@@ -1,1 +1,177 @@
 {%- render 'cart-drawer' -%}
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "limit": 1,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "progress_bar",
+      "name": "Progress bar",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Goal"
+        },
+        {
+          "type": "select",
+          "id": "goal_type",
+          "label": "Goal type",
+          "options": [
+            { "value": "amount",   "label": "Spend amount" },
+            { "value": "quantity", "label": "Item quantity" }
+          ],
+          "default": "amount"
+        },
+        {
+          "type": "number",
+          "id": "goal",
+          "label": "Goal value",
+          "default": 75,
+          "info": "For 'Spend amount': enter a dollar value (e.g. 75 = $75.00). For 'Item quantity': enter a whole number of items."
+        },
+        {
+          "type": "text",
+          "id": "progress_message",
+          "label": "Progress message",
+          "default": "Spend {amount} more for free shipping",
+          "info": "Use {amount} as a placeholder for the remaining amount or item count."
+        },
+        {
+          "type": "text",
+          "id": "success_message",
+          "label": "Goal reached message",
+          "default": "You've unlocked free shipping! 🎉"
+        },
+        {
+          "type": "header",
+          "content": "Bar appearance"
+        },
+        {
+          "type": "color",
+          "id": "bar_color",
+          "label": "Fill colour",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "bar_bg_color",
+          "label": "Track colour",
+          "default": "#e0e0e0"
+        },
+        {
+          "type": "range",
+          "id": "bar_height",
+          "label": "Bar height",
+          "min": 4,
+          "max": 24,
+          "step": 2,
+          "unit": "px",
+          "default": 8
+        },
+        {
+          "type": "range",
+          "id": "bar_radius",
+          "label": "Corner radius",
+          "min": 0,
+          "max": 20,
+          "step": 2,
+          "unit": "px",
+          "default": 8
+        },
+        {
+          "type": "checkbox",
+          "id": "animate",
+          "label": "Animate bar on cart update",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "discount_field",
+      "name": "Discount code",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "input_placeholder",
+          "label": "Input placeholder",
+          "default": "Discount code"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Apply"
+        },
+        {
+          "type": "text",
+          "id": "success_message",
+          "label": "Success message",
+          "default": "Discount applied!"
+        },
+        {
+          "type": "text",
+          "id": "error_message",
+          "label": "Error message",
+          "default": "Invalid or expired discount code."
+        }
+      ]
+    },
+    {
+      "type": "cart_upsell",
+      "name": "Product recommendations",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "You might also like"
+        },
+        {
+          "type": "range",
+          "id": "max_products",
+          "label": "Maximum products",
+          "min": 2,
+          "max": 4,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "options": [
+            { "value": "scroll", "label": "Horizontal scroll" },
+            { "value": "grid",   "label": "Grid" }
+          ],
+          "default": "scroll"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_image",
+          "label": "Show product image",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_price",
+          "label": "Show product price",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Add-to-cart button label",
+          "default": "Add to cart"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
