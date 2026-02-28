@@ -1,0 +1,33 @@
+{% comment %}
+  Renders a product recommendations upsell block inside the cart drawer.
+
+  The element shell is server-rendered; the product cards are fetched and
+  rendered client-side by cart-upsell.js so the drawer opens instantly.
+
+  Accepts:
+  - block: {Object} Block object (settings drive all behaviour + appearance)
+
+  Usage:
+  {% render 'cart-upsell', block: block %}
+{% endcomment %}
+
+<cart-upsell-block
+  class="cart-upsell"
+  data-product-id="{{ cart.items.first.product_id }}"
+  data-limit="{{ block.settings.max_products }}"
+  data-layout="{{ block.settings.layout }}"
+  data-show-image="{{ block.settings.show_image }}"
+  data-show-price="{{ block.settings.show_price }}"
+  data-money-format="{{ shop.money_format | escape }}"
+  data-button-label="{{ block.settings.button_label | escape }}"
+  {% unless cart.items.first %}hidden{% endunless %}
+  {{ block.shopify_attributes }}
+>
+  {%- if block.settings.heading != blank -%}
+    <p class="cart-upsell__heading">{{ block.settings.heading }}</p>
+  {%- endif -%}
+  <div
+    class="cart-upsell__products cart-upsell__products--{{ block.settings.layout }}"
+    aria-live="polite"
+  ></div>
+</cart-upsell-block>

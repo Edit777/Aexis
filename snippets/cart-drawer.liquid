@@ -11,6 +11,32 @@
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
 
+{%- comment -%} Cart enhancement assets — loaded only when the relevant blocks are present {%- endcomment -%}
+{%- if section.blocks.size > 0 -%}
+  {{ 'component-cart-enhancements.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'progress_bar' -%}
+    <script src="{{ 'cart-progress-bar.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+  {%- if block.type == 'discount_field' -%}
+    <script src="{{ 'cart-discount.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+  {%- if block.type == 'cart_upsell' -%}
+    <script src="{{ 'cart-upsell.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Non-upsell item count (excludes products tagged 'cart-hidden') {%- endcomment -%}
+{%- liquid
+  assign non_upsell_count = cart.item_count
+  for item in cart.items
+    if item.product.tags contains 'cart-hidden'
+      assign non_upsell_count = non_upsell_count | minus: 1
+    endif
+  endfor
+-%}
+
 <style>
   .drawer {
     visibility: hidden;
@@ -74,6 +100,13 @@
           </span>
         </button>
       </div>
+      {%- comment -%} Progress bar blocks — sit above cart items {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'progress_bar' -%}
+          {%- render 'cart-progress-bar', block: block, items_count: non_upsell_count -%}
+        {%- endif -%}
+      {%- endfor -%}
+
       <cart-drawer-items
         {% if cart == empty %}
           class=" is-empty"
@@ -495,6 +528,13 @@
           </details>
         {%- endif -%}
 
+        {%- comment -%} Discount code block — sits between cart note and totals {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'discount_field' -%}
+            {%- render 'cart-discount-field', block: block -%}
+          {%- endif -%}
+        {%- endfor -%}
+
         <!-- Start blocks -->
         <!-- Subtotals -->
 
@@ -558,6 +598,13 @@
             {%- endif -%}
           </small>
         </div>
+
+        {%- comment -%} Product recommendations upsell block — sits above checkout button {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'cart_upsell' -%}
+            {%- render 'cart-upsell', block: block -%}
+          {%- endif -%}
+        {%- endfor -%}
 
         <!-- CTAs -->
 

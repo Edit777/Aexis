@@ -1,0 +1,214 @@
+/* =============================================================================
+   component-cart-enhancements.css
+   Styles for cart-progress-bar, cart-discount-field, and cart-upsell-block.
+   Loaded conditionally by snippets/cart-drawer.liquid when any of the
+   three block types are present on the cart-drawer section.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Cart Progress Bar  (<cart-progress-bar>)
+   --------------------------------------------------------------------------- */
+
+cart-progress-bar {
+  display: block;
+}
+
+.cart-progress-bar {
+  padding: 1.4rem 2rem 1rem;
+}
+
+.cart-progress-bar__message {
+  font-size: 1.3rem;
+  line-height: 1.4;
+  margin-bottom: 0.9rem;
+  text-align: center;
+}
+
+.cart-progress-bar__track {
+  background: var(--bar-bg, rgba(var(--color-foreground), 0.1));
+  border-radius: var(--bar-radius, 8px);
+  height: var(--bar-height, 8px);
+  overflow: hidden;
+  width: 100%;
+}
+
+.cart-progress-bar__fill {
+  background: var(--bar-color, rgb(var(--color-button)));
+  border-radius: inherit;
+  height: 100%;
+  width: 0;
+  /* No transition by default — JS sets width directly for immediate feedback */
+}
+
+.cart-progress-bar__fill.is-animated {
+  transition: width 0.45s ease;
+}
+
+/* ---------------------------------------------------------------------------
+   Cart Discount Field  (<cart-discount-field>)
+   --------------------------------------------------------------------------- */
+
+cart-discount-field {
+  display: block;
+}
+
+.cart-discount-field {
+  padding: 1.2rem 2rem 0.4rem;
+}
+
+.cart-discount-field__row {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+
+.cart-discount-field__row .field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cart-discount-field__submit {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.cart-discount-field__feedback {
+  font-size: 1.2rem;
+  margin-top: 0.6rem;
+  padding: 0 0.2rem;
+}
+
+.cart-discount-field__feedback[hidden] {
+  display: none;
+}
+
+.cart-discount-field__error {
+  color: rgb(var(--color-error, 176 34 34));
+}
+
+.cart-discount-field__success {
+  color: rgb(var(--color-button));
+}
+
+.cart-discount-field__applied {
+  margin-top: 0.8rem;
+  padding: 0 0.2rem;
+}
+
+.cart-discount-field__applied .discounts__discount {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Cart Upsell Block  (<cart-upsell-block>)
+   --------------------------------------------------------------------------- */
+
+cart-upsell-block {
+  display: block;
+}
+
+cart-upsell-block[hidden] {
+  display: none;
+}
+
+.cart-upsell {
+  padding: 1.2rem 2rem 0.8rem;
+}
+
+.cart-upsell__heading {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Shared grid container — both layouts share the same item markup */
+.cart-upsell__products {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Horizontal scroll layout */
+.cart-upsell__products--scroll {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 0.4rem; /* room for focus rings */
+}
+
+.cart-upsell__products--scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.cart-upsell__products--scroll .cart-upsell__item {
+  flex: 0 0 calc(50% - 0.5rem);
+  scroll-snap-align: start;
+}
+
+/* Grid layout */
+.cart-upsell__products--grid {
+  flex-wrap: wrap;
+}
+
+.cart-upsell__products--grid .cart-upsell__item {
+  flex: 1 1 calc(50% - 0.5rem);
+}
+
+/* Individual card */
+.cart-upsell__item {
+  border: 0.1rem solid rgba(var(--color-foreground), 0.1);
+  border-radius: var(--buttons-radius, 0.4rem);
+  overflow: hidden;
+  background: rgb(var(--color-background));
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-upsell__item-image {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: rgba(var(--color-foreground), 0.04);
+}
+
+.cart-upsell__item-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cart-upsell__item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.8rem;
+  flex: 1;
+}
+
+.cart-upsell__item-title {
+  font-size: 1.2rem;
+  line-height: 1.3;
+  margin: 0;
+  /* Clamp to 2 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cart-upsell__item-price {
+  font-size: 1.2rem;
+  margin: 0;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.cart-upsell__add-btn {
+  margin-top: auto;
+  font-size: 1.2rem;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
