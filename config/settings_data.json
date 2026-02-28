@@ -132,6 +132,29 @@
         "settings": {
           "color_scheme": "scheme-1"
         }
+      },
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "blocks": {
+          "discount_field_maMLUD": {
+            "type": "discount_field",
+            "settings": {}
+          },
+          "progress_bar_h763aW": {
+            "type": "progress_bar",
+            "settings": {
+              "goal_type": "amount",
+              "goal": 75,
+              "progress_message": "Spend [amount] more for free shipping",
+              "success_message": "You've unlocked free shipping! 🎉"
+            }
+          }
+        },
+        "block_order": [
+          "discount_field_maMLUD",
+          "progress_bar_h763aW"
+        ],
+        "settings": {}
       }
     },
     "content_for_index": [],
