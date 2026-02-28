@@ -1,0 +1,47 @@
+.content-tabs__intro {
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.content-tabs__buttons {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.content-tab-button {
+  border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+  border-radius: 99px;
+  background: transparent;
+  color: rgb(var(--color-foreground));
+  padding: 0.8rem 1.6rem;
+  cursor: pointer;
+}
+
+.content-tab-button.is-active {
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+.content-tab-panel[hidden] {
+  display: none;
+}
+
+.content-tab-panel__grid {
+  display: grid;
+  gap: 2.4rem;
+}
+
+.content-tab-panel__media img {
+  border-radius: 1.2rem;
+  width: 100%;
+  height: auto;
+}
+
+@media screen and (min-width: 990px) {
+  .content-tab-panel__grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+}
