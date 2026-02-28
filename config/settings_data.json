@@ -136,25 +136,83 @@
       "cart-drawer": {
         "type": "cart-drawer",
         "blocks": {
-          "discount_field_maMLUD": {
-            "type": "discount_field",
-            "settings": {}
-          },
-          "progress_bar_h763aW": {
+          "progress_bar_Le4gmw": {
             "type": "progress_bar",
             "settings": {
-              "goal_type": "amount",
-              "goal": 75,
-              "progress_message": "Spend [amount] more for free shipping",
-              "success_message": "You've unlocked free shipping! 🎉"
+              "goal_type": "subtotal",
+              "goal": 50,
+              "progress_message": "Spend [amount] more to get FREE shipping!",
+              "success_message": "Congrats! You get FREE shipping!",
+              "icon": "local_shipping",
+              "icon_filled": false,
+              "accent_color": "accent-1",
+              "margin_top": 15,
+              "margin_bottom": 15
+            }
+          },
+          "payment_badges_rL6PYN": {
+            "type": "payment_badges",
+            "settings": {
+              "enabled_payment_types": "oin, dwolla, facebook_pay, forbrugsforeningen, google_pa",
+              "margin_top": 12,
+              "margin_bottom": 12
+            }
+          },
+          "countdown_timer_9n7zmb": {
+            "type": "countdown_timer",
+            "settings": {
+              "timer_text": "<strong>Cart reserved for [timer] more minutes!</strong>",
+              "timer_duration": 300,
+              "font_size": "1.4",
+              "color_scheme": "inverse",
+              "margin_top": 0,
+              "margin_bottom": 15
+            }
+          },
+          "subtotals_Ukr67b": {
+            "type": "subtotals",
+            "settings": {
+              "display_total_savings": false,
+              "savings_left_text": "<strong>Savings: </strong>",
+              "savings_right_text": "<strong>-[savings]</strong>",
+              "savings_alignment": "spaced",
+              "savings_text_color": "accent-1",
+              "savings_text_size": 16,
+              "savings_position": "above",
+              "savings_spacing": 10,
+              "display_subtotal": true,
+              "subtotal_left_text": "<strong>Subtotal: </strong>",
+              "subtotal_right_text": "<strong>[subtotal]</strong>",
+              "subtotal_alignment": "spaced",
+              "subtotal_text_color": "text",
+              "subtotal_text_size": 20,
+              "display_discounts": true,
+              "discounts_label": "<strong>Discounts:</strong>",
+              "discounts_alignment": "flex-start",
+              "margin_top": 15,
+              "margin_bottom": 15
             }
           }
         },
         "block_order": [
-          "discount_field_maMLUD",
-          "progress_bar_h763aW"
+          "progress_bar_Le4gmw",
+          "payment_badges_rL6PYN",
+          "countdown_timer_9n7zmb",
+          "subtotals_Ukr67b"
         ],
-        "settings": {}
+        "settings": {
+          "test_mode": true,
+          "heading_text": "Cart • [count] items",
+          "heading_alignment": "flex-start",
+          "desktop_width": "normal",
+          "mobile_width": "partial",
+          "enable_header_bg": false,
+          "header_bg_color": "#f3f3f3",
+          "enable_body_bg": false,
+          "body_bg_color": "#f3f3f3",
+          "enable_footer_bg": false,
+          "footer_bg_color": "#f3f3f3"
+        }
       }
     },
     "content_for_index": [],
