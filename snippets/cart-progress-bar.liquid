@@ -1,81 +1,64 @@
-{% comment %}
-  Renders a cart free-shipping / goal progress bar.
-
-  Accepts:
-  - block: {Object} Block object (settings drive all behaviour)
-  - items_count: {Number} Non-upsell cart item count (passed from cart-drawer)
-
-  Usage:
-  {% render 'cart-progress-bar', block: block, items_count: non_upsell_count %}
-{% endcomment %}
-
-{%- liquid
+{% liquid
   assign is_quantity = false
   if block.settings.goal_type == 'quantity'
     assign is_quantity = true
   endif
 
   if is_quantity
-    assign current_value = items_count
-    assign goal_value    = block.settings.goal
+    assign goal_multiplier = 1.0
+    assign goal_max_reference = items_count
   else
-    assign current_value = cart.items_subtotal_price
-    assign goal_value    = block.settings.goal | times: 100
+    assign goal_multiplier = 100.00
+    assign goal_max_reference = cart.items_subtotal_price
   endif
+  
+  assign goal = block.settings.goal | times: goal_multiplier
+  assign goal_progress = goal_max_reference | divided_by: goal | times: 100.0
 
-  assign progress = 0
-  if goal_value > 0
-    assign progress = current_value | times: 100.0 | divided_by: goal_value
-  endif
-
-  if progress >= 100
-    assign progress    = 100
+  assign goal_reached = false
+  if goal_progress >= 100.00
     assign goal_reached = true
-  else
-    assign goal_reached = false
+    assign goal_progress = 100
   endif
--%}
+%}
 
-<cart-progress-bar
-  data-goal-type="{{ block.settings.goal_type }}"
-  data-goal="{{ goal_value }}"
-  data-progress-message="{{ block.settings.progress_message | escape }}"
-  data-success-message="{{ block.settings.success_message | escape }}"
-  data-money-format="{{ shop.money_format | escape }}"
->
-  <div
-    class="cart-progress-bar"
-    style="
-      --bar-color: {{ block.settings.bar_color }};
-      --bar-bg: {{ block.settings.bar_bg_color }};
-      --bar-height: {{ block.settings.bar_height }}px;
-      --bar-radius: {{ block.settings.bar_radius }}px;
-    "
-    {{ block.shopify_attributes }}
-  >
-    <p class="cart-progress-bar__message">
-      {%- if goal_reached -%}
-        {{ block.settings.success_message }}
-      {%- else -%}
-        {%- if is_quantity -%}
-          {%- assign remaining = goal_value | minus: items_count -%}
-          {{ block.settings.progress_message | replace: '[amount]', remaining }}
-        {%- else -%}
-          {%- assign remaining_cents = goal_value | minus: cart.items_subtotal_price -%}
-          {%- assign formatted_remaining = remaining_cents | money_without_trailing_zeros -%}
-          {{ block.settings.progress_message | replace: '[amount]', formatted_remaining }}
-        {%- endif -%}
-      {%- endif -%}
-    </p>
-    <div class="cart-progress-bar__track">
-      <div
-        class="cart-progress-bar__fill{% if block.settings.animate %} is-animated{% endif %}"
-        style="width: {{ progress }}%;"
-        role="progressbar"
-        aria-valuenow="{{ progress | round }}"
-        aria-valuemin="0"
-        aria-valuemax="100"
-      ></div>
+{% capture goal_difference_html %}
+  {% if is_quantity %}
+    {{ goal | minus: items_count | round }}
+  {% else %}
+    <span>{{ goal | minus: cart.items_subtotal_price | money_without_trailing_zeros }}</span>
+  {% endif %}
+{% endcapture %}
+
+<cart-progress-bar class="cart-progress-bar" data-goal-type="{{ block.settings.goal_type }}" data-goal="{% if is_quantity %}{{ goal | round }}{% else %}{{ goal | round }}{% endif %}" data-progress-message="{{ block.settings.progress_message | escape }}" data-success-message="{{ block.settings.success_message | escape }}" data-money-format="{{ shop.money_format | escape }}">
+<div class="cart-progress accent-color-{{ block.settings.accent_color }}" style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;" {{ block.shopify_attributes }}>
+  <p class="cart-progress__text cart-progress-bar__message">
+    {% if goal_reached == false %}
+      {{ block.settings.progress_message | replace: '[amount]', goal_difference_html }}
+    {% else %}
+      {{ block.settings.success_message }}
+    {% endif %}
+  </p>
+  <div class="cart-progress__bar">
+    <div class="cart-progress__bar__progress cart-progress-bar__fill" style="width: {{ goal_progress }}%;">
+      <div class="cart-progress__bar__badge">
+        {%- if block.settings.custom_icon != blank -%}
+          <img
+            src="{{ block.settings.custom_icon | image_url }}"
+            {% if block.settings.custom_icon.alt != blank %}
+              alt="{{ block.settings.custom_icon.alt | escape }}"
+            {% else %}
+              role="presentation"
+            {% endif %}
+            height="200"
+            width="200"
+            loading="lazy"
+          >
+        {% else %}
+          <span class="svg-wrapper">{% render 'icon-checkmark' %}</span>
+        {% endif %}
+      </div>
     </div>
   </div>
+</div>
 </cart-progress-bar>

@@ -1,62 +1,19 @@
-{% comment %}
-  Renders a discount code input in the cart drawer footer.
-
-  Accepts:
-  - block: {Object} Block object (settings drive all labels and messages)
-
-  Usage:
-  {% render 'cart-discount-field', block: block %}
-{% endcomment %}
-
 <cart-discount-field
-  data-success-message="{{ block.settings.success_message | escape }}"
-  data-error-message="{{ block.settings.error_message | escape }}"
+  class="cart-discount{% if block.settings.bottom_separator %} cart-discount--bottom-separator{% endif %}"
+  data-success-message="{{ block.settings.success_msg | escape }}"
+  data-error-message="{{ block.settings.error_msg | escape }}"
+  style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
+  {{ block.shopify_attributes }}
 >
-  <div
-    class="cart-discount-field"
-    {{ block.shopify_attributes }}
-  >
-    <form class="cart-discount-field__form" novalidate>
-      <div class="cart-discount-field__row">
-        <div class="field">
-          <input
-            class="field__input cart-discount-field__input"
-            type="text"
-            id="CartDiscountCode"
-            name="discount"
-            placeholder="{{ block.settings.input_placeholder | escape }}"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="characters"
-            spellcheck="false"
-          >
-          <label class="field__label" for="CartDiscountCode">
-            {{ block.settings.input_placeholder }}
-          </label>
-        </div>
-        <button type="submit" class="button cart-discount-field__submit">
-          {{ block.settings.button_label }}
-        </button>
+  <form class="cart-discount-field__form cart-discount-form">
+    <div class="cart-discount-form__row">
+      <div class="field">
+        <input class="field__input cart-discount-field__input" type="text" name="discount" placeholder="{{ block.settings.placeholder }}">
+        <label class="field__label">{{ block.settings.placeholder }}</label>
       </div>
-      <p class="cart-discount-field__feedback cart-discount-field__error" hidden aria-live="polite"></p>
-      <p class="cart-discount-field__feedback cart-discount-field__success" hidden aria-live="polite"></p>
-    </form>
-
-    {%- if cart.cart_level_discount_applications.size > 0 -%}
-      <ul
-        class="cart-discount-field__applied discounts list-unstyled"
-        aria-label="{{ 'customer.order.discount' | t }}"
-      >
-        {%- for discount in cart.cart_level_discount_applications -%}
-          <li class="discounts__discount">
-            <span class="svg-wrapper">
-              {{- 'icon-discount.svg' | inline_asset_content -}}
-            </span>
-            {{ discount.title | escape }}
-            (-{{ discount.total_allocated_amount | money }})
-          </li>
-        {%- endfor -%}
-      </ul>
-    {%- endif -%}
-  </div>
+      <button class="button" type="submit">{{ block.settings.btn_label }}</button>
+    </div>
+    <p class="cart-discount-field__error cart-discount-form__error" hidden></p>
+    <p class="cart-discount-field__success" hidden></p>
+  </form>
 </cart-discount-field>
