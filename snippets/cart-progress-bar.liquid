@@ -59,11 +59,11 @@
       {%- else -%}
         {%- if is_quantity -%}
           {%- assign remaining = goal_value | minus: items_count -%}
-          {{ block.settings.progress_message | replace: '{amount}', remaining }}
+          {{ block.settings.progress_message | replace: '[amount]', remaining }}
         {%- else -%}
           {%- assign remaining_cents = goal_value | minus: cart.items_subtotal_price -%}
           {%- assign formatted_remaining = remaining_cents | money_without_trailing_zeros -%}
-          {{ block.settings.progress_message | replace: '{amount}', formatted_remaining }}
+          {{ block.settings.progress_message | replace: '[amount]', formatted_remaining }}
         {%- endif -%}
       {%- endif -%}
     </p>
