@@ -49,7 +49,7 @@ if (!customElements.get('cart-progress-bar')) {
         const display   = this.goalType === 'quantity'
           ? String(remaining)
           : this.formatMoney(remaining, this.moneyFormat);
-        this.messageEl.textContent = this.progressMessage.replace('{amount}', display);
+        this.messageEl.textContent = this.progressMessage.replace('[amount]', display);
       }
     }
 
