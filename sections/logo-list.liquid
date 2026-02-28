@@ -1,0 +1,87 @@
+{{ 'section-marketing-logo-list.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  .logo-list-{{ section.id }} .logo-list__item {
+    height: {{ section.settings.mobile_logo_height }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+
+    .logo-list-{{ section.id }} .logo-list__item {
+      height: {{ section.settings.desktop_logo_height }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding logo-list-{{ section.id }}">
+    {%- if section.settings.heading != blank -%}
+      <div class="title-wrapper-with-link title-wrapper--no-top-margin">
+        <h2 class="title {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <ul class="marketing-logo-list" role="list" style="--columns-mobile: {{ section.settings.columns_mobile }};">
+      {%- for block in section.blocks -%}
+        <li {{ block.shopify_attributes }}>
+          <{% if block.settings.link != blank %}a href="{{ block.settings.link }}"{% if block.settings.target_blank %} target="_blank" rel="noreferrer"{% endif %}{% else %}div{% endif %}
+            class="logo-list__item{% if section.settings.gray_logos %} logo-list__item--gray{% endif %}">
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 500
+                | image_tag: loading: 'lazy', widths: '100, 200, 300, 500', alt: block.settings.image.alt
+              }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </{% if block.settings.link != blank %}a{% else %}div{% endif %}>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Logo list",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {"type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Featured on"},
+    {"type": "select", "id": "heading_size", "options": [{"value": "h2", "label": "Small"}, {"value": "h1", "label": "Medium"}, {"value": "h0", "label": "Large"}], "default": "h1", "label": "Heading size"},
+    {"type": "checkbox", "id": "gray_logos", "label": "Gray logos", "default": false},
+    {"type": "range", "id": "columns_mobile", "min": 1, "max": 4, "step": 1, "default": 2, "label": "Mobile columns"},
+    {"type": "range", "id": "mobile_logo_height", "min": 20, "max": 140, "step": 10, "default": 50, "label": "Mobile logo height"},
+    {"type": "range", "id": "desktop_logo_height", "min": 20, "max": 180, "step": 10, "default": 60, "label": "Desktop logo height"},
+    {"type": "select", "id": "color_scheme", "label": "Color scheme", "default": "background-1", "options": [{"value": "accent-1", "label": "Accent 1"}, {"value": "accent-2", "label": "Accent 2"}, {"value": "background-1", "label": "Background 1"}, {"value": "background-2", "label": "Background 2"}, {"value": "inverse", "label": "Inverse"}]},
+    {"type": "header", "content": "Section padding"},
+    {"type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top padding", "default": 36},
+    {"type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 36}
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {"type": "image_picker", "id": "image", "label": "Image"},
+        {"type": "url", "id": "link", "label": "Link"},
+        {"type": "checkbox", "id": "target_blank", "label": "Open link in new tab", "default": false}
+      ]
+    }
+  ],
+  "presets": [{"name": "Logo list", "blocks": [{"type": "logo"}, {"type": "logo"}, {"type": "logo"}, {"type": "logo"}]}]
+}
+{% endschema %}

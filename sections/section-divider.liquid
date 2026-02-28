@@ -1,0 +1,75 @@
+{{ 'section-marketing-divider.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  if section.settings.flip_horizontal
+    assign scale_x = 'scaleX(-1)'
+  else
+    assign scale_x = 'scaleX(1)'
+  endif
+
+  if section.settings.flip_vertical
+    assign scale_y = 'scaleY(-1)'
+  else
+    assign scale_y = 'scaleY(1)'
+  endif
+-%}
+
+{%- style -%}
+  .divider-top-{{ section.id }} {
+    height: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+  }
+  .divider-bottom-{{ section.id }} {
+    height: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  .section-divider-{{ section.id }} {
+    transform: {{ scale_x }} {{ scale_y }};
+    color: {{ section.settings.shape_color }};
+    background: {{ section.settings.background_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .divider-top-{{ section.id }} {
+      height: {{ section.settings.padding_top }}px;
+    }
+    .divider-bottom-{{ section.id }} {
+      height: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="divider-top-{{ section.id }}" style="background: {{ section.settings.background_color }};"></div>
+<div class="section-divider section-divider-{{ section.id }}">
+  {% case section.settings.shape %}
+    {% when 'diagonal_1' %}
+      <svg viewBox="0 0 360 32" width="100%" preserveAspectRatio="none"><polygon fill="currentColor" points="0 29.91 0 32 360 32 360 0 0 29.91"/></svg>
+    {% when 'diagonal_2' %}
+      <svg viewBox="0 64 1440 256" width="100%" preserveAspectRatio="none"><path fill="currentColor" d="M0,288L1440,64L1440,320L0,320Z"/></svg>
+    {% when 'curved_1' %}
+      <svg viewBox="0 0 360 74.65" width="100%" preserveAspectRatio="none"><path fill="currentColor" d="M0,20.29,12,23.6A474.72,474.72,0,0,0,72,37c24,3.31,48,3.31,72-6.69S192,.29,216,7c24,6.43,48,40.18,72,50,24,10.18,48-3.57,60-10l12-6.69v40H0Z" transform="translate(0 -5.64)"/></svg>
+    {% when 'curved_2' %}
+      <svg viewBox="0 0 1440 320" width="100%" preserveAspectRatio="none"><path fill="currentColor" d="M0,192L48,181.3C96,171,192,149,288,144C384,139,480,149,576,149.3C672,149,768,139,864,144C960,149,1056,171,1152,154.7C1248,139,1344,85,1392,58.7L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg>
+    {% when 'sharp_1' %}
+      <svg viewBox="0 0 1440 320" width="100%" preserveAspectRatio="none"><path fill="currentColor" d="M0,160L240,288L480,288L720,160L960,224L1200,32L1440,96L1440,320L1200,320L960,320L720,320L480,320L240,320L0,320Z"/></svg>
+    {% else %}
+      <svg viewBox="0 0 360 32" width="100%" preserveAspectRatio="none"><polygon fill="currentColor" points="0 29.91 0 32 360 32 360 0 0 29.91"/></svg>
+  {% endcase %}
+</div>
+<div class="divider-bottom-{{ section.id }}" style="background: {{ section.settings.shape_color }};"></div>
+
+{% schema %}
+{
+  "name": "Section divider",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {"type": "select", "id": "shape", "label": "Shape", "default": "diagonal_1", "options": [{"value": "diagonal_1", "label": "Diagonal 1"}, {"value": "diagonal_2", "label": "Diagonal 2"}, {"value": "curved_1", "label": "Curved 1"}, {"value": "curved_2", "label": "Curved 2"}, {"value": "sharp_1", "label": "Sharp 1"}]},
+    {"type": "checkbox", "id": "flip_horizontal", "label": "Flip horizontal", "default": false},
+    {"type": "checkbox", "id": "flip_vertical", "label": "Flip vertical", "default": false},
+    {"type": "color", "id": "background_color", "label": "Background color", "default": "#ffffff"},
+    {"type": "color", "id": "shape_color", "label": "Shape color", "default": "#f3f3f3"},
+    {"type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top spacing", "default": 0},
+    {"type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom spacing", "default": 0}
+  ],
+  "presets": [{"name": "Section divider"}]
+}
+{% endschema %}
