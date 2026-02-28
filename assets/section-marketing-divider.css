@@ -1,0 +1,9 @@
+.section-divider {
+  line-height: 0;
+}
+
+.section-divider svg {
+  display: block;
+  width: 100%;
+  height: min(16rem, 18vw);
+}

@@ -1,0 +1,99 @@
+{{ 'section-marketing-comparison-table.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  .comparison-table-{{ section.id }} {
+    --radius: {{ section.settings.corner_radius | divided_by: 10.0 }}rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="title-wrapper-with-link title-wrapper--no-top-margin">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="title {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.text != blank -%}
+        <div class="rte comparison-table__intro">{{ section.settings.text }}</div>
+      {%- endif -%}
+    {%- endif -%}
+
+    <div class="comparison-table-wrapper comparison-table-{{ section.id }}">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>{{ section.settings.feature_label }}</th>
+            <th class="comparison-table__ours">{{ section.settings.us_label }}</th>
+            {%- if section.settings.competitor_1 != blank -%}<th>{{ section.settings.competitor_1 }}</th>{%- endif -%}
+            {%- if section.settings.competitor_2 != blank -%}<th>{{ section.settings.competitor_2 }}</th>{%- endif -%}
+            {%- if section.settings.competitor_3 != blank -%}<th>{{ section.settings.competitor_3 }}</th>{%- endif -%}
+          </tr>
+        </thead>
+        <tbody>
+          {%- for block in section.blocks -%}
+            <tr {{ block.shopify_attributes }}>
+              <td>{{ block.settings.benefit }}</td>
+              <td class="comparison-table__ours">{% render 'comparison-cell-icon', enabled: block.settings.us %}</td>
+              {%- if section.settings.competitor_1 != blank -%}<td>{% render 'comparison-cell-icon', enabled: block.settings.others %}</td>{%- endif -%}
+              {%- if section.settings.competitor_2 != blank -%}<td>{% render 'comparison-cell-icon', enabled: block.settings.others_2 %}</td>{%- endif -%}
+              {%- if section.settings.competitor_3 != blank -%}<td>{% render 'comparison-cell-icon', enabled: block.settings.others_3 %}</td>{%- endif -%}
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Comparison table",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {"type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Why customers choose us"},
+    {"type": "select", "id": "heading_size", "options": [{"value": "h2", "label": "Small"}, {"value": "h1", "label": "Medium"}, {"value": "h0", "label": "Large"}], "default": "h1", "label": "Heading size"},
+    {"type": "richtext", "id": "text", "label": "Text"},
+    {"type": "text", "id": "feature_label", "label": "Feature column label", "default": "Feature"},
+    {"type": "text", "id": "us_label", "label": "Your brand label", "default": "Us"},
+    {"type": "text", "id": "competitor_1", "label": "Competitor 1 label", "default": "Brand A"},
+    {"type": "text", "id": "competitor_2", "label": "Competitor 2 label", "default": "Brand B"},
+    {"type": "text", "id": "competitor_3", "label": "Competitor 3 label", "default": "Brand C"},
+    {"type": "range", "id": "corner_radius", "min": 0, "max": 30, "step": 1, "default": 10, "label": "Corner radius"},
+    {"type": "select", "id": "color_scheme", "label": "Color scheme", "default": "background-1", "options": [{"value": "accent-1", "label": "Accent 1"}, {"value": "accent-2", "label": "Accent 2"}, {"value": "background-1", "label": "Background 1"}, {"value": "background-2", "label": "Background 2"}, {"value": "inverse", "label": "Inverse"}]},
+    {"type": "header", "content": "Section padding"},
+    {"type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top padding", "default": 36},
+    {"type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 36}
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        {"type": "inline_richtext", "id": "benefit", "label": "Benefit", "default": "<strong>Fast shipping</strong>"},
+        {"type": "checkbox", "id": "us", "label": "Us", "default": true},
+        {"type": "checkbox", "id": "others", "label": "Competitor 1", "default": false},
+        {"type": "checkbox", "id": "others_2", "label": "Competitor 2", "default": false},
+        {"type": "checkbox", "id": "others_3", "label": "Competitor 3", "default": false}
+      ]
+    }
+  ],
+  "presets": [{"name": "Comparison table", "blocks": [{"type": "row"}, {"type": "row"}, {"type": "row"}]}]
+}
+{% endschema %}

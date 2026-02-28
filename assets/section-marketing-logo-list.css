@@ -1,0 +1,35 @@
+.marketing-logo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--columns-mobile), minmax(0, 1fr));
+  gap: 1.6rem;
+}
+
+.logo-list__item {
+  border: 0.1rem solid rgba(var(--color-foreground), 0.1);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.logo-list__item img,
+.logo-list__item svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logo-list__item--gray img {
+  filter: grayscale(1);
+  opacity: 0.8;
+}
+
+@media screen and (min-width: 990px) {
+  .marketing-logo-list {
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+}

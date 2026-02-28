@@ -1,0 +1,103 @@
+{{ 'section-marketing-testimonials.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="title-wrapper-with-link title-wrapper--no-top-margin">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="title {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.text != blank -%}
+        <div class="rte testimonials__intro">{{ section.settings.text }}</div>
+      {%- endif -%}
+    {%- endif -%}
+
+    <ul
+      class="testimonials-grid testimonials-grid--{{ section.settings.columns_desktop }}"
+      role="list"
+    >
+      {%- for block in section.blocks -%}
+        <li class="testimonial-card" {{ block.shopify_attributes }}>
+          {%- if block.settings.show_rating and block.settings.star_rating > 0 -%}
+            <div class="testimonial-stars" style="--rating: {{ block.settings.star_rating }};" aria-label="{{ block.settings.star_rating }} out of 5 stars"></div>
+          {%- endif -%}
+
+          {%- if block.settings.quote != blank -%}
+            <blockquote class="testimonial-quote">{{ block.settings.quote }}</blockquote>
+          {%- endif -%}
+
+          <div class="testimonial-author-row">
+            {%- if block.settings.image != blank -%}
+              <div class="testimonial-author-image">
+                {{
+                  block.settings.image
+                  | image_url: width: 120
+                  | image_tag: loading: 'lazy', widths: '60, 90, 120', alt: block.settings.name
+                }}
+              </div>
+            {%- endif -%}
+            <div>
+              {%- if block.settings.name != blank -%}
+                <p class="testimonial-author">{{ block.settings.name }}</p>
+              {%- endif -%}
+              {%- if block.settings.subtitle != blank -%}
+                <p class="testimonial-subtitle">{{ block.settings.subtitle }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {"type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Testimonials"},
+    {"type": "select", "id": "heading_size", "options": [{"value": "h2", "label": "Small"}, {"value": "h1", "label": "Medium"}, {"value": "h0", "label": "Large"}], "default": "h1", "label": "Heading size"},
+    {"type": "richtext", "id": "text", "label": "Text"},
+    {"type": "select", "id": "color_scheme", "label": "Color scheme", "default": "background-1", "options": [{"value": "accent-1", "label": "Accent 1"}, {"value": "accent-2", "label": "Accent 2"}, {"value": "background-1", "label": "Background 1"}, {"value": "background-2", "label": "Background 2"}, {"value": "inverse", "label": "Inverse"}]},
+    {"type": "range", "id": "columns_desktop", "min": 2, "max": 4, "step": 1, "default": 3, "label": "Desktop columns"},
+    {"type": "header", "content": "Section padding"},
+    {"type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top padding", "default": 36},
+    {"type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 36}
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {"type": "richtext", "id": "quote", "label": "Quote", "default": "<p>Share what your customers are saying about your products, customer service or shipping rates.</p>"},
+        {"type": "checkbox", "id": "show_rating", "label": "Show rating", "default": true},
+        {"type": "range", "id": "star_rating", "min": 0, "max": 5, "step": 1, "default": 5, "label": "Star rating"},
+        {"type": "image_picker", "id": "image", "label": "Author image"},
+        {"type": "text", "id": "name", "label": "Author name", "default": "Customer name"},
+        {"type": "text", "id": "subtitle", "label": "Subtitle", "default": "Verified buyer"}
+      ]
+    }
+  ],
+  "presets": [{"name": "Testimonials", "blocks": [{"type": "testimonial"}, {"type": "testimonial"}, {"type": "testimonial"}]}]
+}
+{% endschema %}
