@@ -127,22 +127,36 @@ if (!customElements.get('cart-upsell-block')) {
       btn.setAttribute('aria-busy', 'true');
 
       try {
-        const addResp = await fetch('/cart/add.js', {
+        const cartDrawer = document.querySelector('cart-drawer');
+        const formData = new FormData();
+        formData.append('id', variantId);
+        formData.append('quantity', 1);
+
+        if (cartDrawer) {
+          formData.append(
+            'sections',
+            cartDrawer.getSectionsToRender().map((section) => section.id)
+          );
+          formData.append('sections_url', window.location.pathname);
+        }
+
+        const addResp = await fetch(`${routes.cart_add_url}`, {
           method: 'POST',
           credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: variantId, quantity: 1 }),
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          body: formData,
         });
 
         if (!addResp.ok) throw new Error('add failed');
 
-        // Fetch fresh cart state and re-render via pubsub
-        const cartData = await fetch('/cart.js', {
-          credentials: 'same-origin',
-        }).then((r) => r.json());
+        const cartData = await addResp.json();
+
+        if (cartDrawer) {
+          cartDrawer.renderContents(cartData);
+        }
 
         publish(PUB_SUB_EVENTS.cartUpdate, {
-          source: 'cart-upsell',
+          source: 'cart-items',
           cartData,
           variantId,
         });

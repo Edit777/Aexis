@@ -67,14 +67,15 @@ if (!customElements.get('product-form')) {
             }
 
             const startMarker = CartPerformance.createStartingMarker('add:wait-for-subscribers');
-            if (!this.error)
+            const publishCartUpdate = () =>
               publish(PUB_SUB_EVENTS.cartUpdate, {
-                source: 'product-form',
+                source: 'cart-items',
                 productVariantId: formData.get('id'),
                 cartData: response,
               }).then(() => {
                 CartPerformance.measureFromMarker('add:wait-for-subscribers', startMarker);
               });
+
             this.error = false;
             const quickAddModal = this.closest('quick-add-modal');
             if (quickAddModal) {
@@ -85,6 +86,7 @@ if (!customElements.get('product-form')) {
                     CartPerformance.measure("add:paint-updated-sections", () => {
                       this.cart.renderContents(response);
                     });
+                    publishCartUpdate();
                   });
                 },
                 { once: true }
@@ -94,6 +96,7 @@ if (!customElements.get('product-form')) {
               CartPerformance.measure("add:paint-updated-sections", () => {
                 this.cart.renderContents(response);
               });
+              publishCartUpdate();
             }
           })
           .catch((e) => {

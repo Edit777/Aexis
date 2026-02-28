@@ -22,6 +22,9 @@
   {%- if block.type == 'discount_field' -%}
     <script src="{{ 'cart-discount.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
+  {%- if block.type == 'product_upsells' -%}
+    <script src="{{ 'cart-upsell.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
 {%- endfor -%}
 
 {%- comment -%} Non-upsell item count (excludes products tagged 'cart-hidden') {%- endcomment -%}
@@ -40,7 +43,10 @@
   }
 </style>
 
-<cart-drawer class="drawer{% if cart == empty %} is-empty{% endif %}">
+<cart-drawer
+  class="drawer{% if cart == empty %} is-empty{% endif %}{% if section.settings.test_mode %} animate active{% endif %}"
+  data-test-mode="{{ section.settings.test_mode }}"
+>
   <div id="CartDrawer" class="cart-drawer">
     <div id="CartDrawer-Overlay" class="cart-drawer__overlay"></div>
     <div
@@ -58,7 +64,6 @@
               <button
                 class="drawer__close"
                 type="button"
-                onclick="this.closest('cart-drawer').close()"
                 aria-label="{{ 'accessibility.close' | t }}"
               >
                 <span class="svg-wrapper">
@@ -89,7 +94,6 @@
         <button
           class="drawer__close"
           type="button"
-          onclick="this.closest('cart-drawer').close()"
           aria-label="{{ 'accessibility.close' | t }}"
         >
           <span class="svg-wrapper">

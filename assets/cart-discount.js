@@ -70,13 +70,13 @@ if (!customElements.get('cart-discount-field')) {
           this.input.value = '';
           this.showSuccess(this.dataset.successMessage);
 
-          // Patch only the totals area to avoid re-mounting the whole drawer
-          if (cartState.sections?.['cart-drawer']) {
-            this.patchDrawerFooter(cartState.sections['cart-drawer']);
+          const cartDrawer = document.querySelector('cart-drawer');
+          if (cartDrawer && cartState.sections?.['cart-drawer']) {
+            cartDrawer.renderContents(cartState);
           }
 
           publish(PUB_SUB_EVENTS.cartUpdate, {
-            source: 'cart-discount-field',
+            source: 'cart-items',
             cartData: cartState,
           });
         } else {
@@ -87,18 +87,6 @@ if (!customElements.get('cart-discount-field')) {
       } finally {
         this.setLoading(false);
       }
-    }
-
-    /**
-     * Replaces only the .cart-drawer__footer totals element so we don't
-     * touch the discount input itself or the checkout button.
-     */
-    patchDrawerFooter(sectionHtml) {
-      const parser     = new DOMParser();
-      const doc        = parser.parseFromString(sectionHtml, 'text/html');
-      const newFooter  = doc.querySelector('.cart-drawer__footer');
-      const currFooter = document.querySelector('#CartDrawer .cart-drawer__footer');
-      if (newFooter && currFooter) currFooter.replaceWith(newFooter);
     }
 
     setLoading(loading) {
