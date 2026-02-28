@@ -22,9 +22,6 @@
   {%- if block.type == 'discount_field' -%}
     <script src="{{ 'cart-discount.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
-  {%- if block.type == 'cart_upsell' -%}
-    <script src="{{ 'cart-upsell.js' | asset_url }}" defer="defer"></script>
-  {%- endif -%}
 {%- endfor -%}
 
 {%- comment -%} Non-upsell item count (excludes products tagged 'cart-hidden') {%- endcomment -%}
@@ -104,6 +101,12 @@
       {%- for block in section.blocks -%}
         {%- if block.type == 'progress_bar' -%}
           {%- render 'cart-progress-bar', block: block, items_count: non_upsell_count -%}
+        {%- endif -%}
+        {%- if block.type == 'checkpoints_bar' -%}
+          {%- render 'cart-checkpoints-bar', block: block, items_count: non_upsell_count -%}
+        {%- endif -%}
+        {%- if block.type == 'gift' -%}
+          {%- render 'cart-gift', block: block, items_count: non_upsell_count -%}
         {%- endif -%}
       {%- endfor -%}
 
@@ -601,8 +604,8 @@
 
         {%- comment -%} Product recommendations upsell block — sits above checkout button {%- endcomment -%}
         {%- for block in section.blocks -%}
-          {%- if block.type == 'cart_upsell' -%}
-            {%- render 'cart-upsell', block: block -%}
+          {%- if block.type == 'product_upsells' -%}
+            {%- render 'upsell-block', block: block -%}
           {%- endif -%}
         {%- endfor -%}
 
