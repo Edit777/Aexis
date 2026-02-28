@@ -25,6 +25,9 @@
   {%- if block.type == 'product_upsells' -%}
     <script src="{{ 'cart-upsell.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
+  {%- if block.type == 'countdown_timer' -%}
+    <script src="{{ 'cart-countdown.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
 {%- endfor -%}
 
 {%- comment -%} Non-upsell item count (excludes products tagged 'cart-hidden') {%- endcomment -%}
@@ -101,18 +104,23 @@
           </span>
         </button>
       </div>
-      {%- comment -%} Progress bar blocks — sit above cart items {%- endcomment -%}
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'progress_bar' -%}
-          {%- render 'cart-progress-bar', block: block, items_count: non_upsell_count -%}
-        {%- endif -%}
-        {%- if block.type == 'checkpoints_bar' -%}
-          {%- render 'cart-checkpoints-bar', block: block, items_count: non_upsell_count -%}
-        {%- endif -%}
-        {%- if block.type == 'gift' -%}
-          {%- render 'cart-gift', block: block, items_count: non_upsell_count -%}
-        {%- endif -%}
-      {%- endfor -%}
+      {%- if cart != empty -%}
+        {%- comment -%} Promo blocks — sit above cart items and require cart items {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'progress_bar' -%}
+            {%- render 'cart-progress-bar', block: block, items_count: non_upsell_count -%}
+          {%- endif -%}
+          {%- if block.type == 'checkpoints_bar' -%}
+            {%- render 'cart-checkpoints-bar', block: block, items_count: non_upsell_count -%}
+          {%- endif -%}
+          {%- if block.type == 'gift' -%}
+            {%- render 'cart-gift', block: block, items_count: non_upsell_count -%}
+          {%- endif -%}
+          {%- if block.type == 'countdown_timer' -%}
+            {%- render 'cart-countdown-timer', block: block -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
 
       <cart-drawer-items
         {% if cart == empty %}
@@ -535,12 +543,17 @@
           </details>
         {%- endif -%}
 
-        {%- comment -%} Discount code block — sits between cart note and totals {%- endcomment -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'discount_field' -%}
-            {%- render 'cart-discount-field', block: block -%}
-          {%- endif -%}
-        {%- endfor -%}
+        {%- if cart != empty -%}
+          {%- comment -%} Discount code block — sits between cart note and totals {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'discount_field' -%}
+              {%- render 'cart-discount-field', block: block -%}
+            {%- endif -%}
+            {%- if block.type == 'payment_badges' -%}
+              {%- render 'cart-payment-badges', block: block -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
 
         <!-- Start blocks -->
         <!-- Subtotals -->
@@ -606,12 +619,14 @@
           </small>
         </div>
 
-        {%- comment -%} Product recommendations upsell block — sits above checkout button {%- endcomment -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'product_upsells' -%}
-            {%- render 'upsell-block', block: block -%}
-          {%- endif -%}
-        {%- endfor -%}
+        {%- if cart != empty -%}
+          {%- comment -%} Product recommendations upsell block — sits above checkout button {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'product_upsells' -%}
+              {%- render 'upsell-block', block: block -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
 
         <!-- CTAs -->
 

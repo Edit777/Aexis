@@ -1,0 +1,32 @@
+{% liquid
+  assign enabled_payment_types = block.settings.enabled_payment_types | default: '' | downcase | split: ','
+  assign has_custom_payment_types = false
+  for payment in enabled_payment_types
+    assign normalized_payment = payment | strip
+    if normalized_payment != blank
+      assign has_custom_payment_types = true
+      break
+    endif
+  endfor
+%}
+
+<div
+  class="cart-payment-badges"
+  style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
+  {{ block.shopify_attributes }}
+>
+  <ul class="list list-payment" role="list" aria-label="{{ 'sections.footer.payment' | t }}">
+    {% if has_custom_payment_types %}
+      {% for payment in enabled_payment_types %}
+        {% assign payment_type = payment | strip %}
+        {% if payment_type != blank %}
+          <li class="list-payment__item">{{ payment_type | payment_type_svg_tag: class: 'icon icon--full-color' }}</li>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {%- for type in shop.enabled_payment_types -%}
+        <li class="list-payment__item">{{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}</li>
+      {%- endfor -%}
+    {% endif %}
+  </ul>
+</div>

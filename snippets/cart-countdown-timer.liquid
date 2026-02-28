@@ -1,0 +1,11 @@
+<cart-countdown-timer
+  class="cart-countdown"
+  data-duration="{{ block.settings.timer_duration | default: 300 }}"
+  data-template="{{ block.settings.timer_text | escape }}"
+  style="--font-size: {{ block.settings.font_size }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
+  {{ block.shopify_attributes }}
+>
+  <p class="cart-countdown__text color-{{ block.settings.color_scheme }}">
+    {{ block.settings.timer_text | replace: '[timer]', block.settings.timer_duration | divided_by: 60 | ceil }}
+  </p>
+</cart-countdown-timer>
