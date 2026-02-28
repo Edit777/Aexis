@@ -13,7 +13,7 @@ if (!customElements.get('cart-progress-bar')) {
   class CartProgressBar extends HTMLElement {
     connectedCallback() {
       this.goalType        = this.dataset.goalType;           // 'amount' | 'quantity'
-      this.goal            = parseInt(this.dataset.goal, 10); // cents (amount) or integer (quantity)
+      this.goal = Number.parseFloat(this.dataset.goal); // cents (amount) or integer (quantity)
       this.progressMessage = this.dataset.progressMessage;    // text with {amount} placeholder
       this.successMessage  = this.dataset.successMessage;
       this.moneyFormat     = this.dataset.moneyFormat;
@@ -35,17 +35,19 @@ if (!customElements.get('cart-progress-bar')) {
         ? cartData.item_count
         : cartData.items_subtotal_price;
 
-      const rawPct   = (current / this.goal) * 100;
-      const progress = Math.round(Math.min(rawPct, 100) * 10) / 10; // 1 decimal place
-      const reached  = progress >= 100;
+      const safeGoal = Number.isFinite(this.goal) && this.goal > 0 ? this.goal : 0;
+      const rawPct = safeGoal > 0 ? (current / safeGoal) * 100 : 0;
+      const progress = Math.round(Math.min(Math.max(rawPct, 0), 100) * 10) / 10; // 1 decimal place
+      const reached  = safeGoal > 0 && progress >= 100;
 
       this.fillEl.style.width = `${progress}%`;
+      this.fillEl.classList.add('is-animated');
       this.fillEl.setAttribute('aria-valuenow', Math.round(progress));
 
       if (reached) {
         this.messageEl.textContent = this.successMessage;
       } else {
-        const remaining = Math.max(this.goal - current, 0);
+        const remaining = Math.max((safeGoal || 0) - current, 0);
         const display   = this.goalType === 'quantity'
           ? String(remaining)
           : this.formatMoney(remaining, this.moneyFormat);

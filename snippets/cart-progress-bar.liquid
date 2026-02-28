@@ -1,23 +1,20 @@
 {% liquid
-  assign is_quantity = false
-  if block.settings.goal_type == 'quantity'
-    assign is_quantity = true
-  endif
+  assign is_quantity = block.settings.goal_type == 'quantity'
+  assign goal = block.settings.goal | times: 100.0
+  assign current_value = cart.items_subtotal_price
 
   if is_quantity
-    assign goal_multiplier = 1.0
-    assign goal_max_reference = items_count
-  else
-    assign goal_multiplier = 100.00
-    assign goal_max_reference = cart.items_subtotal_price
+    assign goal = block.settings.goal | round
+    assign current_value = items_count
   endif
-  
-  assign goal = block.settings.goal | times: goal_multiplier
-  assign goal_progress = goal_max_reference | divided_by: goal | times: 100.0
 
-  assign goal_reached = false
-  if goal_progress >= 100.00
-    assign goal_reached = true
+  assign goal_progress = 0
+  if goal > 0
+    assign goal_progress = current_value | times: 100.0 | divided_by: goal
+  endif
+
+  assign goal_reached = goal_progress >= 100.00
+  if goal_progress > 100
     assign goal_progress = 100
   endif
 %}
@@ -30,8 +27,19 @@
   {% endif %}
 {% endcapture %}
 
-<cart-progress-bar class="cart-progress-bar" data-goal-type="{{ block.settings.goal_type }}" data-goal="{% if is_quantity %}{{ goal | round }}{% else %}{{ goal | round }}{% endif %}" data-progress-message="{{ block.settings.progress_message | escape }}" data-success-message="{{ block.settings.success_message | escape }}" data-money-format="{{ shop.money_format | escape }}">
-<div class="cart-progress accent-color-{{ block.settings.accent_color }}" style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;" {{ block.shopify_attributes }}>
+<cart-progress-bar
+  class="cart-progress-bar"
+  data-goal-type="{{ block.settings.goal_type }}"
+  data-goal="{{ goal | round }}"
+  data-progress-message="{{ block.settings.progress_message | escape }}"
+  data-success-message="{{ block.settings.success_message | escape }}"
+  data-money-format="{{ shop.money_format | escape }}"
+>
+<div
+  class="cart-progress accent-color-{{ block.settings.accent_color }}"
+  style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
+  {{ block.shopify_attributes }}
+>
   <p class="cart-progress__text cart-progress-bar__message">
     {% if goal_reached == false %}
       {{ block.settings.progress_message | replace: '[amount]', goal_difference_html }}
@@ -54,6 +62,10 @@
             width="200"
             loading="lazy"
           >
+        {%- elsif block.settings.icon != blank -%}
+          <span class="material-symbols-outlined{% if block.settings.icon_filled %} filled{% endif %}">
+            {{- block.settings.icon -}}
+          </span>
         {% else %}
           <span class="svg-wrapper">{% render 'icon-checkmark' %}</span>
         {% endif %}

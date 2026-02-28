@@ -1,56 +1,153 @@
 /* =============================================================================
    component-cart-enhancements.css
-   Styles for cart-progress-bar, cart-discount-field, and cart-upsell-block.
-   Loaded conditionally by snippets/cart-drawer.liquid when any of the
-   three block types are present on the cart-drawer section.
+   Styles for cart-progress-bar, cart-discount-field, cart-upsell-block,
+   countdown timer and payment badges.
    ============================================================================= */
 
-/* ---------------------------------------------------------------------------
-   Cart Progress Bar  (<cart-progress-bar>)
-   --------------------------------------------------------------------------- */
-
-cart-progress-bar {
+cart-progress-bar,
+cart-discount-field,
+cart-upsell-block,
+cart-countdown-timer {
   display: block;
 }
 
-.cart-progress-bar {
-  padding: 1.4rem 2rem 1rem;
+cart-upsell-block[hidden] {
+  display: none;
 }
 
-.cart-progress-bar__message {
+/* ---------------------------------------------------------------------------
+   Cart Progress Bar
+   --------------------------------------------------------------------------- */
+
+.cart-progress {
+  margin-top: var(--margin-top, 1.2rem);
+  margin-bottom: var(--margin-bottom, 1.2rem);
+  padding: 0 2rem;
+}
+
+.cart-progress__text {
+  margin: 0 0 0.9rem;
+  text-align: center;
   font-size: 1.3rem;
   line-height: 1.4;
-  margin-bottom: 0.9rem;
-  text-align: center;
 }
 
-.cart-progress-bar__track {
-  background: var(--bar-bg, rgba(var(--color-foreground), 0.1));
-  border-radius: var(--bar-radius, 8px);
-  height: var(--bar-height, 8px);
-  overflow: hidden;
-  width: 100%;
+.cart-progress__bar {
+  position: relative;
+  height: 0.8rem;
+  border-radius: 99rem;
+  overflow: visible;
+  background: rgba(var(--color-foreground), 0.12);
 }
 
-.cart-progress-bar__fill {
-  background: var(--bar-color, rgb(var(--color-button)));
-  border-radius: inherit;
+.cart-progress__bar__progress {
+  position: relative;
   height: 100%;
-  width: 0;
-  /* No transition by default — JS sets width directly for immediate feedback */
-}
-
-.cart-progress-bar__fill.is-animated {
+  border-radius: inherit;
+  background: rgb(var(--color-button));
   transition: width 0.45s ease;
 }
 
+.cart-progress__bar__badge {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(45%, -50%);
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.cart-progress__bar__badge .svg-wrapper,
+.cart-progress__bar__badge .material-symbols-outlined {
+  display: inline-flex;
+  width: 1.4rem;
+  height: 1.4rem;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.cart-progress__bar__badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 /* ---------------------------------------------------------------------------
-   Cart Discount Field  (<cart-discount-field>)
+   Cart Checkpoints Bar
    --------------------------------------------------------------------------- */
 
-cart-discount-field {
-  display: block;
+.cart-checkpoints .cart-progress__bar {
+  margin-top: 2.8rem;
 }
+
+.cart-checkpoints__icon {
+  left: var(--position);
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+
+.cart-checkpoints__label {
+  position: absolute;
+  top: 2.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 9rem;
+  text-align: center;
+  font-size: var(--mobile-text-size, 1rem);
+  line-height: 1.2;
+}
+
+@media screen and (min-width: 750px) {
+  .cart-checkpoints__label {
+    font-size: var(--desktop-text-size, 1.2rem);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Countdown Timer
+   --------------------------------------------------------------------------- */
+
+.cart-countdown {
+  margin-top: var(--margin-top, 0);
+  margin-bottom: var(--margin-bottom, 1.2rem);
+  padding: 0 2rem;
+}
+
+.cart-countdown__text {
+  margin: 0;
+  padding: 0.9rem 1.2rem;
+  border-radius: 0.8rem;
+  text-align: center;
+  font-size: var(--font-size, 1.4rem);
+}
+
+/* ---------------------------------------------------------------------------
+   Payment badges
+   --------------------------------------------------------------------------- */
+
+.cart-payment-badges {
+  margin-top: var(--margin-top, 1.2rem);
+  margin-bottom: var(--margin-bottom, 1.2rem);
+  padding: 0 2rem;
+}
+
+.cart-payment-badges .list-payment {
+  justify-content: center;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Cart Discount Field
+   --------------------------------------------------------------------------- */
 
 .cart-discount-field {
   padding: 1.2rem 2rem 0.4rem;
@@ -103,16 +200,8 @@ cart-discount-field {
 }
 
 /* ---------------------------------------------------------------------------
-   Cart Upsell Block  (<cart-upsell-block>)
+   Cart Upsell Block
    --------------------------------------------------------------------------- */
-
-cart-upsell-block {
-  display: block;
-}
-
-cart-upsell-block[hidden] {
-  display: none;
-}
 
 .cart-upsell {
   padding: 1.2rem 2rem 0.8rem;
@@ -125,19 +214,17 @@ cart-upsell-block[hidden] {
   text-align: center;
 }
 
-/* Shared grid container — both layouts share the same item markup */
 .cart-upsell__products {
   display: flex;
   gap: 1rem;
 }
 
-/* Horizontal scroll layout */
 .cart-upsell__products--scroll {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding-bottom: 0.4rem; /* room for focus rings */
+  padding-bottom: 0.4rem;
 }
 
 .cart-upsell__products--scroll::-webkit-scrollbar {
@@ -149,7 +236,6 @@ cart-upsell-block[hidden] {
   scroll-snap-align: start;
 }
 
-/* Grid layout */
 .cart-upsell__products--grid {
   flex-wrap: wrap;
 }
@@ -158,7 +244,6 @@ cart-upsell-block[hidden] {
   flex: 1 1 calc(50% - 0.5rem);
 }
 
-/* Individual card */
 .cart-upsell__item {
   border: 0.1rem solid rgba(var(--color-foreground), 0.1);
   border-radius: var(--buttons-radius, 0.4rem);
@@ -193,7 +278,6 @@ cart-upsell-block[hidden] {
   font-size: 1.2rem;
   line-height: 1.3;
   margin: 0;
-  /* Clamp to 2 lines */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
