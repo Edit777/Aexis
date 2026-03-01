@@ -79,7 +79,7 @@ class CartDrawer extends HTMLElement {
   }
 
   renderContents(parsedState) {
-    this.classList.remove('is-empty');
+    this.classList.toggle('is-empty', parsedState.item_count === 0);
     this.productId = parsedState.id;
     this.getSectionsToRender().forEach((section) => {
       const sectionElement = section.selector
