@@ -132,13 +132,6 @@
             <li class="splide__slide">
               <div class="splide__slide__container">
           {% endif %}
-          {% if type == 'cart-drawer' and block.settings.style != 'add_button' %}
-            <style>
-              .cart-drawer .cart-item--product-{{ product.handle }} {
-                display: none;
-              }
-            </style>
-          {% endif %}
           <{{ type }}-upsell
             class='upsell upsell--{{ block.settings.style }} {{ type }}-upsell-{{ section.id }} upsell--btn-{{ block.settings.btn_position }} color-{{ block.settings.color_scheme }} gradient{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}'
             data-style="{{ block.settings.style }}" 
