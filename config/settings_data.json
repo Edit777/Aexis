@@ -150,7 +150,7 @@
               "stacking": "row",
               "color_scheme": "scheme-1",
               "product_list": [
-                "test"
+                "test-2"
               ],
               "prdouct_1_preselected": false,
               "product_1_desc": "",
@@ -310,6 +310,7 @@
           },
           "progress_bar_ewnxJ3": {
             "type": "progress_bar",
+            "disabled": true,
             "settings": {
               "goal_type": "subtotal",
               "goal": 50,
