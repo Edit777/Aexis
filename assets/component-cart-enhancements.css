@@ -471,7 +471,7 @@ cart-drawer-upsell.selected .upsell__toggle-switch .toggle-switch__slider { tran
   border: none;
   cursor: pointer;
   padding: 0.4rem;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 2.8rem;
@@ -485,16 +485,12 @@ cart-drawer-upsell.selected .upsell__toggle-switch .toggle-switch__slider { tran
 .upsell__checkbox .checkmark-checked,
 .upsell__plus-btn .checkmark-checked { display: none; }
 .upsell__checkbox .checkmark-unchecked,
-.upsell__plus-btn .checkmark-unchecked { display: inline-flex; }
+.upsell__plus-btn .checkmark-unchecked { display: flex; }
 
 cart-drawer-upsell.selected .upsell__checkbox .checkmark-checked,
-cart-drawer-upsell.selected .upsell__plus-btn .checkmark-checked { display: inline-flex; }
+cart-drawer-upsell.selected .upsell__plus-btn .checkmark-checked { display: flex; }
 cart-drawer-upsell.selected .upsell__checkbox .checkmark-unchecked,
 cart-drawer-upsell.selected .upsell__plus-btn .checkmark-unchecked { display: none; }
-
-/* Slider stacking fallback without Splide */
-.upsells-container--slider { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; }
-.upsells-container--slider .upsell { scroll-snap-align: start; flex-shrink: 0; width: 85%; }
 
 /* ---------------------------------------------------------------------------
    Cart Item Error Icon — constrain size and hide when no error text
