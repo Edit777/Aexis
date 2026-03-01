@@ -136,8 +136,42 @@
       "cart-drawer": {
         "type": "cart-drawer",
         "blocks": {
+          "cart_items_8em64M": {
+            "type": "cart_items",
+            "settings": {
+              "image_size": "20",
+              "image_link": false,
+              "title_size": "1.5",
+              "title_link": true,
+              "displayed_variants": "classic",
+              "prices_position": "right",
+              "displayed_compare_prices": "product",
+              "price_color": "accent-1",
+              "compare_price_color": "text",
+              "display_single_item_prices": true,
+              "enable_savings": false,
+              "savings_text": "<strong>(You save [amount])</strong>",
+              "savings_color": "text",
+              "quantity_font_size": 14,
+              "quantity_container_padding": 0,
+              "quantity_corner_radius": 4,
+              "quantity_border_width": 1,
+              "quantity_border_color": "#414141",
+              "quantity_container_color_scheme": "background-2",
+              "quantity_input_padding": 0.5,
+              "quantity_separators_opacity": 55,
+              "quantity_padding": 0.4,
+              "quantity_btns_color_scheme": "background-2",
+              "quantity_round_btns": false,
+              "quantity_outline_btns": false,
+              "quantity_btns_icon_size": 70,
+              "margin_top": 15,
+              "margin_bottom": 15
+            }
+          },
           "countdown_timer_9n7zmb": {
             "type": "countdown_timer",
+            "disabled": true,
             "settings": {
               "timer_text": "<strong>Cart reserved for [timer] more minutes!</strong>",
               "timer_duration": 300,
@@ -280,6 +314,7 @@
           }
         },
         "block_order": [
+          "cart_items_8em64M",
           "countdown_timer_9n7zmb",
           "gift_wPKN46",
           "checkpoints_bar_qF7fCD",
@@ -295,7 +330,7 @@
           "desktop_width": "normal",
           "mobile_width": "partial",
           "enable_header_bg": false,
-          "header_bg_color": "#f3f3f3",
+          "header_bg_color": "#121212",
           "enable_body_bg": false,
           "body_bg_color": "#f3f3f3",
           "enable_footer_bg": false,
