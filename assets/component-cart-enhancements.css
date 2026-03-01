@@ -152,7 +152,8 @@ cart-upsell-block[hidden] {
 }
 
 .cart-countdown--full-width {
-  padding-inline: 0;
+  margin-inline: -1.5rem;
+  padding-inline: 1.5rem;
 }
 
 .cart-countdown__text {

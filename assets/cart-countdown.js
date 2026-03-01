@@ -1,4 +1,6 @@
 if (!customElements.get('cart-countdown-timer')) {
+  const RESET_DURATION_SECONDS = 90;
+
   class CartCountdownTimer extends HTMLElement {
     connectedCallback() {
       this.duration = Number.parseInt(this.dataset.duration, 10);
@@ -20,9 +22,11 @@ if (!customElements.get('cart-countdown-timer')) {
       this.remaining = this.duration;
       this.render();
       this.timer = window.setInterval(() => {
-        this.remaining = Math.max(this.remaining - 1, 0);
+        this.remaining = this.remaining - 1;
+        if (this.remaining <= 0) {
+          this.remaining = RESET_DURATION_SECONDS;
+        }
         this.render();
-        if (this.remaining === 0) this.stop();
       }, 1000);
     }
 
