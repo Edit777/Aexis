@@ -2738,25 +2738,42 @@ details[open] .modal-overlay::after {
   display: block;
   position: absolute;
   opacity: 1;
-  transform: scale(1);
-  transition: transform 150ms ease, opacity 150ms ease;
+  transform: translateZ(0) scale(1) rotate(0deg);
+  transform-origin: center;
+  will-change: transform, opacity;
+  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1), opacity 160ms ease;
 }
 
 details:not([open]) > .header__icon--menu .icon-close,
 details[open] > .header__icon--menu .icon-hamburger {
   visibility: hidden;
   opacity: 0;
-  transform: scale(0.8);
+  transform: translateZ(0) scale(0.72) rotate(-90deg);
+}
+
+details[open] > .header__icon--menu .icon-close,
+details:not([open]) > .header__icon--menu .icon-hamburger {
+  visibility: visible;
+  opacity: 1;
+  transform: translateZ(0) scale(1) rotate(0deg);
 }
 
 .js details[open]:not(.menu-opening) > .header__icon--menu .icon-close {
   visibility: hidden;
+  opacity: 0;
+  transform: translateZ(0) scale(0.72) rotate(90deg);
 }
 
 .js details[open]:not(.menu-opening) > .header__icon--menu .icon-hamburger {
   visibility: visible;
   opacity: 1;
-  transform: scale(1.07);
+  transform: translateZ(0) scale(1) rotate(0deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header__icon--menu .icon {
+    transition: opacity 100ms ease;
+  }
 }
 
 .js details > .header__submenu {
