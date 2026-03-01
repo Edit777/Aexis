@@ -464,7 +464,7 @@
                   {% endif %}
                 </div>
                 {%- if block.settings.display_discounts and cart.cart_level_discount_applications.size > 0 -%}
-                  <div class="cart-drawer__discounts cart-drawer__footer__discounts list-unstyled" style='--alignment:{{ block.settings.discounts_alignment }};' role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                  <div class="cart-drawer__discounts cart-drawer__footer__discounts list-unstyled" style='--alignment:{% case block.settings.discounts_alignment %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};' role="list" aria-label="{{ 'customer.order.discount' | t }}">
                     <span class='cart-drawer__discounts__label'>{{ block.settings.discounts_label }}</span>
                     {%- for discount in cart.cart_level_discount_applications -%}
                       <div class="badge">
