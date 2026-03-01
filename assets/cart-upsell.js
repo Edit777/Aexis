@@ -1,510 +1,248 @@
-/**
- * cart-upsell.js
- *
- * Supports two upsell implementations:
- *  1) <cart-upsell-block> (new card-based recommendations)
- *  2) <cart-drawer-upsell> (legacy markup rendered by snippets/upsell-block.liquid)
- */
+if (!customElements.get('cart-drawer-upsells')) {
+  class CartDrawerUpsells extends HTMLElement {
+    constructor() {
+      super();
+      this.onClick = this.onClick.bind(this);
+      this.onVariantChange = this.onVariantChange.bind(this);
+      this.onCartUpdate = this.onCartUpdate.bind(this);
+      this.busy = false;
+    }
 
-if (!customElements.get('cart-upsell-block')) {
-  class CartUpsellBlock extends HTMLElement {
     connectedCallback() {
-      this.productId = this.dataset.productId;
-      this.limit = parseInt(this.dataset.limit || '3', 10);
-      this.layout = this.dataset.layout || 'scroll';
-      this.showImage = this.dataset.showImage !== 'false';
-      this.showPrice = this.dataset.showPrice !== 'false';
-      this.moneyFormat = this.dataset.moneyFormat;
-      this.buttonLabel = this.dataset.buttonLabel || 'Add to cart';
-
-      this.grid = this.querySelector('.cart-upsell__products');
-
-      if (this.productId) this.fetchRecommendations(this.productId);
-
-      this.unsubscribe = subscribe(PUB_SUB_EVENTS.cartUpdate, ({ cartData } = {}) => {
-        if (!cartData) return;
-
-        if (!cartData.item_count) {
-          this.hidden = true;
-          return;
-        }
-
-        this.hidden = false;
-
-        const firstId = String(cartData.items?.[0]?.product_id || '');
-        if (firstId && firstId !== this.productId) {
-          this.productId = firstId;
-          this.fetchRecommendations(this.productId);
-        }
-      });
-    }
-
-    disconnectedCallback() {
-      if (this.unsubscribe) this.unsubscribe();
-    }
-
-    async fetchRecommendations(productId) {
-      if (!productId) return;
-      try {
-        const url = `/recommendations/products.json?product_id=${productId}&limit=${this.limit}&intent=related`;
-        const resp = await fetch(url, { credentials: 'same-origin' });
-        if (!resp.ok) return;
-        const { products } = await resp.json();
-        this.renderProducts(products);
-      } catch (_) {
-        // Upsell is non-critical — swallow errors silently
-      }
-    }
-
-    renderProducts(products) {
-      const available = (products || [])
-        .filter((p) => p.available)
-        .slice(0, this.limit);
-
-      if (!available.length) {
-        this.hidden = true;
-        return;
-      }
-
-      this.hidden = false;
-      this.grid.innerHTML = available.map((p) => this.buildCard(p)).join('');
-
-      this.grid.querySelectorAll('.cart-upsell__add-btn').forEach((btn) => {
-        btn.addEventListener('click', this.handleAddToCart.bind(this));
-      });
-    }
-
-    buildCard(product) {
-      const variant = product.variants?.[0];
-      if (!variant) return '';
-
-      const price = this.formatMoney(variant.price, this.moneyFormat);
-
-      const imageHtml =
-        this.showImage && product.featured_image
-          ? `<div class="cart-upsell__item-image">
-             <img
-               src="${this.escape(product.featured_image.url || product.featured_image.src || '')}?width=200"
-               alt="${this.escape(product.featured_image.alt || product.title)}"
-               loading="lazy"
-               width="100"
-               height="100"
-             >
-           </div>`
-          : '';
-
-      const priceHtml = this.showPrice ? `<p class="cart-upsell__item-price">${price}</p>` : '';
-
-      return `<div class="cart-upsell__item">
-        ${imageHtml}
-        <div class="cart-upsell__item-content">
-          <p class="cart-upsell__item-title">${this.escape(product.title)}</p>
-          ${priceHtml}
-          <button
-            class="button button--full-width cart-upsell__add-btn"
-            data-variant-id="${variant.id}"
-            aria-label="Add ${this.escape(product.title)} to cart"
-          >
-            ${this.escape(this.buttonLabel)}
-          </button>
-        </div>
-      </div>`;
-    }
-
-    async handleAddToCart(event) {
-      const btn = event.currentTarget;
-      const variantId = parseInt(btn.dataset.variantId, 10);
-
-      btn.disabled = true;
-      btn.setAttribute('aria-busy', 'true');
-
-      try {
-        const cartDrawer = document.querySelector('cart-drawer');
-        const formData = new FormData();
-        formData.append('id', variantId);
-        formData.append('quantity', 1);
-
-        if (cartDrawer) {
-          formData.append('sections', cartDrawer.getSectionsToRender().map((section) => section.id));
-          formData.append('sections_url', window.location.pathname);
-        }
-
-        const addResp = await fetch(`${routes.cart_add_url}`, {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-          body: formData,
-        });
-
-        if (!addResp.ok) throw new Error('add failed');
-
-        const cartData = await addResp.json();
-
-        if (cartDrawer) {
-          cartDrawer.renderContents(cartData);
-        }
-
-        publish(PUB_SUB_EVENTS.cartUpdate, {
-          source: 'cart-items',
-          cartData,
-          variantId,
-        });
-
-        const originalLabel = btn.textContent;
-        btn.textContent = '✓';
-        setTimeout(() => {
-          btn.textContent = originalLabel;
-          btn.disabled = false;
-          btn.removeAttribute('aria-busy');
-        }, 1500);
-      } catch (_) {
-        btn.disabled = false;
-        btn.removeAttribute('aria-busy');
-      }
-    }
-
-    formatMoney(cents, format) {
-      const amount = (cents || 0) / 100;
-      return format
-        .replace('{{amount}}', amount.toFixed(2))
-        .replace('{{amount_no_decimals}}', Math.round(amount))
-        .replace('{{amount_with_comma_separator}}', amount.toFixed(2).replace('.', ','))
-        .replace(
-          '{{amount_no_decimals_with_comma_separator}}',
-          Math.round(amount)
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-        )
-        .replace('{{amount_with_apostrophe_separator}}', amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "'"))
-        .replace('{{amount_no_decimals_no_space_separator}}', Math.round(amount).toString().replace(/\s/g, ''));
-    }
-
-    escape(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-  }
-
-  customElements.define('cart-upsell-block', CartUpsellBlock);
-}
-
-if (!customElements.get('cart-drawer-upsell')) {
-  class CartDrawerUpsell extends HTMLElement {
-    connectedCallback() {
-      this.cartDrawer = document.querySelector('cart-drawer');
-      this.cartItems = this.cartDrawer?.querySelector('cart-drawer-items') || null;
-      this.isClassicAddButton = this.dataset.style === 'add_button';
-
-      this.toggleEnabled = this.dataset.toggle === 'true';
-      this.skipNonExistent = this.dataset.skipNonExistent === 'true';
+      this.drawer = document.querySelector('cart-drawer');
+      this.controlStyle = this.dataset.controlStyle;
+      this.toggleElement = this.dataset.toggleElement;
+      this.hideInCartItems = this.dataset.hideInCart === 'true';
+      this.enablePriceUpdates = this.dataset.enablePriceUpdates === 'true';
       this.skipUnavailable = this.dataset.skipUnavailable === 'true';
-      this.dataset.toggleElement = this.dataset.toggleElement || 'button';
+      this.hideComparePrice = this.dataset.hideComparePrice === 'true';
+      this.moneyFormat = this.dataset.moneyFormat || '${{amount}}';
 
-      this.addButton = this.querySelector('.upsell__add-btn');
-      this.defaultLabel = this.dataset.defaultLabel || 'Add';
-      this.selectedLabel = this.dataset.selectedLabel || 'Added';
-      this.unavailableLabel = this.dataset.unavailableLabel || 'Sold out';
-      this.form = this.querySelector('product-form form');
-      this.idInput = this.form?.querySelector('[name="id"]');
-      this.variantPicker = this.querySelector('.upsell__variant-picker');
-      this.variantDataNode = this.variantPicker?.querySelector('script[type="application/json"]') || null;
-      this.variantSelectElements = [...(this.variantPicker?.querySelectorAll('select.variant-dropdown') || [])];
-
-      this.variantData = this.getVariantData();
-      this.selectedVariantId = parseInt(this.dataset.id || this.idInput?.value, 10) || null;
-      if (this.selectedVariantId) this.syncVariantInputs(this.selectedVariantId);
-
-      this.boundToggleClick = this.onToggleClick.bind(this);
-      this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
-        node.addEventListener('click', this.boundToggleClick);
-      });
-
-      if (this.variantPicker) {
-        this.boundVariantChange = this.onVariantChange.bind(this);
-        this.variantPicker.addEventListener('change', this.boundVariantChange);
-      }
-
-      this.unsubscribe = subscribe(PUB_SUB_EVENTS.cartUpdate, ({ cartData } = {}) => {
-        if (!cartData || this.isClassicAddButton) return;
-        this.syncSelectedWithCart(cartData);
-      });
-
-      this.updateOptionStatuses();
-      const initialVariant = this.variantData.find((variant) => variant.id === this.selectedVariantId);
-      if (initialVariant) this.updateDisplayedPrices(initialVariant);
-      this.syncSelectedForCurrentVariant();
-      this.updateAvailabilityUI();
-      this.syncSelectionState();
+      this.items = Array.from(this.querySelectorAll('[data-upsell-item]'));
+      this.setupItems();
+      this.applyPreselectedState();
+      this.addEventListener('click', this.onClick);
+      this.addEventListener('change', this.onVariantChange);
+      subscribe(PUB_SUB_EVENTS.cartUpdate, this.onCartUpdate);
     }
 
     disconnectedCallback() {
-      if (this.unsubscribe) this.unsubscribe();
-      this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
-        node.removeEventListener('click', this.boundToggleClick);
+      this.removeEventListener('click', this.onClick);
+      this.removeEventListener('change', this.onVariantChange);
+    }
+
+    setupItems() {
+      this.items.forEach((item) => {
+        const variantsNode = item.querySelector('[data-upsell-variants]');
+        try {
+          item._variants = JSON.parse(variantsNode?.textContent || '[]');
+        } catch (_) {
+          item._variants = [];
+        }
+
+        item._selectedVariant = item._variants.find(
+          (variant) => String(variant.id) === item.dataset.initialVariantId
+        ) || item._variants[0] || null;
+
+        if (this.skipUnavailable) {
+          this.ensureAvailableVariant(item);
+        }
+
+        this.syncVariantInputs(item);
+        this.syncItemVisualState(item);
+        this.updateDisplayedPrice(item);
       });
-      if (this.variantPicker) {
-        this.variantPicker.removeEventListener('change', this.boundVariantChange);
-      }
     }
 
-    getVariantData() {
-      if (!this.variantDataNode) return [];
-      try {
-        return JSON.parse(this.variantDataNode.textContent || '[]');
-      } catch (_) {
-        return [];
-      }
+    applyPreselectedState() {
+      if (this.controlStyle !== 'toggle_switch') return;
+
+      this.items.forEach((item) => {
+        const inCart = item.dataset.inCart === 'true';
+        const preselected = item.dataset.preselected === 'true';
+        const selected = inCart || preselected;
+        item.dataset.selected = selected ? 'true' : 'false';
+        this.syncItemVisualState(item);
+
+        if (!inCart && preselected) {
+          this.addVariant(item, false);
+        }
+      });
     }
 
-    onToggleClick(event) {
-      const target = event.target;
-      const tagName = target.tagName.toLowerCase();
-      if (tagName === 'select' || tagName === 'option') return;
+    onCartUpdate(event) {
+      const cartData = event?.cartData;
+      if (!cartData?.items) return;
 
-      const toggleNode = target.closest('[data-upsell-toggle]');
-      const isContainerToggle = toggleNode?.dataset.upsellToggle === 'container';
-      const isControlToggle = toggleNode?.dataset.upsellToggle === 'control';
-      const insideControl = Boolean(target.closest('[data-upsell-control="true"]'));
+      const variantIdsInCart = new Set(cartData.items.map((line) => String(line.variant_id)));
+      this.items.forEach((item) => {
+        const selectedVariantId = String(item._selectedVariant?.id || item.dataset.initialVariantId);
+        const isInCart = variantIdsInCart.has(selectedVariantId);
+        item.dataset.inCart = isInCart ? 'true' : 'false';
 
-      if (isContainerToggle && insideControl) {
-        event.stopPropagation();
+        if (this.controlStyle === 'toggle_switch') {
+          const preselected = item.dataset.preselected === 'true';
+          item.dataset.selected = isInCart || preselected ? 'true' : 'false';
+        } else {
+          item.dataset.selected = isInCart ? 'true' : 'false';
+          if (this.hideInCartItems && isInCart) item.hidden = true;
+        }
+
+        this.syncItemVisualState(item);
+      });
+    }
+
+    onClick(event) {
+      const control = event.target.closest('[data-upsell-control]');
+      if (!control) {
+        if (this.toggleElement !== 'container' || this.controlStyle !== 'toggle_switch') return;
+        const item = event.target.closest('[data-upsell-item]');
+        if (!item) return;
+        const isInteractive = event.target.closest('button, select, a, input, label');
+        if (isInteractive) return;
+        this.toggleItem(item);
         return;
       }
 
-      if (!isContainerToggle && !isControlToggle) return;
+      const item = control.closest('[data-upsell-item]');
+      if (!item || this.busy) return;
 
-      if (!this.toggleEnabled || this._busy) {
-        event.preventDefault();
-        return;
-      }
-      event.preventDefault();
-
-      const selected = this.dataset.selected === 'true';
-      if (selected) {
-        this.removeFromCart();
+      if (this.controlStyle === 'toggle_switch') {
+        this.toggleItem(item);
       } else {
-        this.addToCart();
+        this.addVariant(item, true);
       }
     }
 
-    onVariantChange() {
-      if (!this.variantSelectElements.length) return;
+    async onVariantChange(event) {
+      const select = event.target.closest('[data-option-position]');
+      if (!select) return;
+      const item = select.closest('[data-upsell-item]');
+      if (!item) return;
 
-      this.updateOptionStatuses();
-
-      const selectedOptions = this.variantSelectElements.map((select) => select.value);
-      let variant = this.findVariantByOptions(selectedOptions);
-
-      if (!variant && this.skipNonExistent) {
-        const fallback = this.findFirstMatchingVariant(selectedOptions, false);
-        if (fallback) {
-          this.setSelectsFromVariant(fallback);
-          variant = fallback;
-        }
+      const previousVariantId = String(item.dataset.initialVariantId);
+      this.resolveVariant(item);
+      if (this.skipUnavailable) {
+        this.ensureAvailableVariant(item);
+      }
+      this.syncVariantInputs(item);
+      if (this.enablePriceUpdates) {
+        this.updateDisplayedPrice(item);
       }
 
-      if (variant && !variant.available && this.skipUnavailable) {
-        const availableFallback = this.findFirstMatchingVariant(selectedOptions, true);
-        if (availableFallback) {
-          this.setSelectsFromVariant(availableFallback);
-          variant = availableFallback;
-        }
+      if (this.controlStyle === 'toggle_switch' && item.dataset.inCart === 'true') {
+        await this.removeVariantById(previousVariantId, false);
+        await this.addVariant(item, false);
       }
+    }
 
-      if (!variant) {
-        this.selectedVariantId = null;
-        this.dataset.id = '';
-        this.updateAvailabilityUI(false);
-        return;
+    resolveVariant(item) {
+      const selects = Array.from(item.querySelectorAll('[data-option-position]'));
+      const selectedOptions = selects.map((select) => select.value);
+
+      const matched = item._variants.find((variant) =>
+        variant.options.every((value, index) => value === selectedOptions[index])
+      );
+
+      if (matched) {
+        item._selectedVariant = matched;
       }
-
-      this.syncVariantInputs(variant.id);
-      this.updateDisplayedPrices(variant);
-      this.syncSelectedForCurrentVariant();
-      this.updateAvailabilityUI(variant.available);
-      this.syncSelectionState();
     }
 
-    setSelectsFromVariant(variant) {
-      if (!variant?.options) return;
-      this.variantSelectElements.forEach((select, index) => {
-        if (variant.options[index] !== undefined) {
-          select.value = variant.options[index];
-        }
-      });
-      this.updateOptionStatuses();
+    ensureAvailableVariant(item) {
+      if (!item._selectedVariant?.available) {
+        const firstAvailable = item._variants.find((variant) => variant.available);
+        if (firstAvailable) item._selectedVariant = firstAvailable;
+      }
     }
 
-    syncVariantInputs(variantId) {
-      this.selectedVariantId = parseInt(variantId, 10);
-      this.dataset.id = String(this.selectedVariantId);
-      if (this.idInput) this.idInput.value = String(this.selectedVariantId);
-    }
+    syncVariantInputs(item) {
+      if (!item._selectedVariant) return;
+      const selects = Array.from(item.querySelectorAll('[data-option-position]'));
 
-    findVariantByOptions(options) {
-      return this.variantData.find((variant) => variant.options.every((opt, index) => opt === options[index]));
-    }
-
-    findFirstMatchingVariant(options, onlyAvailable) {
-      return this.variantData.find((variant) => {
-        if (onlyAvailable && !variant.available) return false;
-        return variant.options.every((opt, index) => {
-          if (options[index] === undefined || options[index] === null) return true;
-          return options[index] === opt;
-        });
-      });
-    }
-
-    updateOptionStatuses() {
-      if (!this.variantSelectElements.length || !this.variantData.length) return;
-
-      const selectedOptions = this.variantSelectElements.map((select) => select.value);
-
-      this.variantSelectElements.forEach((select, selectIndex) => {
-        const options = [...select.options];
-
-        options.forEach((optionElement) => {
-          const testSelection = [...selectedOptions];
-          testSelection[selectIndex] = optionElement.value;
-
-          const matches = this.variantData.filter((variant) => {
-            return variant.options.every((opt, index) => {
-              if (index === selectIndex) return opt === optionElement.value;
-              const chosen = selectedOptions[index];
-              return !chosen || opt === chosen;
+      selects.forEach((select, index) => {
+        const selectedOption = item._selectedVariant.options[index];
+        Array.from(select.options).forEach((optionNode) => {
+          const candidate = item._variants.find((variant) => {
+            if (variant.options[index] !== optionNode.value) return false;
+            return selects.every((otherSelect, otherIndex) => {
+              if (otherIndex === index) return true;
+              const expected = otherIndex < index ? otherSelect.value : item._selectedVariant.options[otherIndex];
+              return variant.options[otherIndex] === expected;
             });
           });
 
-          const exists = matches.length > 0;
-          const available = matches.some((variant) => variant.available);
-
-          optionElement.classList.remove('non-existent', 'unavailable');
-          optionElement.disabled = false;
-
-          if (!exists) {
-            optionElement.classList.add('non-existent');
-            if (this.skipNonExistent) optionElement.disabled = true;
-          } else if (!available) {
-            optionElement.classList.add('unavailable');
-            if (this.skipUnavailable) optionElement.disabled = true;
+          if (this.skipUnavailable) {
+            optionNode.hidden = !candidate || !candidate.available;
           }
+
+          optionNode.disabled = !candidate || (this.skipUnavailable ? !candidate.available : false);
         });
 
-        if (select.selectedOptions[0]?.disabled) {
-          const firstEnabled = options.find((option) => !option.disabled);
-          if (firstEnabled) {
-            select.value = firstEnabled.value;
-            selectedOptions[selectIndex] = firstEnabled.value;
-          }
-        }
+        select.value = selectedOption;
       });
+
+      item.dataset.initialVariantId = String(item._selectedVariant.id);
+      item.dataset.unavailable = item._selectedVariant.available ? 'false' : 'true';
+      this.syncItemVisualState(item);
     }
 
+    updateDisplayedPrice(item) {
+      if (!item._selectedVariant) return;
 
-    syncSelectedForCurrentVariant() {
-      const selectedVariant = parseInt(this.dataset.id, 10);
-      if (this.isClassicAddButton) {
-        this.setSelected(false);
-        return;
+      const percent = Number(item.dataset.discountPercent || 0);
+      const fixedCents = Number(item.dataset.discountFixedCents || 0);
+      const compareBase = Number(item._selectedVariant.compare_at_price || item._selectedVariant.price || 0);
+      const finalCents = Math.max(
+        0,
+        Math.round(Number(item._selectedVariant.price || 0) * ((100 - percent) / 100) - fixedCents)
+      );
+
+      const finalNode = item.querySelector('[data-upsell-price-final]');
+      const compareNode = item.querySelector('[data-upsell-price-compare]');
+      if (finalNode) finalNode.textContent = this.formatMoney(finalCents);
+      if (compareNode) {
+        compareNode.textContent = this.formatMoney(compareBase);
+        compareNode.hidden = this.hideComparePrice || compareBase <= finalCents;
       }
-
-      if (!selectedVariant) {
-        this.setSelected(false);
-        return;
-      }
-
-      const inCart = this.getCurrentCartVariantIds().includes(selectedVariant);
-      this.setSelected(inCart);
     }
 
-    getCurrentCartVariantIds() {
-      return [...document.querySelectorAll('cart-drawer [data-quantity-variant-id]')]
-        .map((input) => parseInt(input.dataset.quantityVariantId || '0', 10))
-        .filter(Boolean);
+    syncItemVisualState(item) {
+      const selected = item.dataset.selected === 'true';
+      const unavailable = item.dataset.unavailable === 'true';
+      item.classList.toggle('is-selected', selected);
+      item.classList.toggle('is-unavailable', unavailable);
+
+      const toggle = item.querySelector('.cart-drawer-upsells__toggle');
+      if (toggle) toggle.setAttribute('aria-pressed', selected ? 'true' : 'false');
     }
 
-    updateDisplayedPrices(variant) {
-      if (this.dataset.updatePrices !== 'true' || !variant) return;
+    async toggleItem(item) {
+      if (this.busy || item.dataset.unavailable === 'true') return;
 
-      const percentageLeft = parseFloat(this.dataset.percentageLeft || '1');
-      const fixedDiscount = parseFloat(this.dataset.fixedDiscount || '0');
-      const comparePrice = variant.compare_at_price && variant.compare_at_price > variant.price ? variant.compare_at_price : variant.price;
-      const price = Math.max(0, (variant.price * percentageLeft) - fixedDiscount);
-
-      this.querySelectorAll('.regular-price').forEach((node) => {
-        node.textContent = this.formatMoney(price);
-      });
-
-      this.querySelectorAll('.compare-price').forEach((node) => {
-        node.textContent = this.formatMoney(comparePrice);
-        node.classList.toggle('hidden', comparePrice <= price);
-      });
-    }
-
-    formatMoney(cents) {
-      if (window?.Shopify?.formatMoney) return window.Shopify.formatMoney(cents, this.dataset.moneyFormat || undefined);
-      return `${(cents / 100).toFixed(2)}`;
-    }
-
-    updateAvailabilityUI(isAvailable = true) {
-      this.dataset.unavailable = String(!isAvailable);
-      this.classList.toggle('is-unavailable', !isAvailable);
-      this.classList.toggle('is-actionable', isAvailable);
-
-      if (!this.addButton) return;
-      this.addButton.toggleAttribute('disabled', !isAvailable);
-
-      if (!isAvailable) {
-        this.updateButtonLabel(this.unavailableLabel);
-      } else if (!this.isClassicAddButton && this.dataset.selected === 'true') {
-        this.updateButtonLabel(this.selectedLabel);
+      const selected = item.dataset.selected === 'true';
+      if (selected) {
+        await this.removeVariantById(item.dataset.initialVariantId, true);
+        item.dataset.selected = 'false';
+        item.dataset.preselected = 'false';
       } else {
-        this.updateButtonLabel(this.defaultLabel);
-      }
-    }
-
-    updateButtonLabel(label) {
-      if (!this.addButton) return;
-
-      const labelNode = this.addButton.querySelector('span');
-      if (labelNode) {
-        labelNode.textContent = label;
-      } else {
-        this.addButton.textContent = label;
-      }
-    }
-
-    setBusy(isBusy) {
-      this._busy = isBusy;
-      this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
-        node.toggleAttribute('disabled', isBusy);
-        node.setAttribute('aria-busy', String(isBusy));
-      });
-
-      if (this.addButton && this.isClassicAddButton) {
-        this.addButton.toggleAttribute('disabled', isBusy || this.dataset.unavailable === 'true');
-        this.addButton.setAttribute('aria-busy', String(isBusy));
+        const ok = await this.addVariant(item, true);
+        if (ok) item.dataset.selected = 'true';
       }
 
-      this.variantSelectElements.forEach((select) => {
-        select.toggleAttribute('disabled', isBusy);
-      });
+      this.syncItemVisualState(item);
     }
 
-    async addToCart() {
-      if (!this.selectedVariantId || this._busy) return;
-
-      this.setBusy(true);
+    async addVariant(item, syncUi) {
+      if (!item._selectedVariant || item.dataset.unavailable === 'true') return false;
+      this.busy = true;
       try {
         const formData = new FormData();
-        formData.append('id', this.selectedVariantId);
+        formData.append('id', item._selectedVariant.id);
         formData.append('quantity', 1);
 
-        if (this.cartDrawer) {
-          formData.append('sections', this.cartDrawer.getSectionsToRender().map((section) => section.id).join(','));
+        if (this.drawer) {
+          formData.append('sections', this.drawer.getSectionsToRender().map((s) => s.id).join(','));
           formData.append('sections_url', window.location.pathname);
         }
 
@@ -515,37 +253,41 @@ if (!customElements.get('cart-drawer-upsell')) {
           body: formData,
         });
 
-        if (!response.ok) return;
+        if (!response.ok) return false;
 
         const cartData = await response.json();
-        this.setSelected(true);
+        if (this.drawer) this.drawer.renderContents(cartData);
 
-        if (this.cartDrawer) this.cartDrawer.renderContents(cartData);
+        if (syncUi) {
+          item.dataset.inCart = 'true';
+          item.dataset.selected = 'true';
+          this.syncItemVisualState(item);
+        }
 
         publish(PUB_SUB_EVENTS.cartUpdate, {
-          source: 'cart-upsell',
+          source: 'cart-upsell-rebuild',
           cartData,
-          variantId: this.selectedVariantId,
+          variantId: item._selectedVariant.id,
         });
+
+        return true;
       } catch (_) {
-        // non-critical
+        return false;
       } finally {
-        this.setBusy(false);
+        this.busy = false;
       }
     }
 
-    async removeFromCart() {
-      if (!this.selectedVariantId || this._busy) return;
-
-      this.setBusy(true);
+    async removeVariantById(variantId, rerender) {
+      this.busy = true;
       try {
         const payload = {
-          id: this.selectedVariantId,
+          id: Number(variantId),
           quantity: 0,
         };
 
-        if (this.cartDrawer) {
-          payload.sections = this.cartDrawer.getSectionsToRender().map((section) => section.id).join(',');
+        if (this.drawer) {
+          payload.sections = this.drawer.getSectionsToRender().map((s) => s.id).join(',');
           payload.sections_url = window.location.pathname;
         }
 
@@ -559,53 +301,32 @@ if (!customElements.get('cart-drawer-upsell')) {
           body: JSON.stringify(payload),
         });
 
-        if (!response.ok) return;
+        if (!response.ok) return false;
 
         const cartData = await response.json();
-        this.setSelected(false);
-
-        if (this.cartDrawer) this.cartDrawer.renderContents(cartData);
+        if (rerender && this.drawer) this.drawer.renderContents(cartData);
 
         publish(PUB_SUB_EVENTS.cartUpdate, {
-          source: 'cart-upsell',
+          source: 'cart-upsell-rebuild',
           cartData,
-          variantId: this.selectedVariantId,
+          variantId: Number(variantId),
         });
+
+        return true;
       } catch (_) {
-        // non-critical
+        return false;
       } finally {
-        this.setBusy(false);
+        this.busy = false;
       }
     }
 
-    syncSelectedWithCart(cartData) {
-      const selectedVariant = parseInt(this.dataset.id, 10);
-      if (!selectedVariant) return;
-
-      const inCart = (cartData.items || []).some((item) => item.variant_id === selectedVariant);
-      this.setSelected(inCart);
-      this.syncSelectionState();
-    }
-
-    setSelected(selected) {
-      this.dataset.selected = selected ? 'true' : 'false';
-      this.dataset.state = selected ? 'selected' : 'default';
-    }
-
-    syncSelectionState() {
-      const selected = !this.isClassicAddButton && this.dataset.selected === 'true';
-      this.setSelected(selected);
-      this.classList.toggle('is-selected', selected);
-      this.setAttribute('aria-selected', String(selected));
-      this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
-        node.setAttribute('aria-pressed', String(selected));
-      });
-
-      if (this.addButton && this.dataset.unavailable !== 'true' && !this.isClassicAddButton) {
-        this.updateButtonLabel(selected ? this.selectedLabel : this.defaultLabel);
-      }
+    formatMoney(cents) {
+      const value = (Number(cents || 0) / 100).toFixed(2);
+      return this.moneyFormat
+        .replace(/\{\{\s*amount\s*\}\}/, value)
+        .replace(/\{\{\s*amount_no_decimals\s*\}\}/, String(Math.round(Number(cents || 0) / 100)));
     }
   }
 
-  customElements.define('cart-drawer-upsell', CartDrawerUpsell);
+  customElements.define('cart-drawer-upsells', CartDrawerUpsells);
 }

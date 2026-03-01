@@ -1,0 +1,61 @@
+{% liquid
+  assign display_block = false
+  if block.settings.display == 'globally'
+    assign display_block = true
+  else
+    assign handles_array = block.settings.display_product_handles | replace: ' ', '' | split: ','
+    if product and handles_array contains product.handle
+      assign display_block = true
+    endif
+  endif
+
+  assign products_count = block.settings.product_list.count
+%}
+
+{% if display_block and products_count > 0 %}
+  <cart-drawer-upsells
+    class="cart-drawer-upsells color-{{ block.settings.color_scheme }} gradient"
+    data-control-style="{{ block.settings.style }}"
+    data-toggle-element="{{ block.settings.toggle_element }}"
+    data-hide-in-cart="{{ block.settings.hide_in_cart_items }}"
+    data-enable-price-updates="{{ block.settings.update_prices }}"
+    data-skip-unavailable="{{ block.settings.skip_unavailable }}"
+    data-hide-compare-price="{{ block.settings.hide_compare_price }}"
+    data-money-format="{{ shop.money_format | escape }}"
+    style="
+      --upsell-margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;
+      --upsell-margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;
+      --upsell-image-size: {{ block.settings.images_size }}rem;
+      --upsell-image-radius: {{ block.settings.images_corner_radius | divided_by: 10.0 }}rem;
+      --upsell-title-size: {{ block.settings.title_size }}rem;
+      --upsell-desc-size: {{ block.settings.desc_size }}rem;
+      --upsell-price-size: {{ block.settings.price_size }}rem;
+      --upsell-card-radius: {{ block.settings.corner_radius | divided_by: 10.0 }}rem;
+      --upsell-border-width: {% if block.settings.show_border %}{{ block.settings.border_width }}rem{% else %}0{% endif %};
+      --upsell-border-color: {{ block.settings.regular_border_color }};
+      --upsell-selected-border-color: {{ block.settings.selected_border_color }};
+      --upsell-bg-color: {% if block.settings.show_custom_bg %}{{ block.settings.regular_bg_color }}{% else %}transparent{% endif %};
+      --upsell-selected-bg-color: {% if block.settings.show_custom_bg %}{{ block.settings.selected_bg_color }}{% else %}transparent{% endif %};
+      --upsell-mobile-title-size: {{ block.settings.container_title_mobile_text_size | divided_by: 10.0 }}rem;
+      --upsell-desktop-title-size: {{ block.settings.container_title_desktop_text_size | divided_by: 10.0 }}rem;
+      --upsell-shadow: {% if block.settings.show_box_shadow %}0 8px 20px rgba(0, 0, 0, 0.08){% else %}none{% endif %};
+    "
+    {{ block.shopify_attributes }}
+  >
+    {% if block.settings.container_title != blank and block.settings.container_title_position == 'outside' %}
+      <h3 class="cart-drawer-upsells__title-outside">{{ block.settings.container_title }}</h3>
+    {% endif %}
+
+    <div class="cart-drawer-upsells__surface">
+      {% if block.settings.container_title != blank and block.settings.container_title_position == 'inside' %}
+        <h3 class="cart-drawer-upsells__title-inside">{{ block.settings.container_title }}</h3>
+      {% endif %}
+
+      <div class="cart-drawer-upsells__list cart-drawer-upsells__list--{{ block.settings.stacking }}" data-upsell-list>
+        {% for upsell_product in block.settings.product_list limit: 3 %}
+          {% render 'cart-drawer-upsell-item', block: block, upsell_product: upsell_product, upsell_index: forloop.index %}
+        {% endfor %}
+      </div>
+    </div>
+  </cart-drawer-upsells>
+{% endif %}
