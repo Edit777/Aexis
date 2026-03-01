@@ -5,7 +5,14 @@
   style="--font-size: {{ block.settings.font_size }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
   {{ block.shopify_attributes }}
 >
+  {%- liquid
+    assign timer_mins = block.settings.timer_duration | default: 300 | divided_by: 60 | floor
+    assign timer_secs = block.settings.timer_duration | default: 300 | modulo: 60
+    assign timer_mm = timer_mins | prepend: '00' | slice: -2, 2
+    assign timer_ss = timer_secs | prepend: '00' | slice: -2, 2
+    assign initial_timer = timer_mm | append: ':' | append: timer_ss
+  -%}
   <p class="cart-countdown__text color-{{ block.settings.color_scheme }}">
-    {{ block.settings.timer_text | replace: '[timer]', block.settings.timer_duration | divided_by: 60 | ceil }}
+    {{ block.settings.timer_text | replace: '[timer]', initial_timer }}
   </p>
 </cart-countdown-timer>

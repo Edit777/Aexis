@@ -54,6 +54,7 @@ class CartDrawer extends HTMLElement {
     );
 
     document.body.classList.add('overflow-hidden');
+    document.dispatchEvent(new CustomEvent('cart-drawer:open'));
   }
 
   close() {
