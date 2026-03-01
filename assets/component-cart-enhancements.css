@@ -335,6 +335,15 @@ cart-drawer-upsell .upsell__title h3 {
   line-height: 1.35;
 }
 
+cart-drawer-upsell .upsell__title h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+cart-drawer-upsell .upsell__title h3 a:hover {
+  text-decoration: underline;
+}
+
 cart-drawer-upsell .upsell__desc {
   margin-top: 0.4rem;
   font-size: var(--desc-font-size, 1.2rem);
@@ -342,18 +351,23 @@ cart-drawer-upsell .upsell__desc {
 }
 
 cart-drawer-upsell .upsell__price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
   font-size: var(--price-font-size, 1.2rem);
   white-space: nowrap;
 }
 
 cart-drawer-upsell .compare-price {
-  margin-inline-start: 0.5rem;
+  margin-inline-start: 0;
   text-decoration: line-through;
   color: rgba(var(--color-foreground), 0.55);
 }
 
 cart-drawer-upsell .upsell__variant-picker {
   margin-top: 0.8rem;
+  display: grid;
+  gap: 0.6rem;
 }
 
 cart-drawer-upsell .upsell__select {
@@ -363,6 +377,13 @@ cart-drawer-upsell .upsell__select {
 cart-drawer-upsell .upsell__add-btn {
   margin-top: 1rem;
   width: 100%;
+}
+
+cart-drawer-upsell .upsell__add-btn > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
 }
 
 cart-drawer-upsell .upsell__toggle-switch,
@@ -383,6 +404,13 @@ cart-drawer-upsell.is-selected {
   box-shadow: 0 0 0 0.1rem rgba(var(--color-button), 0.2);
 }
 
+cart-drawer-upsell[data-selected='true'] .upsell__add-btn > span::before,
+cart-drawer-upsell.is-selected .upsell__add-btn > span::before {
+  content: '✓';
+  font-size: 1.1em;
+  line-height: 1;
+}
+
 cart-drawer-upsell[data-unavailable='true'],
 cart-drawer-upsell.is-unavailable {
   opacity: 0.58;
@@ -393,6 +421,15 @@ cart-drawer-upsell.is-unavailable .upsell-toggle-btn,
 cart-drawer-upsell[data-unavailable='true'] .upsell__add-btn,
 cart-drawer-upsell.is-unavailable .upsell__add-btn {
   pointer-events: none;
+}
+
+cart-drawer-upsell[data-unavailable='true'] .upsell__select,
+cart-drawer-upsell.is-unavailable .upsell__select {
+  opacity: 0.7;
+}
+
+cart-drawer-upsell.is-actionable:not(.is-selected):not(.is-unavailable):hover {
+  border-color: rgba(var(--color-button), 0.4);
 }
 
 /* ---------------------------------------------------------------------------

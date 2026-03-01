@@ -143,15 +143,19 @@
             class='upsell upsell--{{ block.settings.style }} {{ type }}-upsell-{{ section.id }} upsell--btn-{{ block.settings.btn_position }} color-{{ block.settings.color_scheme }} gradient{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}'
             data-style="{{ block.settings.style }}" 
             data-selected="{{ preselected }}"
+            data-state="default"
             data-handle="{{ product.handle }}"
             data-toggle="{% if block.settings.style == 'add_button' %}false{% else %}true{% endif %}"
             data-id="{{ product.first_available_variant.id }}"
             data-skip-non-existent='true'
             data-skip-unavailable="{{ block.settings.skip_unavailable }}"
+            data-default-label="{{ block.settings.add_btn_label | escape }}"
+            data-selected-label="{{ 'general.accessibility.selected' | t | default: 'Added' | escape }}"
+            data-unavailable-label="{{ 'products.product.sold_out' | t | escape }}"
             {% if block.settings.update_prices %}
               data-update-prices='true'
               data-price="{{ price }}"
-              data-compare-price="{% if compare_price > price %}{{ price }}{% else %}{{ compare_price }}{% endif %}"
+              data-compare-price="{% if compare_price > price %}{{ compare_price }}{% else %}{{ price }}{% endif %}"
               data-percentage-left="{{ percentage_left }}"
               data-fixed-discount="{{ fixed_discount }}"
               data-money-format="{{ shop.money_format }}"
@@ -274,7 +278,7 @@
               </div>
               {% if block.settings.style == 'toggle_switch' %}
                 <button class='upsell__toggle-switch toggle-switch{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
-                  <span class='toggle-switch__slider'>&nbsp</span>
+                  <span class='toggle-switch__slider'>&nbsp;</span>
                 </button>
               {% elsif block.settings.style == 'checkbox_1' %}
                 <button class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>

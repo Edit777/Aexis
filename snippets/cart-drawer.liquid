@@ -29,6 +29,18 @@
     <script src="{{ 'cart-gift.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
 {%- endfor -%}
+{%- liquid
+  assign has_upsells_block = false
+  for block in section.blocks
+    if block.type == 'product_upsells'
+      assign has_upsells_block = true
+      break
+    endif
+  endfor
+-%}
+{%- if has_upsells_block -%}
+  <script src="{{ 'cart-upsell.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
 
 {%- comment -%} Non-upsell item count (excludes products tagged 'cart-hidden') {%- endcomment -%}
 {%- liquid
