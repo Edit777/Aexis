@@ -230,7 +230,7 @@
               "timer_text": "<strong>Cart reserved for [timer] more minutes!</strong>",
               "timer_duration": 300,
               "font_size": "1.4",
-              "width_behavior": "auto",
+              "width_behavior": "full",
               "color_scheme": "scheme-3",
               "margin_top": 0,
               "margin_bottom": 15
