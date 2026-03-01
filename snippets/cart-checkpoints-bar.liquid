@@ -108,7 +108,7 @@
       {% if block.settings.enable_goal_1 and goal_1_value > 0 %}
         <div class="cart-progress__bar__badge cart-checkpoints__icon{% if goal_max_reference >= goal_1_value %} is-unlocked{% endif %}" style="--position:{{ goal_1_position }}%;">
           {% if block.settings.goal_1_icon != blank %}
-            {% render 'material-icon', icon: block.settings.goal_1_icon, filled: block.settings.goal_1_icon_filled %}
+            {% render 'material-icon', icon: block.settings.goal_1_icon, filled: block.settings.goal_1_icon_filled and goal_max_reference >= goal_1_value %}
           {% else %}
             <span class="svg-wrapper">{% render 'icon-checkmark' %}</span>
           {% endif %}
@@ -122,7 +122,7 @@
       {% if block.settings.enable_goal_2 and goal_2_value > 0 %}
         <div class="cart-progress__bar__badge cart-checkpoints__icon{% if goal_max_reference >= goal_2_value %} is-unlocked{% endif %}" style="--position:{{ goal_2_position }}%;">
           {% if block.settings.goal_2_icon != blank %}
-            {% render 'material-icon', icon: block.settings.goal_2_icon, filled: block.settings.goal_2_icon_filled %}
+            {% render 'material-icon', icon: block.settings.goal_2_icon, filled: block.settings.goal_2_icon_filled and goal_max_reference >= goal_2_value %}
           {% else %}
             <span class="svg-wrapper">{% render 'icon-checkmark' %}</span>
           {% endif %}
@@ -136,7 +136,7 @@
       {% if block.settings.enable_goal_3 and goal_3_value > 0 %}
         <div class="cart-progress__bar__badge cart-checkpoints__icon{% if goal_max_reference >= goal_3_value %} is-unlocked{% endif %}" style="--position:{{ goal_3_position }}%;">
           {% if block.settings.goal_3_icon != blank %}
-            {% render 'material-icon', icon: block.settings.goal_3_icon, filled: block.settings.goal_3_icon_filled %}
+            {% render 'material-icon', icon: block.settings.goal_3_icon, filled: block.settings.goal_3_icon_filled and goal_max_reference >= goal_3_value %}
           {% else %}
             <span class="svg-wrapper">{% render 'icon-checkmark' %}</span>
           {% endif %}
