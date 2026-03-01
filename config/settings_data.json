@@ -138,9 +138,8 @@
         "blocks": {
           "product_upsells_DcbUwe": {
             "type": "product_upsells",
-            "disabled": true,
             "settings": {
-              "position": "body",
+              "position": "footer",
               "display": "globally",
               "display_product_handles": "",
               "style": "checkbox_1",
@@ -239,6 +238,7 @@
           },
           "gift_wPKN46": {
             "type": "gift",
+            "disabled": true,
             "settings": {
               "position": "body",
               "display": "globally",
@@ -279,6 +279,7 @@
           },
           "checkpoints_bar_qF7fCD": {
             "type": "checkpoints_bar",
+            "disabled": true,
             "settings": {
               "goal_type": "subtotal",
               "progress_message": "You're [amount] away from [next_goal_lowercase]!",
@@ -310,6 +311,7 @@
           },
           "progress_bar_ewnxJ3": {
             "type": "progress_bar",
+            "disabled": true,
             "settings": {
               "goal_type": "subtotal",
               "goal": 50,
@@ -320,14 +322,6 @@
               "color_scheme": "",
               "margin_top": 15,
               "margin_bottom": 15
-            }
-          },
-          "payment_badges_rL6PYN": {
-            "type": "payment_badges",
-            "settings": {
-              "enabled_payment_types": "oin, dwolla, facebook_pay, forbrugsforeningen, google_pa",
-              "margin_top": 12,
-              "margin_bottom": 12
             }
           },
           "subtotals_Ukr67b": {
@@ -353,6 +347,14 @@
               "margin_bottom": 15
             }
           },
+          "payment_badges_rL6PYN": {
+            "type": "payment_badges",
+            "settings": {
+              "enabled_payment_types": "oin, dwolla, facebook_pay, forbrugsforeningen, google_pa",
+              "margin_top": 12,
+              "margin_bottom": 12
+            }
+          },
           "checkout_btn_TRrJGQ": {
             "type": "checkout_btn",
             "settings": {
@@ -374,8 +376,8 @@
           "gift_wPKN46",
           "checkpoints_bar_qF7fCD",
           "progress_bar_ewnxJ3",
-          "payment_badges_rL6PYN",
           "subtotals_Ukr67b",
+          "payment_badges_rL6PYN",
           "checkout_btn_TRrJGQ"
         ],
         "settings": {
