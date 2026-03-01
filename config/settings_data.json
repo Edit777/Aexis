@@ -136,15 +136,15 @@
       "cart-drawer": {
         "type": "cart-drawer",
         "blocks": {
-          "product_upsells_DcbUwe": {
+          "product_upsells_aHHcp7": {
             "type": "product_upsells",
             "settings": {
-              "position": "footer",
+              "position": "body",
               "display": "globally",
               "display_product_handles": "",
-              "style": "checkbox_1",
+              "style": "toggle_switch",
               "btn_position": "right",
-              "toggle_element": "button",
+              "toggle_element": "container",
               "add_btn_label": "<strong>Add</strong>",
               "hide_in_cart_items": true,
               "stacking": "row",
@@ -370,7 +370,7 @@
           }
         },
         "block_order": [
-          "product_upsells_DcbUwe",
+          "product_upsells_aHHcp7",
           "cart_items_8em64M",
           "countdown_timer_9n7zmb",
           "gift_wPKN46",
