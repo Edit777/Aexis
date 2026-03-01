@@ -256,10 +256,11 @@ cart-drawer-items {
 
 .cart-drawer .cart-drawer-item__quantity-and-prices {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
   flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .cart-drawer .cart-drawer-item__quantity-and-prices--reverse {
@@ -363,6 +364,7 @@ cart-drawer-items {
   align-items: flex-start;
   justify-content: flex-end;
   flex: 0 0 auto;
+  min-width: 8.2rem;
 }
 
 .cart-drawer.cart-drawer .cart-item__price-wrapper > *:only-child {
@@ -420,7 +422,7 @@ cart-drawer-items {
   width: auto;
   min-height: auto;
   border-radius: var(--corner-radius, var(--inputs-radius));
-  font-size: var(--font-size, 1.4rem);
+  font-size: max(var(--font-size, 1.4rem), 1.2rem);
   padding: var(--container-padding, 0);
 }
 
@@ -476,7 +478,7 @@ cart-drawer-items {
   .cart-drawer .cart-drawer-item__quantity-and-prices,
   .cart-drawer .cart-drawer-item__quantity-and-prices--reverse {
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
   }
 
   .cart-drawer .cart-drawer-item__quantity-and-prices .cart-item__totals {
