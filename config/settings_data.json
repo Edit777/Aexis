@@ -204,9 +204,9 @@
               "displayed_variants": "classic",
               "prices_position": "right",
               "displayed_compare_prices": "product",
-              "color_scheme": "",
-              "display_single_item_prices": true,
-              "enable_savings": false,
+              "color_scheme": "scheme-1",
+              "display_single_item_prices": false,
+              "enable_savings": true,
               "savings_text": "<strong>(You save [amount])</strong>",
               "quantity_font_size": 14,
               "quantity_container_padding": 0,
@@ -280,7 +280,6 @@
           },
           "checkpoints_bar_qF7fCD": {
             "type": "checkpoints_bar",
-            "disabled": true,
             "settings": {
               "goal_type": "subtotal",
               "progress_message": "You're [amount] away from [next_goal_lowercase]!",
@@ -312,7 +311,6 @@
           },
           "progress_bar_ewnxJ3": {
             "type": "progress_bar",
-            "disabled": true,
             "settings": {
               "goal_type": "subtotal",
               "goal": 50,
