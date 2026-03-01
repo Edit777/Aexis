@@ -196,6 +196,7 @@ if (!customElements.get('cart-drawer-upsell')) {
     connectedCallback() {
       this.cartDrawer = document.querySelector('cart-drawer');
       this.cartItems = this.cartDrawer?.querySelector('cart-drawer-items') || null;
+      this.isClassicAddButton = this.dataset.style === 'add_button';
 
       this.toggleEnabled = this.dataset.toggle === 'true';
       this.skipNonExistent = this.dataset.skipNonExistent === 'true';
@@ -226,7 +227,7 @@ if (!customElements.get('cart-drawer-upsell')) {
       }
 
       this.unsubscribe = subscribe(PUB_SUB_EVENTS.cartUpdate, ({ cartData } = {}) => {
-        if (!cartData) return;
+        if (!cartData || this.isClassicAddButton) return;
         this.syncSelectedWithCart(cartData);
       });
 
@@ -388,6 +389,11 @@ if (!customElements.get('cart-drawer-upsell')) {
 
     syncSelectedForCurrentVariant() {
       const selectedVariant = parseInt(this.dataset.id, 10);
+      if (this.isClassicAddButton) {
+        this.dataset.selected = 'false';
+        return;
+      }
+
       if (!selectedVariant) {
         this.dataset.selected = 'false';
         return;
@@ -436,7 +442,7 @@ if (!customElements.get('cart-drawer-upsell')) {
 
       if (!isAvailable) {
         this.updateButtonLabel(this.unavailableLabel);
-      } else if (this.dataset.selected === 'true') {
+      } else if (!this.isClassicAddButton && this.dataset.selected === 'true') {
         this.updateButtonLabel(this.selectedLabel);
       } else {
         this.updateButtonLabel(this.defaultLabel);
@@ -559,12 +565,15 @@ if (!customElements.get('cart-drawer-upsell')) {
     }
 
     syncSelectionState() {
-      const selected = this.dataset.selected === 'true';
+      const selected = !this.isClassicAddButton && this.dataset.selected === 'true';
       this.dataset.state = selected ? 'selected' : 'default';
       this.classList.toggle('is-selected', selected);
       this.setAttribute('aria-selected', String(selected));
+      this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
+        node.setAttribute('aria-pressed', String(selected));
+      });
 
-      if (this.addButton && this.dataset.unavailable !== 'true') {
+      if (this.addButton && this.dataset.unavailable !== 'true' && !this.isClassicAddButton) {
         this.updateButtonLabel(selected ? this.selectedLabel : this.defaultLabel);
       }
     }
