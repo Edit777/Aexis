@@ -422,6 +422,28 @@
           {%- endif -%}
         {%- endfor -%}
 
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'product_upsells' %}
+              {% if block.settings.position == 'body' %}
+                {% liquid
+                  if block.settings.display == 'globally'
+                    assign display = true
+                  else
+                    assign display = false
+                    assign handles_array = block.settings.display_product_handles | replace: ' ', '' | split: ','
+                    if product and handles_array contains product.handle
+                      assign display = true
+                    endif
+                  endif
+                %}
+                {% if display %}
+                  {% render 'upsell-block', block: block, type: 'cart-drawer' %}
+                {% endif %}
+              {% endif %}
+          {% endcase %}
+        {% endfor %}
+
         <div class="drawer__footer">
           {% for block in section.blocks %}
             {% case block.type %}
@@ -570,7 +592,20 @@
               </div>
             {% when 'product_upsells' %}
               {% if block.settings.position == 'footer' %}
-                {% render 'upsell-block', block: block, type: 'cart-drawer' %}
+                {% liquid
+                  if block.settings.display == 'globally'
+                    assign display = true
+                  else
+                    assign display = false
+                    assign handles_array = block.settings.display_product_handles | replace: ' ', '' | split: ','
+                    if product and handles_array contains product.handle
+                      assign display = true
+                    endif
+                  endif
+                %}
+                {% if display %}
+                  {% render 'upsell-block', block: block, type: 'cart-drawer' %}
+                {% endif %}
               {% endif %}
             {% when 'gift' %}
               {% if block.settings.position == 'footer' %}
