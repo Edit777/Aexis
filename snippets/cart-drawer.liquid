@@ -22,9 +22,6 @@
   {%- if block.type == 'discount_field' -%}
     <script src="{{ 'cart-discount.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
-  {%- if block.type == 'product_upsells' -%}
-    <script src="{{ 'cart-upsell.js' | asset_url }}" defer="defer"></script>
-  {%- endif -%}
   {%- if block.type == 'countdown_timer' -%}
     <script src="{{ 'cart-countdown.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
