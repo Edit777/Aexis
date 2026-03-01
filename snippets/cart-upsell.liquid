@@ -67,6 +67,7 @@
       data-selected="{{ is_selected }}"
       data-style="{{ block.settings.style }}"
       class="upsell--btn-{{ block.settings.btn_position }}"
+      tabindex="-1"
     >
       <div class="upsell__container">
         {%- if block.settings.show_images -%}
@@ -108,10 +109,24 @@
           <button class="upsell__toggle-switch upsell-toggle-btn" type="button">
             <span class="toggle-switch__slider">&nbsp;</span>
           </button>
+        {%- elsif block.settings.style == 'checkbox_1' -%}
+          <button class="upsell__checkbox upsell-toggle-btn" type="button">
+            <span class="checkmark-unchecked">{% render 'icon-plus' %}</span>
+            <span class="checkmark-checked">{% render 'icon-checkmark' %}</span>
+          </button>
+        {%- elsif block.settings.style == 'checkbox_2' -%}
+          <button class="upsell__checkbox upsell-toggle-btn" type="button">
+            <span class="checkmark-unchecked">{% render 'icon-plus' %}</span>
+            <span class="checkmark-checked">{% render 'icon-tick' %}</span>
+          </button>
+        {%- elsif block.settings.style == 'plus_button' -%}
+          <button class="upsell__plus-btn upsell-toggle-btn" type="button">
+            <span class="checkmark-unchecked">{% render 'icon-plus' %}</span>
+            <span class="checkmark-checked">{% render 'icon-checkmark' %}</span>
+          </button>
         {%- else -%}
           <button
-            type="submit"
-            name="add"
+            type="button"
             class="upsell__add-btn button upsell-toggle-btn"
             {%- if product.first_available_variant.available == false -%}disabled{%- endif -%}
           >

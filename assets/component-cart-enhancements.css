@@ -463,6 +463,35 @@ cart-drawer-upsell { display: block; }
 cart-drawer-upsell.selected .upsell__toggle-switch { background: rgb(var(--color-button)); }
 cart-drawer-upsell.selected .upsell__toggle-switch .toggle-switch__slider { transform: translateX(2rem); }
 
+/* Checkbox and plus button toggle states */
+.upsell__checkbox,
+.upsell__plus-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.8rem;
+  height: 2.8rem;
+}
+.upsell__checkbox svg,
+.upsell__plus-btn svg {
+  width: 2rem;
+  height: 2rem;
+}
+.upsell__checkbox .checkmark-checked,
+.upsell__plus-btn .checkmark-checked { display: none; }
+.upsell__checkbox .checkmark-unchecked,
+.upsell__plus-btn .checkmark-unchecked { display: flex; }
+
+cart-drawer-upsell.selected .upsell__checkbox .checkmark-checked,
+cart-drawer-upsell.selected .upsell__plus-btn .checkmark-checked { display: flex; }
+cart-drawer-upsell.selected .upsell__checkbox .checkmark-unchecked,
+cart-drawer-upsell.selected .upsell__plus-btn .checkmark-unchecked { display: none; }
+
 /* ---------------------------------------------------------------------------
    Cart Item Error Icon — constrain size and hide when no error text
    --------------------------------------------------------------------------- */
