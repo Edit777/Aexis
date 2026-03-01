@@ -98,7 +98,10 @@ cart-drawer:not(.is-empty) .cart-drawer__collection {
   color: rgb(var(--color-foreground));
   background-color: transparent;
   border: none;
+  border-radius: 999px;
   cursor: pointer;
+  transform: translateZ(0);
+  transition: background-color var(--duration-short) ease, box-shadow var(--duration-short) ease, transform var(--duration-short) ease;
 }
 
 .cart-drawer__warnings .drawer__close {
@@ -108,6 +111,47 @@ cart-drawer:not(.is-empty) .cart-drawer__collection {
 .drawer__close .svg-wrapper {
   height: 2rem;
   width: 2rem;
+}
+
+.drawer__close .icon {
+  transition: transform var(--duration-short) ease;
+  transform-origin: center;
+}
+
+.drawer__close:hover,
+.drawer__close:focus-visible {
+  background-color: rgba(var(--color-foreground), 0.06);
+  transform: translateY(-1px) scale(1.02);
+}
+
+.drawer__close:focus-visible {
+  box-shadow: 0 0 0 0.2rem rgba(var(--color-button), 0.2);
+}
+
+.drawer__close:hover .icon,
+.drawer__close:focus-visible .icon,
+.drawer.active .drawer__close .icon {
+  transform: rotate(8deg) scale(1.03);
+}
+
+.drawer__close:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer__close,
+  .drawer__close .icon {
+    transition: none;
+  }
+
+  .drawer__close:hover,
+  .drawer__close:focus-visible,
+  .drawer__close:active,
+  .drawer__close:hover .icon,
+  .drawer__close:focus-visible .icon,
+  .drawer.active .drawer__close .icon {
+    transform: none;
+  }
 }
 
 .drawer__contents {
