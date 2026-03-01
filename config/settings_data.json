@@ -183,13 +183,14 @@
           },
           "gift_wPKN46": {
             "type": "gift",
+            "disabled": true,
             "settings": {
               "position": "body",
               "display": "globally",
               "display_product_handles": "",
               "accent_color": "accent-1",
               "color_scheme": "scheme-1",
-              "product": "",
+              "product": "test",
               "product_desc": "Write a short description about your product",
               "goal_type": "subtotal",
               "requirement": "80",
@@ -278,7 +279,7 @@
           "subtotals_Ukr67b": {
             "type": "subtotals",
             "settings": {
-              "display_total_savings": false,
+              "display_total_savings": true,
               "savings_left_text": "<strong>Savings: </strong>",
               "savings_right_text": "<strong>-[savings]</strong>",
               "savings_alignment": "spaced",
