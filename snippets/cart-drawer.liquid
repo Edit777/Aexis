@@ -475,7 +475,7 @@
           {% case block.type %}
             {% when 'product_upsells' %}
               {% if block.settings.position == 'body' %}
-                {% render 'upsell-block', block: block, type: 'cart-drawer' %}
+                {% render 'cart-upsell', block: block %}
               {% endif %}
           {% endcase %}
         {% endfor %}
@@ -628,7 +628,7 @@
               </div>
             {% when 'product_upsells' %}
               {% if block.settings.position == 'footer' %}
-                {% render 'upsell-block', block: block, type: 'cart-drawer' %}
+                {% render 'cart-upsell', block: block %}
               {% endif %}
             {% when 'gift' %}
               {% if block.settings.position == 'footer' %}

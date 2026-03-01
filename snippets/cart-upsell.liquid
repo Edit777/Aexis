@@ -1,8 +1,5 @@
 {% comment %}
-  Renders a product recommendations upsell block inside the cart drawer.
-
-  The element shell is server-rendered; the product cards are fetched and
-  rendered client-side by cart-upsell.js so the drawer opens instantly.
+  Renders a product upsell block inside the cart drawer (server-side rendered).
 
   Accepts:
   - block: {Object} Block object (settings drive all behaviour + appearance)
@@ -11,23 +8,121 @@
   {% render 'cart-upsell', block: block %}
 {% endcomment %}
 
-<cart-upsell-block
-  class="cart-upsell"
-  data-product-id="{{ cart.items.first.product_id }}"
-  data-limit="{{ block.settings.max_products }}"
-  data-layout="{{ block.settings.layout }}"
-  data-show-image="{{ block.settings.show_image }}"
-  data-show-price="{{ block.settings.show_price }}"
-  data-money-format="{{ shop.money_format | escape }}"
-  data-button-label="{{ block.settings.button_label | escape }}"
-  {% unless cart.items.first %}hidden{% endunless %}
+<div
+  class="cart-upsell color-{{ block.settings.color_scheme }}{% unless cart.items.size > 0 %} hidden{% endunless %}"
+  style="
+    --image-size: {{ block.settings.images_size }}rem;
+    --image-border-radius: {{ block.settings.images_corner_radius | divided_by: 10.0 }}rem;
+    --title-font-size: {{ block.settings.title_size }}rem;
+    --desc-font-size: {{ block.settings.desc_size }}rem;
+    --price-font-size: {{ block.settings.price_size }}rem;
+    --border-radius: {{ block.settings.corner_radius | divided_by: 10.0 }}rem;
+  "
   {{ block.shopify_attributes }}
 >
-  {%- if block.settings.heading != blank -%}
-    <p class="cart-upsell__heading">{{ block.settings.heading }}</p>
+  {%- if block.settings.container_title != blank -%}
+    <p class="cart-upsell__heading">{{ block.settings.container_title }}</p>
   {%- endif -%}
-  <div
-    class="cart-upsell__products cart-upsell__products--{{ block.settings.layout }}"
-    aria-live="polite"
-  ></div>
-</cart-upsell-block>
+
+  {%- for product in block.settings.product_list limit: 3 -%}
+    {%- liquid
+      if forloop.index == 1
+        assign featured_image = block.settings.product_1_image
+        assign description = block.settings.product_1_desc
+        assign percentage_discount = block.settings.product_1_percentage_discount | plus: 0
+        assign percentage_left = 100.0 | minus: percentage_discount | divided_by: 100.0
+        assign fixed_discount = block.settings.product_1_fixed_amount_discount | times: 100.0
+      elsif forloop.index == 2
+        assign featured_image = block.settings.product_2_image
+        assign description = block.settings.product_2_desc
+        assign percentage_discount = block.settings.product_2_percentage_discount | plus: 0
+        assign percentage_left = 100.0 | minus: percentage_discount | divided_by: 100.0
+        assign fixed_discount = block.settings.product_2_fixed_amount_discount | times: 100.0
+      else
+        assign featured_image = block.settings.product_3_image
+        assign description = block.settings.product_3_desc
+        assign percentage_discount = block.settings.product_3_percentage_discount | plus: 0
+        assign percentage_left = 100.0 | minus: percentage_discount | divided_by: 100.0
+        assign fixed_discount = block.settings.product_3_fixed_amount_discount | times: 100.0
+      endif
+
+      assign price = product.first_available_variant.price | times: percentage_left | minus: fixed_discount
+      assign compare_price = product.first_available_variant.price
+      if product.first_available_variant.compare_at_price > product.first_available_variant.price
+        assign compare_price = product.first_available_variant.compare_at_price
+      endif
+
+      assign is_selected = false
+      for item in cart.items
+        if item.variant_id == product.first_available_variant.id
+          assign is_selected = true
+          break
+        endif
+      endfor
+    -%}
+
+    <cart-drawer-upsell
+      data-id="{{ product.first_available_variant.id }}"
+      data-toggle="{% if block.settings.style == 'add_button' %}false{% else %}true{% endif %}"
+      data-selected="{{ is_selected }}"
+      data-style="{{ block.settings.style }}"
+      class="upsell--btn-{{ block.settings.btn_position }}"
+    >
+      <div class="upsell__container">
+        {%- if block.settings.show_images -%}
+          {%- liquid
+            if featured_image != blank
+              assign product_image = featured_image
+            else
+              assign product_image = product.featured_image
+            endif
+          -%}
+          {%- if product_image != blank -%}
+            <div class="upsell__image">
+              <img
+                src="{{ product_image | image_url: width: 200 }}"
+                alt="{{ product_image.alt | escape }}"
+                class="upsell__image__img"
+                loading="lazy"
+                width="200"
+                height="200"
+              >
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+
+        <div class="upsell__content">
+          <div class="upsell__title">
+            <h3>{{ product.title }}</h3>
+          </div>
+          {%- unless description == blank -%}
+            <p class="upsell__desc">{{ description }}</p>
+          {%- endunless -%}
+          <div class="upsell__price">
+            <span class="regular-price">{{ price | money }}</span>
+            <span class="compare-price{% unless compare_price > price %} hidden{% endunless %}">{{ compare_price | money }}</span>
+          </div>
+        </div>
+
+        {%- if block.settings.style == 'toggle_switch' -%}
+          <button class="upsell__toggle-switch upsell-toggle-btn" type="button">
+            <span class="toggle-switch__slider">&nbsp;</span>
+          </button>
+        {%- else -%}
+          <button
+            type="submit"
+            name="add"
+            class="upsell__add-btn button upsell-toggle-btn"
+            {%- if product.first_available_variant.available == false -%}disabled{%- endif -%}
+          >
+            {{ block.settings.add_btn_label }}
+          </button>
+        {%- endif -%}
+      </div>
+
+      <form method="post" action="{{ routes.cart_add_url }}" class="hidden">
+        <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+      </form>
+    </cart-drawer-upsell>
+  {%- endfor -%}
+</div>
