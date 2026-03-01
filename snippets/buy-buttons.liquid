@@ -82,7 +82,7 @@
               disabled
             {% endif %}
           >
-            <span>
+            <span class="button__label">
               {%- if product.selected_or_first_available_variant == null -%}
                 {{ 'products.product.unavailable' | t }}
               {%- elsif product.selected_or_first_available_variant.available == false or quantity_rule_soldout -%}
@@ -90,6 +90,9 @@
               {%- else -%}
                 {{ 'products.product.add_to_cart' | t }}
               {%- endif -%}
+            </span>
+            <span class="sold-out-message hidden">
+              {{ 'products.product.sold_out' | t }}
             </span>
             {%- render 'loading-spinner' -%}
           </button>
