@@ -86,12 +86,24 @@ cart-upsell-block[hidden] {
 
 .cart-checkpoints .cart-progress__bar {
   margin-top: 2.8rem;
+  background: rgba(var(--color-foreground), 0.16);
+}
+
+.cart-checkpoints .cart-progress__bar__progress {
+  background: rgb(var(--color-button));
 }
 
 .cart-checkpoints__icon {
   left: var(--position);
   right: auto;
   transform: translate(-50%, -50%);
+  color: rgba(var(--color-foreground), 0.55);
+}
+
+.cart-checkpoints__icon.is-unlocked {
+  background: rgb(var(--color-button));
+  border-color: rgba(var(--color-button), 0.45);
+  color: rgb(var(--color-button-text));
 }
 
 .cart-checkpoints__label {
@@ -104,6 +116,7 @@ cart-upsell-block[hidden] {
   text-align: center;
   font-size: var(--mobile-text-size, 1rem);
   line-height: 1.2;
+  color: rgb(var(--color-foreground));
 }
 
 @media screen and (min-width: 750px) {
