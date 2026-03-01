@@ -309,6 +309,96 @@ cart-drawer-items {
   margin-top: 1rem;
 }
 
+.cart-drawer .cart-drawer__footer {
+  margin-top: var(--margin-top, 0);
+  margin-bottom: var(--margin-bottom, 0);
+}
+
+.cart-drawer .cart-drawer__totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing, 0.8rem);
+  padding: 1.2rem 1.4rem;
+  border-radius: var(--buttons-radius, 0.8rem);
+  border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  background: rgba(var(--color-foreground), 0.03);
+}
+
+.cart-drawer .cart-drawer__totals--reverse {
+  flex-direction: column-reverse;
+}
+
+.cart-drawer .cart-drawer__totals__row {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: var(--text-size, 1.35rem);
+  line-height: 1.35;
+}
+
+.cart-drawer .cart-drawer__totals__row > span:last-child {
+  text-align: right;
+}
+
+.cart-drawer .cart-drawer__totals__row__money {
+  font-weight: 600;
+}
+
+
+.cart-drawer .cart-drawer__totals__row--left {
+  text-align: left;
+}
+
+.cart-drawer .cart-drawer__totals__row--center {
+  justify-content: center;
+  text-align: center;
+  flex-wrap: wrap;
+}
+
+.cart-drawer .cart-drawer__totals__row--center > span {
+  width: 100%;
+}
+
+.cart-drawer .cart-drawer__totals__row--right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.cart-drawer .cart-drawer__footer__discounts {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: var(--alignment, flex-start);
+}
+
+.cart-drawer .cart-drawer__discounts__label {
+  width: 100%;
+  margin-bottom: 0.1rem;
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+.cart-drawer .cart-drawer__footer__discounts .badge {
+  margin: 0;
+}
+
+.cart-drawer .cart-drawer__total-savings {
+  margin: 1rem 0 0;
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+
+.cart-drawer .cart__ctas {
+  margin-top: var(--margin-top, 0);
+  margin-bottom: var(--margin-bottom, 0);
+  display: grid;
+  gap: 0.8rem;
+  text-align: left;
+}
+
 .cart-drawer .totals {
   justify-content: space-between;
 }
@@ -318,8 +408,10 @@ cart-drawer-items {
 }
 
 .cart-drawer .tax-note {
-  margin: 1.2rem 0 2rem auto;
+  margin: 1.2rem 0 0;
   text-align: left;
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.72);
 }
 
 .cart-drawer .product-option dd {
@@ -341,7 +433,7 @@ cart-drawer-items {
 .drawer__footer #dynamic-checkout-cart ul {
   flex-wrap: wrap !important;
   flex-direction: row !important;
-  margin: 0.5rem -0.5rem 0 0 !important;
+  margin: 0.2rem -0.5rem 0 0 !important;
   gap: 0.5rem;
 }
 

@@ -15,21 +15,36 @@ cart-upsell-block[hidden] {
   display: none;
 }
 
+
+.cart-drawer {
+  --cart-drawer-block-gap: 1.2rem;
+  --cart-drawer-block-radius: 1.2rem;
+  --cart-drawer-block-border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  --cart-drawer-block-surface: rgba(var(--color-foreground), 0.03);
+}
+
 /* ---------------------------------------------------------------------------
    Cart Progress Bar
    --------------------------------------------------------------------------- */
 
 .cart-progress {
-  margin-top: var(--margin-top, 1.2rem);
-  margin-bottom: var(--margin-bottom, 1.2rem);
-  padding: 0 2rem;
+  margin-top: var(--margin-top, var(--cart-drawer-block-gap));
+  margin-bottom: var(--margin-bottom, var(--cart-drawer-block-gap));
+  padding: 1.2rem 1.4rem 1.3rem;
+  border-radius: var(--cart-drawer-block-radius);
+  border: var(--cart-drawer-block-border);
+  background: var(--cart-drawer-block-surface);
 }
 
 .cart-progress__text {
-  margin: 0 0 0.9rem;
+  margin: 0 0 0.8rem;
   text-align: center;
-  font-size: 1.3rem;
-  line-height: 1.4;
+  font-size: 1.25rem;
+  line-height: 1.35;
+}
+
+.cart-progress__text span {
+  font-weight: 600;
 }
 
 .cart-progress__bar {
@@ -37,7 +52,7 @@ cart-upsell-block[hidden] {
   height: 0.8rem;
   border-radius: 99rem;
   overflow: visible;
-  background: rgba(var(--color-foreground), 0.12);
+  background: rgba(var(--color-foreground), 0.14);
 }
 
 .cart-progress__bar__progress {
@@ -85,7 +100,7 @@ cart-upsell-block[hidden] {
    --------------------------------------------------------------------------- */
 
 .cart-checkpoints .cart-progress__bar {
-  margin-top: 2.8rem;
+  margin-top: 2.6rem;
   background: rgba(var(--color-foreground), 0.16);
 }
 
@@ -112,7 +127,7 @@ cart-upsell-block[hidden] {
   left: 50%;
   transform: translateX(-50%);
   width: max-content;
-  max-width: 9rem;
+  max-width: 10rem;
   text-align: center;
   font-size: var(--mobile-text-size, 1rem);
   line-height: 1.2;
@@ -131,7 +146,7 @@ cart-upsell-block[hidden] {
 
 .cart-countdown {
   margin-top: var(--margin-top, 0);
-  margin-bottom: var(--margin-bottom, 1.2rem);
+  margin-bottom: var(--margin-bottom, var(--cart-drawer-block-gap));
   padding: 0 2rem;
 }
 
@@ -141,10 +156,16 @@ cart-upsell-block[hidden] {
 
 .cart-countdown__text {
   margin: 0;
-  padding: 0.9rem 1.2rem;
-  border-radius: 0.8rem;
+  padding: 1rem 1.2rem;
+  border-radius: var(--cart-drawer-block-radius);
+  border: var(--cart-drawer-block-border);
   text-align: center;
   font-size: var(--font-size, 1.4rem);
+  line-height: 1.35;
+}
+
+.cart-countdown__text strong {
+  font-weight: 700;
 }
 
 /* ---------------------------------------------------------------------------
@@ -152,14 +173,32 @@ cart-upsell-block[hidden] {
    --------------------------------------------------------------------------- */
 
 .cart-payment-badges {
-  margin-top: var(--margin-top, 1.2rem);
-  margin-bottom: var(--margin-bottom, 1.2rem);
-  padding: 0 2rem;
+  margin-top: var(--margin-top, var(--cart-drawer-block-gap));
+  margin-bottom: var(--margin-bottom, var(--cart-drawer-block-gap));
+  padding: 1.2rem 1.4rem;
+  border-radius: var(--cart-drawer-block-radius);
+  border: var(--cart-drawer-block-border);
+  background: var(--cart-drawer-block-surface);
 }
 
 .cart-payment-badges .list-payment {
   justify-content: center;
-  margin: 0;
+  margin: -0.4rem;
+  padding-top: 0;
+  gap: 0.2rem;
+}
+
+.cart-payment-badges .list-payment__item {
+  padding: 0.4rem;
+}
+
+.cart-payment-badges .list-payment__item .icon {
+  width: 3.6rem;
+  height: 2.4rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.6rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.1);
+  background: rgb(var(--color-background));
 }
 
 /* ---------------------------------------------------------------------------
@@ -319,8 +358,8 @@ cart-upsell-block[hidden] {
    --------------------------------------------------------------------------- */
 
 .cart-drawer-gift-container {
-  margin-top: var(--margin-top, 1.2rem);
-  margin-bottom: var(--margin-bottom, 1.2rem);
+  margin-top: var(--margin-top, var(--cart-drawer-block-gap));
+  margin-bottom: var(--margin-bottom, var(--cart-drawer-block-gap));
   padding: 0 2rem;
 }
 
@@ -328,7 +367,7 @@ cart-upsell-block[hidden] {
   position: relative;
   display: block;
   border: 0.1rem solid rgba(var(--color-foreground), 0.15);
-  border-radius: var(--border-radius, 1.2rem);
+  border-radius: var(--border-radius, var(--cart-drawer-block-radius));
   background: rgb(var(--color-background));
   transition: border-color var(--duration-short) ease, box-shadow var(--duration-short) ease, background var(--duration-short) ease;
   overflow: hidden;
@@ -338,7 +377,7 @@ cart-upsell-block[hidden] {
   display: flex;
   align-items: flex-start;
   gap: 1.2rem;
-  padding: 1.2rem;
+  padding: 1.3rem;
 }
 
 .cart-drawer-gift .upsell__image {
@@ -378,8 +417,8 @@ cart-upsell-block[hidden] {
 
 .cart-drawer-gift__progress {
   margin: 0;
-  padding: 0.9rem 1.2rem;
-  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  padding: 1rem 1.2rem;
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.1);
   font-size: var(--mobile-text-size, 1.2rem);
 }
 
@@ -448,7 +487,7 @@ cart-upsell-block[hidden] {
   border-style: dashed;
   border-color: rgba(var(--color-foreground), 0.25);
   background: rgba(var(--color-foreground), 0.03);
-  padding: 1.2rem;
+  padding: 1.3rem;
 }
 
 .cart-drawer-gift__status-label {
