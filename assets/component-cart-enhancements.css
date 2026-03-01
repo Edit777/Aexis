@@ -397,3 +397,68 @@ cart-countdown-timer {
   margin: 0.5rem 0 0;
   color: rgba(var(--color-foreground), 0.72);
 }
+
+/* ---------------------------------------------------------------------------
+   Cart Product Upsells
+   --------------------------------------------------------------------------- */
+
+.cart-upsell { margin: 1rem 0; }
+.cart-upsell__heading { font-weight: 600; margin-bottom: 0.75rem; }
+
+cart-drawer-upsell { display: block; }
+.upsell__container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: var(--border-radius, 0.4rem);
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.upsell--border .upsell__container { border: 1px solid rgba(0,0,0,0.12); }
+.upsell--btn-left .upsell__container { flex-direction: row-reverse; }
+
+.upsell__image { flex-shrink: 0; }
+.upsell__image__img {
+  width: var(--image-size, 5rem);
+  height: var(--image-size, 5rem);
+  object-fit: cover;
+  border-radius: var(--image-border-radius, 0.2rem);
+  display: block;
+}
+
+.upsell__content { flex: 1; min-width: 0; }
+.upsell__title h3 { font-size: var(--title-font-size, 1.4rem); margin: 0 0 0.25rem; }
+.upsell__desc { font-size: var(--desc-font-size, 1.2rem); margin: 0.25rem 0; opacity: 0.7; }
+
+.upsell__price { display: flex; gap: 0.5rem; align-items: center; font-size: var(--price-font-size, 1.3rem); }
+.upsell__price .compare-price { text-decoration: line-through; opacity: 0.5; }
+.upsell__price .compare-price.hidden { display: none; }
+
+/* Toggle switch */
+.upsell__toggle-switch {
+  flex-shrink: 0;
+  width: 4.4rem;
+  height: 2.4rem;
+  background: rgba(0,0,0,0.15);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.25s;
+  padding: 0;
+}
+.upsell__toggle-switch .toggle-switch__slider {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.25s;
+  display: block;
+}
+cart-drawer-upsell.selected .upsell__toggle-switch { background: rgb(var(--color-button)); }
+cart-drawer-upsell.selected .upsell__toggle-switch .toggle-switch__slider { transform: translateX(2rem); }
