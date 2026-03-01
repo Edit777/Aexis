@@ -145,6 +145,7 @@
             data-default-label="{{ block.settings.add_btn_label | escape }}"
             data-selected-label="{{ 'general.accessibility.selected' | t | default: 'Added' | escape }}"
             data-unavailable-label="{{ 'products.product.sold_out' | t | escape }}"
+            data-money-format={{ shop.money_format | json }}
             {% if block.settings.update_prices %}
               data-update-prices='true'
               data-price="{{ price }}"
@@ -244,7 +245,13 @@
                                   assign option_class = 'unavailable'
                                 endif
                               -%}
-                              <option value="{{ value | escape }}" class="{{ option_class }}">
+                              <option
+                                value="{{ value | escape }}"
+                                class="{{ option_class }}"
+                                {% if value == product.first_available_variant.options[option.position | minus: 1] %}
+                                  selected="selected"
+                                {% endif %}
+                              >
                                 {% if option_disabled -%}
                                   {{- 'products.product.value_unavailable' | t: option_value: value -}}
                                 {%- else -%}
@@ -270,20 +277,20 @@
                 {% endif %}
               </div>
               {% if block.settings.style == 'toggle_switch' %}
-                <button class='upsell__toggle-switch toggle-switch{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
+                <button type='button' class='upsell__toggle-switch toggle-switch{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
                   <span class='toggle-switch__slider'>&nbsp;</span>
                 </button>
               {% elsif block.settings.style == 'checkbox_1' %}
-                <button class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
+                <button type='button' class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
                   {% render 'checkbox-icons' %}
                 </button>
               {% elsif block.settings.style == 'checkbox_2' %}
-                <button class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
+                <button type='button' class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
                   {% render 'material-icon', icon: 'add_circle', class: ' checkmark-unchecked' %}
                   {% render 'material-icon', icon: 'check_circle', filled: true, class: ' checkmark-checked' %}
                 </button>
               {% elsif block.settings.style == 'plus_button' %}
-                <button class='upsell__plus-btn{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
+                <button type='button' class='upsell__plus-btn{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
                   {% render 'material-icon', icon: 'add', class: ' checkmark-unchecked' %}
                   {% render 'material-icon', icon: 'check', filled: true, class: ' checkmark-checked' %}
                 </button>

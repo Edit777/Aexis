@@ -291,9 +291,11 @@ cart-drawer-upsell.upsell {
 }
 
 cart-drawer-upsell .upsell__container {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.2rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 1.2rem;
+  row-gap: 0.8rem;
   padding: 1.3rem;
 }
 
@@ -318,10 +320,10 @@ cart-drawer-upsell .upsell__content {
 }
 
 cart-drawer-upsell .upsell__title {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.8rem;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: start;
 }
 
 cart-drawer-upsell .upsell__title h3,
@@ -331,6 +333,8 @@ cart-drawer-upsell .upsell__price {
 }
 
 cart-drawer-upsell .upsell__title h3 {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: var(--title-font-size, 1.4rem);
   line-height: 1.35;
 }
@@ -353,9 +357,14 @@ cart-drawer-upsell .upsell__desc {
 cart-drawer-upsell .upsell__price {
   display: inline-flex;
   align-items: baseline;
+  justify-content: flex-end;
   gap: 0.5rem;
   font-size: var(--price-font-size, 1.2rem);
   white-space: nowrap;
+}
+
+cart-drawer-upsell .upsell__price--separate {
+  margin-top: 0.8rem;
 }
 
 cart-drawer-upsell .compare-price {
@@ -368,6 +377,10 @@ cart-drawer-upsell .upsell__variant-picker {
   margin-top: 0.8rem;
   display: grid;
   gap: 0.6rem;
+}
+
+cart-drawer-upsell .upsell__variant-picker .select__select {
+  width: 100%;
 }
 
 cart-drawer-upsell .upsell__select {
@@ -389,12 +402,28 @@ cart-drawer-upsell .upsell__add-btn > span {
 cart-drawer-upsell .upsell__toggle-switch,
 cart-drawer-upsell .upsell__checkbox,
 cart-drawer-upsell .upsell__plus-btn {
-  margin-top: 0.1rem;
+  margin-top: 0;
   flex: 0 0 auto;
+  width: 3.2rem;
+  min-width: 3.2rem;
+  height: 3.2rem;
+  min-height: 3.2rem;
 }
 
 cart-drawer-upsell .upsell-toggle-btn {
   cursor: pointer;
+}
+
+cart-drawer-upsell .upsell__container.upsell-toggle-btn {
+  cursor: pointer;
+}
+
+cart-drawer-upsell .upsell__container.upsell-toggle-btn .upsell__variant-picker,
+cart-drawer-upsell .upsell__container.upsell-toggle-btn .upsell__select,
+cart-drawer-upsell .upsell__container.upsell-toggle-btn a,
+cart-drawer-upsell .upsell__container.upsell-toggle-btn button,
+cart-drawer-upsell .upsell__container.upsell-toggle-btn select {
+  cursor: auto;
 }
 
 
@@ -414,8 +443,25 @@ cart-drawer-upsell .upsell__checkbox,
 cart-drawer-upsell .upsell__plus-btn,
 cart-drawer-upsell .upsell__toggle-switch {
   align-self: center;
+  justify-self: end;
   white-space: nowrap;
 }
+
+@media screen and (max-width: 749px) {
+  cart-drawer-upsell .upsell__container {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  cart-drawer-upsell .upsell__toggle-switch,
+  cart-drawer-upsell .upsell__checkbox,
+  cart-drawer-upsell .upsell__plus-btn {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    margin-top: 0.1rem;
+  }
+}
+
 
 cart-drawer-upsell[data-selected='true'],
 cart-drawer-upsell.is-selected {
