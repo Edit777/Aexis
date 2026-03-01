@@ -135,6 +135,7 @@
           <{{ type }}-upsell
             class='upsell upsell--{{ block.settings.style }} {{ type }}-upsell-{{ section.id }} upsell--btn-{{ block.settings.btn_position }} color-{{ block.settings.color_scheme }} gradient{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}'
             data-style="{{ block.settings.style }}" 
+            data-control-mode="{% if block.settings.style == 'add_button' %}classic{% else %}toggle{% endif %}"
             data-selected="{{ preselected }}"
             data-state="default"
             data-handle="{{ product.handle }}"
@@ -161,7 +162,13 @@
                 {{ block.settings.container_title }}
               </h3>
             {% endif %}
-            <div class='upsell__container{% if block.settings.toggle_element == 'container' and block.settings.style != "add_button" %} upsell-toggle-btn{% endif %}'{% if block.settings.toggle_element == 'container' and block.settings.style != "add_button" %} data-upsell-container-toggle='true'{% endif %}>
+            <div
+              class='upsell__container{% if block.settings.toggle_element == 'container' and block.settings.style != "add_button" %} upsell-toggle-btn{% endif %}'
+              {% if block.settings.toggle_element == 'container' and block.settings.style != "add_button" %}
+                data-upsell-container-toggle='true'
+                data-upsell-toggle='container'
+              {% endif %}
+            >
               {% if block.settings.show_images %}
                 {% liquid
                   if featured_image != blank
@@ -280,20 +287,40 @@
                 {% endif %}
               </div>
               {% if block.settings.style == 'toggle_switch' %}
-                <button type='button' class='upsell__toggle-switch toggle-switch{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}' data-upsell-control='true'>
+                <button
+                  type='button'
+                  class='upsell__toggle-switch toggle-switch{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'
+                  data-upsell-control='true'
+                  data-upsell-toggle='control'
+                >
                   <span class='toggle-switch__slider'>&nbsp;</span>
                 </button>
               {% elsif block.settings.style == 'checkbox_1' %}
-                <button type='button' class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}' data-upsell-control='true'>
+                <button
+                  type='button'
+                  class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'
+                  data-upsell-control='true'
+                  data-upsell-toggle='control'
+                >
                   {% render 'checkbox-icons' %}
                 </button>
               {% elsif block.settings.style == 'checkbox_2' %}
-                <button type='button' class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}' data-upsell-control='true'>
+                <button
+                  type='button'
+                  class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'
+                  data-upsell-control='true'
+                  data-upsell-toggle='control'
+                >
                   {% render 'material-icon', icon: 'add_circle', class: ' checkmark-unchecked' %}
                   {% render 'material-icon', icon: 'check_circle', filled: true, class: ' checkmark-checked' %}
                 </button>
               {% elsif block.settings.style == 'plus_button' %}
-                <button type='button' class='upsell__plus-btn{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}' data-upsell-control='true'>
+                <button
+                  type='button'
+                  class='upsell__plus-btn{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'
+                  data-upsell-control='true'
+                  data-upsell-toggle='control'
+                >
                   {% render 'material-icon', icon: 'add', class: ' checkmark-unchecked' %}
                   {% render 'material-icon', icon: 'check', filled: true, class: ' checkmark-checked' %}
                 </button>
