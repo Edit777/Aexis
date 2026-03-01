@@ -61,9 +61,7 @@
             loading="lazy"
           >
         {%- elsif block.settings.icon != blank -%}
-          <span class="material-symbols-outlined{% if block.settings.icon_filled %} filled{% endif %}">
-            {{- block.settings.icon -}}
-          </span>
+          {% render 'material-icon', icon: block.settings.icon, filled: block.settings.icon_filled %}
         {% else %}
           <span class="svg-wrapper">{% render 'icon-checkmark' %}</span>
         {% endif %}

@@ -15,6 +15,23 @@
 {%- if section.blocks.size > 0 -%}
   {{ 'component-cart-enhancements.css' | asset_url | stylesheet_tag }}
 {%- endif -%}
+{%- liquid
+  assign cart_drawer_uses_material_icons = false
+  for block in section.blocks
+    if block.type == 'progress_bar' or block.type == 'checkpoints_bar' or block.type == 'icon_with_text' or block.type == 'text_with_icon'
+      assign cart_drawer_uses_material_icons = true
+      break
+    endif
+  endfor
+-%}
+{%- if cart_drawer_uses_material_icons -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0;1"
+  >
+{%- endif -%}
 {%- for block in section.blocks -%}
   {%- if block.type == 'progress_bar' -%}
     <script src="{{ 'cart-progress-bar.js' | asset_url }}" defer="defer"></script>
