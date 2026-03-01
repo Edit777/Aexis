@@ -1,3 +1,6 @@
-<span class="material-icon material-symbols-outlined{% if filled %} filled{% endif %}{% if custom_color != blank %} material-icon--custom-color color-icon-{{ custom_color }}{% endif %}{% if class != blank %} {{ class | strip }}{% endif %}">
+<span
+  class="material-icon material-symbols-outlined{% if filled %} filled{% endif %}{% if custom_color != blank %} material-icon--custom-color color-icon-{{ custom_color }}{% endif %}{% if class != blank %} {{ class | strip }}{% endif %}"
+  style='font-variation-settings: "FILL" {% if filled %}1{% else %}0{% endif %}, "wght" 400, "GRAD" 0, "opsz" 24;'
+>
   {{ icon | strip | downcase | replace: ' ', '_' }}
 </span>

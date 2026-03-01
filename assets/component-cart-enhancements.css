@@ -152,8 +152,8 @@ cart-upsell-block[hidden] {
 }
 
 .cart-countdown--full-width {
-  margin-inline: -1.5rem;
-  padding-inline: 1.5rem;
+  margin-inline: -2rem;
+  padding-inline: 2rem;
 }
 
 .cart-countdown__text {
@@ -395,6 +395,26 @@ cart-drawer-upsell .upsell__plus-btn {
 
 cart-drawer-upsell .upsell-toggle-btn {
   cursor: pointer;
+}
+
+
+cart-drawer-upsell .upsell__checkbox .material-symbols-outlined,
+cart-drawer-upsell .upsell__plus-btn .material-symbols-outlined {
+  width: 2rem;
+  height: 2rem;
+  font-size: 2rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+cart-drawer-upsell .upsell__checkbox,
+cart-drawer-upsell .upsell__plus-btn,
+cart-drawer-upsell .upsell__toggle-switch {
+  align-self: center;
+  white-space: nowrap;
 }
 
 cart-drawer-upsell[data-selected='true'],

@@ -61,7 +61,7 @@
             loading="lazy"
           >
         {%- elsif block.settings.icon != blank -%}
-          {% render 'material-icon', icon: block.settings.icon, filled: block.settings.icon_filled %}
+          {% render 'material-icon', icon: block.settings.icon, filled: block.settings.icon_filled and goal_progress >= 100 %}
         {% else %}
           <span class="svg-wrapper">{% render 'icon-checkmark' %}</span>
         {% endif %}
