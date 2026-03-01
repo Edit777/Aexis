@@ -114,10 +114,12 @@
                   class="select__select"
                   data-option-position="{{ option.position }}"
                 >
+                  {% assign option_index = option.position | minus: 1 %}
+                  {% assign initial_option_value = initial_variant.options[option_index] %}
                   {% for value in option.values %}
                     <option
                       value="{{ value | escape }}"
-                      {% if initial_variant.options[option.position | minus: 1] == value %}selected{% endif %}
+                      {% if initial_option_value == value %}selected{% endif %}
                     >
                       {{ value }}
                     </option>
