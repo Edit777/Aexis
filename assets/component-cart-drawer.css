@@ -216,7 +216,7 @@ cart-drawer-items {
   display: grid;
   grid-template-columns: var(--cart-item-image-size, 8rem) minmax(0, 1fr);
   align-items: start;
-  gap: 0.8rem;
+  gap: var(--cart-item-row-gap, 0.8rem);
   margin-bottom: 0;
 }
 
@@ -238,7 +238,7 @@ cart-drawer-items {
   grid-row: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--cart-item-content-gap, 0.5rem);
   min-width: 0;
 }
 
@@ -256,7 +256,7 @@ cart-drawer-items {
 
 .cart-drawer .cart-drawer-item__quantity-and-prices {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.8rem;
   flex-wrap: nowrap;
@@ -360,7 +360,7 @@ cart-drawer-items {
 .cart-drawer .cart-item__totals {
   pointer-events: auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
   flex: 0 0 auto;
 }
@@ -384,6 +384,16 @@ cart-drawer-items {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.cart-drawer .cart-item__price-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.cart-drawer .cart-item__totals.left .cart-item__price-wrapper {
+  align-items: flex-start;
 }
 
 .cart-drawer .unit-price {

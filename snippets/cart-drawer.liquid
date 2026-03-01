@@ -158,7 +158,7 @@
           {%- if block.type == 'cart_items' -%}
           <cart-drawer-items
             class="color-{{ block.settings.color_scheme }} gradient"
-            style="--image-size: {{ block.settings.image_size }}%;--cart-item-image-size: {{ block.settings.image_size | times: 0.4 }}rem;--title-size:{{ block.settings.title_size }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
+            style="--image-size: {{ block.settings.image_size }}%;--cart-item-image-size: {{ block.settings.image_size | times: 0.4 }}rem;--title-size:{{ block.settings.title_size }}rem;--cart-item-row-gap: {{ block.settings.quantity_container_padding | plus: 0.6 }}rem;--cart-item-content-gap: {{ block.settings.quantity_container_padding | plus: 0.4 }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
             {{ block.shopify_attributes }}
           >
             <form
@@ -210,7 +210,6 @@
 
                           <div class="cart-item__media" role="cell">
                             {%- if item.image -%}
-                              {%- assign cart_item_image_width = block.settings.image_size | times: 5 -%}
                               {%- comment -%} Leave empty space due to a:empty CSS display: none rule {%- endcomment -%}
                               {%- if block.settings.image_link -%}<a href="{{ item.url }}" class="cart-item__link" tabindex="-1" aria-hidden="true"> </a>{%- endif -%}
                               <img
@@ -218,8 +217,8 @@
                                 src="{{ item.image | image_url: width: 300 }}"
                                 alt="{{ item.image.alt | escape }}"
                                 loading="lazy"
-                                width="{{ cart_item_image_width }}"
-                                height="{{ cart_item_image_width | divided_by: item.image.aspect_ratio | ceil }}"
+                                width="150"
+                                height="{{ 150 | divided_by: item.image.aspect_ratio | ceil }}"
                               >
                             {%- endif -%}
                           </div>
@@ -321,7 +320,7 @@
                               </cart-remove-button>
                             </div>
 
-                            <div class="cart-drawer-item__quantity-and-prices{% if block.settings.prices_position == 'left' %} cart-drawer-item__quantity-and-prices--reverse{% endif %}{% if has_props %} cart-drawer-item__quantity-and-prices--has-props{% endif %}">
+                            <div class="cart-drawer-item__quantity-and-prices{% if block.settings.prices_position == 'left' %} cart-drawer-item__quantity-and-prices--reverse{% endif %}{% if has_props != false %} cart-drawer-item__quantity-and-prices--has-props{% endif %}">
                               <div class="cart-item__quantity">
                                 <div class="cart-item__quantity-wrapper">
                                   <quantity-input
@@ -379,14 +378,12 @@
                                   role="alert"
                                 >
                                   <small class="cart-item__error-text"></small>
-                                  <span class="svg-wrapper">
                                   <svg aria-hidden="true" focusable="false" class="icon icon-error" viewBox="0 0 13 13">
                                     <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
                                     <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
                                     <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
                                     <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7"/>
                                   </svg>
-                                </span>
                                 </div>
                               </div>
 
