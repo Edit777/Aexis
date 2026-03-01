@@ -10,9 +10,9 @@
 {
   "current": {
     "logo_width": 90,
-    "type_header_font": "assistant_n4",
+    "type_header_font": "poppins_n7",
     "heading_scale": 100,
-    "type_body_font": "assistant_n4",
+    "type_body_font": "poppins_n5",
     "body_scale": 100,
     "page_width": 1200,
     "spacing_sections": 0,
@@ -136,6 +136,64 @@
       "cart-drawer": {
         "type": "cart-drawer",
         "blocks": {
+          "product_upsells_DcbUwe": {
+            "type": "product_upsells",
+            "settings": {
+              "position": "body",
+              "display": "globally",
+              "display_product_handles": "",
+              "style": "checkbox_1",
+              "btn_position": "right",
+              "toggle_element": "button",
+              "add_btn_label": "<strong>Add</strong>",
+              "hide_in_cart_items": true,
+              "stacking": "row",
+              "accent_color": "accent-1",
+              "color_scheme": "scheme-1",
+              "product_list": [
+                "test"
+              ],
+              "prdouct_1_preselected": false,
+              "product_1_desc": "",
+              "product_1_percentage_discount": "0",
+              "product_1_fixed_amount_discount": "0",
+              "prdouct_2_preselected": false,
+              "product_2_desc": "",
+              "product_2_percentage_discount": "0",
+              "product_2_fixed_amount_discount": "0",
+              "prdouct_3_preselected": false,
+              "product_3_desc": "",
+              "product_3_percentage_discount": "0",
+              "product_3_fixed_amount_discount": "0",
+              "show_images": true,
+              "images_size": "5",
+              "images_corner_radius": 2,
+              "title_size": "1.4",
+              "title_link": false,
+              "desc_size": "1.2",
+              "price_position": "next_to_title",
+              "price_size": "1.4",
+              "hide_compare_price": false,
+              "show_variant_picker": true,
+              "update_prices": false,
+              "skip_unavailable": false,
+              "container_title": "",
+              "container_title_position": "outside",
+              "container_title_mobile_text_size": 20,
+              "container_title_desktop_text_size": 20,
+              "corner_radius": 10,
+              "show_box_shadow": false,
+              "show_border": false,
+              "regular_border_color": "#e6e6e6",
+              "selected_border_color": "#dd1d1d",
+              "border_width": "0.2",
+              "show_custom_bg": false,
+              "regular_bg_color": "#f2f2f2",
+              "selected_bg_color": "#f2f2f2",
+              "margin_top": 15,
+              "margin_bottom": 15
+            }
+          },
           "cart_items_8em64M": {
             "type": "cart_items",
             "settings": {
@@ -174,7 +232,7 @@
             "settings": {
               "timer_text": "<strong>Cart reserved for [timer] more minutes!</strong>",
               "timer_duration": 300,
-              "font_size": "1.6",
+              "font_size": "1.4",
               "color_scheme": "scheme-3",
               "margin_top": 0,
               "margin_bottom": 15
@@ -182,17 +240,16 @@
           },
           "gift_wPKN46": {
             "type": "gift",
-            "disabled": true,
             "settings": {
               "position": "body",
               "display": "globally",
               "display_product_handles": "",
               "accent_color": "accent-1",
-              "color_scheme": "scheme-1",
+              "color_scheme": "scheme-2",
               "product": "test",
               "product_desc": "Write a short description about your product",
               "goal_type": "subtotal",
-              "requirement": "80",
+              "requirement": "",
               "locked_progress_text": "You're [amount] away from a free gift!",
               "unlocked_progress_text": "Congrats! You unlocked a free gift!🎉",
               "progress_mobile_text_size": 13,
@@ -230,7 +287,7 @@
               "success_message": "Congrats! You've unlocked all prizes!🎉",
               "labels_mobile_text_size": 10,
               "labels_desktop_text_size": 12,
-              "accent_color": "accent-1",
+              "color_scheme": "scheme-1",
               "enable_goal_1": true,
               "goal_1_label": "Free Shipping",
               "goal_1_text": "FREE shipping",
@@ -250,7 +307,7 @@
               "goal_3_icon": "redeem",
               "goal_3_icon_filled": false,
               "margin_top": 15,
-              "margin_bottom": 15
+              "margin_bottom": 27
             }
           },
           "progress_bar_ewnxJ3": {
@@ -314,6 +371,7 @@
           }
         },
         "block_order": [
+          "product_upsells_DcbUwe",
           "cart_items_8em64M",
           "countdown_timer_9n7zmb",
           "gift_wPKN46",
