@@ -38,9 +38,11 @@
 if (!customElements.get('cart-drawer-gift')) {
   class CartDrawerGift extends HTMLElement {
     connectedCallback() {
-      this.variantId  = parseInt(this.dataset.id,       10);
-      // data-selected is the server-rendered initial locked/unlocked state
-      this.isUnlocked = this.dataset.selected === 'true';
+      this.variantId   = parseInt(this.dataset.id, 10);
+      this.goalType    = this.dataset.goalType || 'price';
+      this.threshold   = this.dataset.threshold ? parseInt(this.dataset.threshold, 10) : null;
+      this.isUnlocked  = this.dataset.unlocked === 'true';
+      this.isSelected  = this.dataset.giftInCart === 'true';
 
       // Subscribe to cart updates to keep gift state in sync
       this.unsubscribe = subscribe(PUB_SUB_EVENTS.cartUpdate, ({ cartData } = {}) => {
@@ -88,13 +90,16 @@ if (!customElements.get('cart-drawer-gift')) {
       // Re-evaluate server threshold. The Liquid already computed this on page
       // load via data-selected; on client updates we re-derive from the element's
       // sibling threshold data if present, otherwise trust data-selected toggling.
-      // data-threshold (cents) is optionally stamped by cart-gift.liquid.
-      if (this.dataset.threshold) {
-        const threshold  = parseInt(this.dataset.threshold, 10);
-        this.isUnlocked  = subtotal >= threshold;
+      if (Number.isInteger(this.threshold)) {
+        const progressReference = this.goalType === 'quantity'
+          ? this._nonGiftItemsCount(cartData)
+          : subtotal;
+
+        this.isUnlocked = progressReference >= this.threshold;
       }
 
       const giftInCart = this._giftIsInCart(cartData);
+      this.isSelected = giftInCart;
 
       if (this.isUnlocked && !giftInCart) {
         this._addGiftToCart();
@@ -103,12 +108,12 @@ if (!customElements.get('cart-drawer-gift')) {
       } else {
         // State unchanged — just update the visual locked/unlocked classes
         // without triggering another cart mutation.
-        this._updateUI(this.isUnlocked);
+        this._updateUI({ unlocked: this.isUnlocked, selected: giftInCart });
       }
 
       // If locked state flipped, update the visual
       if (wasUnlocked !== this.isUnlocked) {
-        this._updateUI(this.isUnlocked);
+        this._updateUI({ unlocked: this.isUnlocked, selected: giftInCart });
       }
     }
 
@@ -145,7 +150,8 @@ if (!customElements.get('cart-drawer-gift')) {
         if (!resp.ok) return;
 
         const cartData = await resp.json();
-        this._updateUI(true);
+        this.isSelected = true;
+        this._updateUI({ unlocked: true, selected: true });
 
         if (cartDrawer) cartDrawer.renderContents(cartData);
 
@@ -194,7 +200,8 @@ if (!customElements.get('cart-drawer-gift')) {
         if (!resp.ok) return;
 
         const cartData = await resp.json();
-        this._updateUI(false);
+        this.isSelected = false;
+        this._updateUI({ unlocked: false, selected: false });
 
         if (cartDrawer) cartDrawer.renderContents(cartData);
 
@@ -214,9 +221,17 @@ if (!customElements.get('cart-drawer-gift')) {
     // UI state
     // ─────────────────────────────────────────────────────────────
 
-    _updateUI(unlocked) {
-      this.dataset.selected = String(unlocked);
-      // CSS in the theme drives locked/unlocked visuals via [data-selected]
+    _updateUI({ unlocked, selected }) {
+      this.dataset.unlocked = String(Boolean(unlocked));
+      this.dataset.selected = String(Boolean(selected));
+      this.dataset.giftInCart = String(Boolean(selected));
+
+      const state = selected ? 'selected' : unlocked ? 'unlocked' : 'locked';
+      this.dataset.state = state;
+
+      this.classList.toggle('is-locked', state === 'locked');
+      this.classList.toggle('is-unlocked', state === 'unlocked');
+      this.classList.toggle('is-selected', state === 'selected');
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -245,6 +260,16 @@ if (!customElements.get('cart-drawer-gift')) {
     // ─────────────────────────────────────────────────────────────
     // Helpers
     // ─────────────────────────────────────────────────────────────
+
+
+    _nonGiftItemsCount(cartData) {
+      const items = cartData.items || [];
+      return items.reduce((count, item) => {
+        const isGift = item.properties && item.properties['_gift'] === 'true';
+        if (isGift) return count;
+        return count + (item.quantity || 0);
+      }, 0);
+    }
 
     _giftIsInCart(cartData) {
       const items = cartData.items || [];

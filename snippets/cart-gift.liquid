@@ -22,7 +22,10 @@
     assign product = block.settings.product
   %}
   {% if product == blank %}
-    <h4 class='center'>Assign the gift product in block settings</h4>
+    <div class='cart-drawer-gift cart-drawer-gift--config-missing'>
+      <p class='cart-drawer-gift__status-label'>Gift setup required</p>
+      <p class='cart-drawer-gift__status-copy'>Assign the gift product in block settings to enable this promotion.</p>
+    </div>
   {% else %}
     {% liquid
       assign is_quantity = false
@@ -46,6 +49,14 @@
         assign unlocked = false
         assign progress_message = block.settings.locked_progress_text
       endif
+
+      assign gift_in_cart = false
+      for item in cart.items
+        if item.product_id == product.id and item.properties._gift == 'true'
+          assign gift_in_cart = true
+          break
+        endif
+      endfor
     %}
     {% if product.available != false %}
       <style>
@@ -54,8 +65,13 @@
         }
       </style>
       <cart-drawer-gift
-        class='cart-drawer-gift upsell color-{{ block.settings.color_scheme }} accent-color-{{ block.settings.accent_color }}{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}{% if block.settings.toggle_element == 'container' %} upsell--container-btn{% endif %}'
-        data-selected="{{ unlocked }}"
+        class='cart-drawer-gift upsell color-{{ block.settings.color_scheme }} accent-color-{{ block.settings.accent_color }}{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}{% if block.settings.toggle_element == 'container' %} upsell--container-btn{% endif %}{% if unlocked %} is-unlocked{% else %} is-locked{% endif %}{% if gift_in_cart %} is-selected{% endif %}'
+        data-selected="{{ gift_in_cart }}"
+        data-unlocked="{{ unlocked }}"
+        data-gift-in-cart="{{ gift_in_cart }}"
+        data-state="{% if gift_in_cart %}selected{% elsif unlocked %}unlocked{% else %}locked{% endif %}"
+        data-threshold="{{ requirement | round }}"
+        data-goal-type="{{ block.settings.goal_type }}"
         data-handle="{{ product.handle }}"
         data-id="{{ product.selected_or_first_available_variant.id }}"
       >
@@ -82,8 +98,8 @@
             %}
             {% if product_image != blank %}
               <div class='upsell__image'>
-                {%- assign gift_img_px = block.settings.image_size | times: 16 | round -%}
-              {%- assign gift_img_fetch_w = gift_img_px | times: 2 -%}
+              {%- assign gift_img_px = block.settings.image_size | times: 16 | round -%}
+              {%- assign gift_img_fetch_w = gift_img_px | times: 2 | at_most: 320 -%}
               <img
                 src="{{ product_image | image_url: width: gift_img_fetch_w }}"
                 alt="{{ product_image.alt | escape }}"
@@ -220,6 +236,11 @@
           </product-form>
         </div>
       </cart-drawer-gift>
+    {% else %}
+      <div class='cart-drawer-gift cart-drawer-gift--config-missing'>
+        <p class='cart-drawer-gift__status-label'>Gift unavailable</p>
+        <p class='cart-drawer-gift__status-copy'>The configured gift product is currently unavailable. Pick another product in block settings.</p>
+      </div>
     {% endif %}
   {% endif %}
 </div>
