@@ -321,7 +321,10 @@
                               </cart-remove-button>
                             </div>
 
-                            <div class="cart-drawer-item__quantity-and-prices{% if block.settings.prices_position == 'left' %} cart-drawer-item__quantity-and-prices--reverse{% endif %}{% if has_props != false %} cart-drawer-item__quantity-and-prices--has-props{% endif %}">
+                            <div
+                              class="cart-drawer-item__quantity-and-prices{% if block.settings.prices_position == 'left' %} cart-drawer-item__quantity-and-prices--reverse{% endif %}{% if has_props != false %} cart-drawer-item__quantity-and-prices--has-props{% endif %}"
+                              style="--cart-item-quantity-row-gap: 0.6rem;"
+                            >
                               <div class="cart-item__quantity">
                                 <div class="cart-item__quantity-wrapper">
                                   <quantity-input

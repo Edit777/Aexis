@@ -215,8 +215,9 @@ cart-drawer-items {
 .cart-drawer .cart-item {
   display: grid;
   grid-template-columns: var(--cart-item-image-size, 7rem) minmax(0, 1fr);
-  align-items: start;
-  gap: var(--cart-item-row-gap, 0.6rem);
+  align-items: flex-start;
+  column-gap: var(--cart-item-row-gap, 0.6rem);
+  row-gap: 0;
   margin-bottom: 0;
 }
 
@@ -238,6 +239,7 @@ cart-drawer-items {
   grid-row: 1;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: var(--cart-item-content-gap, 0.35rem);
   min-width: 0;
 }
@@ -258,7 +260,7 @@ cart-drawer-items {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.6rem;
+  gap: var(--cart-item-quantity-row-gap, 0.6rem);
   flex-wrap: nowrap;
   min-width: 0;
 }
@@ -418,6 +420,7 @@ cart-drawer-items {
   padding-top: 0;
   grid-column: auto;
   flex: 0 0 auto;
+  align-self: flex-start;
 }
 
 
@@ -439,14 +442,19 @@ cart-drawer-items {
   border-radius: var(--corner-radius, var(--inputs-radius));
   font-size: var(--font-size, 1.25rem);
   padding: var(--container-padding, 0);
+  align-self: flex-start;
 }
 
-.cart-drawer .quantity.cart-quantity::after,
-.cart-drawer .quantity.cart-quantity::before {
+.cart-drawer .quantity.cart-quantity::before,
+.cart-drawer .quantity.cart-quantity::after {
   border-radius: inherit;
 }
 
 .cart-drawer .quantity.cart-quantity::after {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   box-shadow: 0 0 0 var(--border-width, var(--inputs-border-width)) var(--border-color, rgba(var(--color-foreground), var(--inputs-border-opacity)));
 }
 
@@ -454,6 +462,7 @@ cart-drawer-items {
   width: auto;
   min-width: calc(var(--icon-size, 0.7em) + (var(--padding, 0.3em) * 2));
   padding: var(--padding, 0.3em);
+  margin: 0;
 }
 
 .cart-drawer .quantity.cart-quantity .quantity__input {
@@ -462,16 +471,25 @@ cart-drawer-items {
   max-width: 3.2em;
   padding: 0 var(--input-padding, 0.4em);
   font-size: inherit;
-}
-
-.cart-drawer .quantity.cart-quantity .quantity__button:first-child,
-.cart-drawer .quantity.cart-quantity .quantity__button:last-child {
-  margin: 0;
+  flex: 0 1 auto;
 }
 
 .cart-drawer .quantity.cart-quantity .quantity__button + .quantity__input,
 .cart-drawer .quantity.cart-quantity .quantity__input + .quantity__button {
   border-left: 0.1rem solid rgba(var(--color-foreground), var(--separator-opacity, 0.5));
+}
+
+.cart-drawer .quantity.cart-quantity .quantity__button:focus,
+.cart-drawer .quantity.cart-quantity .quantity__button:focus-visible,
+.cart-drawer .quantity.cart-quantity .quantity__input:focus,
+.cart-drawer .quantity.cart-quantity .quantity__input:focus-visible {
+  background-color: inherit;
+  z-index: 2;
+}
+
+.cart-drawer .quantity.cart-quantity .quantity__button:not(:focus-visible):not(.focused),
+.cart-drawer .quantity.cart-quantity .quantity__input:not(:focus-visible):not(.focused) {
+  background-color: inherit;
 }
 
 .cart-drawer .quantity.cart-quantity.cart-quantity--round-btns .quantity__button:first-child {
