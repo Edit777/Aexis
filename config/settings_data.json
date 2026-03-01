@@ -138,6 +138,7 @@
         "blocks": {
           "product_upsells_DcbUwe": {
             "type": "product_upsells",
+            "disabled": true,
             "settings": {
               "position": "body",
               "display": "globally",
@@ -148,7 +149,6 @@
               "add_btn_label": "<strong>Add</strong>",
               "hide_in_cart_items": true,
               "stacking": "row",
-              "accent_color": "accent-1",
               "color_scheme": "scheme-1",
               "product_list": [
                 "test"
@@ -204,12 +204,10 @@
               "displayed_variants": "classic",
               "prices_position": "right",
               "displayed_compare_prices": "product",
-              "price_color": "accent-1",
-              "compare_price_color": "text",
+              "color_scheme": "",
               "display_single_item_prices": true,
               "enable_savings": false,
               "savings_text": "<strong>(You save [amount])</strong>",
-              "savings_color": "text",
               "quantity_font_size": 14,
               "quantity_container_padding": 0,
               "quantity_corner_radius": 4,
@@ -233,6 +231,7 @@
               "timer_text": "<strong>Cart reserved for [timer] more minutes!</strong>",
               "timer_duration": 300,
               "font_size": "1.4",
+              "width_behavior": "auto",
               "color_scheme": "scheme-3",
               "margin_top": 0,
               "margin_bottom": 15
@@ -244,7 +243,6 @@
               "position": "body",
               "display": "globally",
               "display_product_handles": "",
-              "accent_color": "accent-1",
               "color_scheme": "scheme-2",
               "product": "test",
               "product_desc": "Write a short description about your product",
@@ -319,7 +317,7 @@
               "success_message": "Congrats! You get FREE shipping!",
               "icon": "local_shipping",
               "icon_filled": false,
-              "accent_color": "accent-1",
+              "color_scheme": "",
               "margin_top": 15,
               "margin_bottom": 15
             }
@@ -339,7 +337,7 @@
               "savings_left_text": "<strong>Savings: </strong>",
               "savings_right_text": "<strong>-[savings]</strong>",
               "savings_alignment": "spaced",
-              "savings_text_color": "accent-1",
+              "color_scheme": "",
               "savings_text_size": 16,
               "savings_position": "above",
               "savings_spacing": 10,
@@ -347,7 +345,6 @@
               "subtotal_left_text": "<strong>Subtotal: </strong>",
               "subtotal_right_text": "<strong>[subtotal]</strong>",
               "subtotal_alignment": "spaced",
-              "subtotal_text_color": "text",
               "subtotal_text_size": 20,
               "display_discounts": true,
               "discounts_label": "<strong>Discounts:</strong>",
