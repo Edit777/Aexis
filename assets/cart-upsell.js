@@ -201,6 +201,7 @@ if (!customElements.get('cart-drawer-upsell')) {
       this.toggleEnabled = this.dataset.toggle === 'true';
       this.skipNonExistent = this.dataset.skipNonExistent === 'true';
       this.skipUnavailable = this.dataset.skipUnavailable === 'true';
+      this.dataset.toggleElement = this.dataset.toggleElement || 'button';
 
       this.addButton = this.querySelector('.upsell__add-btn');
       this.defaultLabel = this.dataset.defaultLabel || 'Add';
@@ -219,6 +220,10 @@ if (!customElements.get('cart-drawer-upsell')) {
       this.boundToggleClick = this.onToggleClick.bind(this);
       this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
         node.addEventListener('click', this.boundToggleClick);
+      });
+      this.boundControlClick = this.onControlClick.bind(this);
+      this.querySelectorAll('[data-upsell-control="true"]').forEach((node) => {
+        node.addEventListener('click', this.boundControlClick);
       });
 
       if (this.variantPicker) {
@@ -243,6 +248,9 @@ if (!customElements.get('cart-drawer-upsell')) {
       if (this.unsubscribe) this.unsubscribe();
       this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
         node.removeEventListener('click', this.boundToggleClick);
+      });
+      this.querySelectorAll('[data-upsell-control="true"]').forEach((node) => {
+        node.removeEventListener('click', this.boundControlClick);
       });
       if (this.variantPicker) {
         this.variantPicker.removeEventListener('change', this.boundVariantChange);
@@ -270,6 +278,17 @@ if (!customElements.get('cart-drawer-upsell')) {
         this.removeFromCart();
       } else {
         this.addToCart();
+      }
+    }
+
+    onControlClick(event) {
+      if (this._busy) {
+        event.preventDefault();
+        return;
+      }
+
+      if (this.dataset.toggleElement === 'container') {
+        event.stopPropagation();
       }
     }
 
