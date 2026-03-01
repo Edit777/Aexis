@@ -138,6 +138,7 @@
         "blocks": {
           "cart_items_8em64M": {
             "type": "cart_items",
+            "disabled": true,
             "settings": {
               "image_size": "20",
               "image_link": false,
@@ -171,11 +172,10 @@
           },
           "countdown_timer_9n7zmb": {
             "type": "countdown_timer",
-            "disabled": true,
             "settings": {
               "timer_text": "<strong>Cart reserved for [timer] more minutes!</strong>",
               "timer_duration": 300,
-              "font_size": "1.4",
+              "font_size": "1.6",
               "color_scheme": "scheme-1",
               "margin_top": 0,
               "margin_bottom": 15
