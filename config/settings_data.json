@@ -138,7 +138,6 @@
         "blocks": {
           "cart_items_8em64M": {
             "type": "cart_items",
-            "disabled": true,
             "settings": {
               "image_size": "20",
               "image_link": false,
