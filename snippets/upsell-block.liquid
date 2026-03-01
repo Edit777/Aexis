@@ -132,26 +132,26 @@
             <li class="splide__slide">
               <div class="splide__slide__container">
           {% endif %}
+          {% if type == 'cart-drawer' and block.settings.style != 'add_button' %}
+            <style>
+              .cart-drawer .cart-item--product-{{ product.handle }} {
+                display: none;
+              }
+            </style>
+          {% endif %}
           <{{ type }}-upsell
-            class='upsell upsell--{{ block.settings.style }} {{ type }}-upsell-{{ section.id }} upsell--btn-{{ block.settings.btn_position }} color-{{ block.settings.color_scheme }} gradient{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}'
+            class='upsell upsell--{{ block.settings.style }} {{ type }}-upsell-{{ section.id }} upsell--btn-{{ block.settings.btn_position }} color-{{ block.settings.color_scheme }} accent-color-{{ block.settings.accent_color }}{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}'
             data-style="{{ block.settings.style }}" 
-            data-control-mode="{% if block.settings.style == 'add_button' %}classic{% else %}toggle{% endif %}"
             data-selected="{{ preselected }}"
-            data-state="default"
             data-handle="{{ product.handle }}"
             data-toggle="{% if block.settings.style == 'add_button' %}false{% else %}true{% endif %}"
-            data-toggle-element="{{ block.settings.toggle_element }}"
             data-id="{{ product.first_available_variant.id }}"
             data-skip-non-existent='true'
             data-skip-unavailable="{{ block.settings.skip_unavailable }}"
-            data-default-label="{{ block.settings.add_btn_label | escape }}"
-            data-selected-label="{{ 'general.accessibility.selected' | t | default: 'Added' | escape }}"
-            data-unavailable-label="{{ 'products.product.sold_out' | t | escape }}"
-            data-money-format={{ shop.money_format | json }}
             {% if block.settings.update_prices %}
               data-update-prices='true'
               data-price="{{ price }}"
-              data-compare-price="{% if compare_price > price %}{{ compare_price }}{% else %}{{ price }}{% endif %}"
+              data-compare-price="{% if compare_price > price %}{{ price }}{% else %}{{ compare_price }}{% endif %}"
               data-percentage-left="{{ percentage_left }}"
               data-fixed-discount="{{ fixed_discount }}"
               data-money-format="{{ shop.money_format }}"
@@ -162,13 +162,7 @@
                 {{ block.settings.container_title }}
               </h3>
             {% endif %}
-            <div
-              class='upsell__container{% if block.settings.toggle_element == 'container' and block.settings.style != "add_button" %} upsell-toggle-btn{% endif %}'
-              {% if block.settings.toggle_element == 'container' and block.settings.style != "add_button" %}
-                data-upsell-container-toggle='true'
-                data-upsell-toggle='container'
-              {% endif %}
-            >
+            <div class='upsell__container{% if block.settings.toggle_element == 'container' and block.settings.style != "add_button" %} upsell-toggle-btn{% endif %}'>
               {% if block.settings.show_images %}
                 {% liquid
                   if featured_image != blank
@@ -213,7 +207,7 @@
                   {% if block.settings.show_variant_picker %}
                     <div class='upsell__variant-picker'>
                       {%- for option in product.options_with_values -%}
-                        <div class="upsell__select select select--small no-background color-{{ settings.pickers_color_scheme }} gradient">
+                        <div class="upsell__select select select--small no-background color-{{ settings.pickers_color_scheme }} accent-color-{{ settings.pickers_overlay_color }} accent-2-color-{{ settings.pickers_text_color }}">
                           <select class="select__select variant-dropdown" name="options[{{ option.name | escape }}]">
                             {% for value in option.values %}
                               {%- liquid
@@ -253,15 +247,7 @@
                                   assign option_class = 'unavailable'
                                 endif
                               -%}
-                              {%- assign selected_option_index = option.position | minus: 1 -%}
-                              {%- assign selected_option_value = product.first_available_variant.options[selected_option_index] -%}
-                              <option
-                                value="{{ value | escape }}"
-                                class="{{ option_class }}"
-                                {% if value == selected_option_value %}
-                                  selected="selected"
-                                {% endif %}
-                              >
+                              <option value="{{ value | escape }}" class="{{ option_class }}">
                                 {% if option_disabled -%}
                                   {{- 'products.product.value_unavailable' | t: option_value: value -}}
                                 {%- else -%}
@@ -287,40 +273,20 @@
                 {% endif %}
               </div>
               {% if block.settings.style == 'toggle_switch' %}
-                <button
-                  type='button'
-                  class='upsell__toggle-switch toggle-switch{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'
-                  data-upsell-control='true'
-                  data-upsell-toggle='control'
-                >
-                  <span class='toggle-switch__slider'>&nbsp;</span>
+                <button class='upsell__toggle-switch toggle-switch{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
+                  <span class='toggle-switch__slider'>&nbsp</span>
                 </button>
               {% elsif block.settings.style == 'checkbox_1' %}
-                <button
-                  type='button'
-                  class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'
-                  data-upsell-control='true'
-                  data-upsell-toggle='control'
-                >
+                <button class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
                   {% render 'checkbox-icons' %}
                 </button>
               {% elsif block.settings.style == 'checkbox_2' %}
-                <button
-                  type='button'
-                  class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'
-                  data-upsell-control='true'
-                  data-upsell-toggle='control'
-                >
+                <button class='upsell__checkbox flex-center{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
                   {% render 'material-icon', icon: 'add_circle', class: ' checkmark-unchecked' %}
                   {% render 'material-icon', icon: 'check_circle', filled: true, class: ' checkmark-checked' %}
                 </button>
               {% elsif block.settings.style == 'plus_button' %}
-                <button
-                  type='button'
-                  class='upsell__plus-btn{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'
-                  data-upsell-control='true'
-                  data-upsell-toggle='control'
-                >
+                <button class='upsell__plus-btn{% if block.settings.toggle_element == 'button' %} upsell-toggle-btn{% endif %}'>
                   {% render 'material-icon', icon: 'add', class: ' checkmark-unchecked' %}
                   {% render 'material-icon', icon: 'check', filled: true, class: ' checkmark-checked' %}
                 </button>
