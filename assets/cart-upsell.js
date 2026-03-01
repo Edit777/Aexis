@@ -202,6 +202,9 @@ if (!customElements.get('cart-drawer-upsell')) {
       this.skipUnavailable = this.dataset.skipUnavailable === 'true';
 
       this.addButton = this.querySelector('.upsell__add-btn');
+      this.defaultLabel = this.dataset.defaultLabel || 'Add';
+      this.selectedLabel = this.dataset.selectedLabel || 'Added';
+      this.unavailableLabel = this.dataset.unavailableLabel || 'Sold out';
       this.form = this.querySelector('product-form form');
       this.idInput = this.form?.querySelector('[name="id"]');
       this.variantPicker = this.querySelector('.upsell__variant-picker');
@@ -377,8 +380,31 @@ if (!customElements.get('cart-drawer-upsell')) {
     }
 
     updateAvailabilityUI(isAvailable = true) {
+      this.dataset.unavailable = String(!isAvailable);
+      this.classList.toggle('is-unavailable', !isAvailable);
+      this.classList.toggle('is-actionable', isAvailable);
+
       if (!this.addButton) return;
       this.addButton.toggleAttribute('disabled', !isAvailable);
+
+      if (!isAvailable) {
+        this.updateButtonLabel(this.unavailableLabel);
+      } else if (this.dataset.selected === 'true') {
+        this.updateButtonLabel(this.selectedLabel);
+      } else {
+        this.updateButtonLabel(this.defaultLabel);
+      }
+    }
+
+    updateButtonLabel(label) {
+      if (!this.addButton) return;
+
+      const labelNode = this.addButton.querySelector('span');
+      if (labelNode) {
+        labelNode.textContent = label;
+      } else {
+        this.addButton.textContent = label;
+      }
     }
 
     setBusy(isBusy) {
@@ -487,8 +513,13 @@ if (!customElements.get('cart-drawer-upsell')) {
 
     syncSelectionState() {
       const selected = this.dataset.selected === 'true';
+      this.dataset.state = selected ? 'selected' : 'default';
       this.classList.toggle('is-selected', selected);
       this.setAttribute('aria-selected', String(selected));
+
+      if (this.addButton && this.dataset.unavailable !== 'true') {
+        this.updateButtonLabel(selected ? this.selectedLabel : this.defaultLabel);
+      }
     }
   }
 
