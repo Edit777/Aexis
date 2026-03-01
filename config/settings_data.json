@@ -142,7 +142,7 @@
               "position": "footer",
               "display": "globally",
               "display_product_handles": "",
-              "style": "toggle_switch",
+              "style": "checkbox_2",
               "btn_position": "right",
               "toggle_element": "container",
               "add_btn_label": "<strong>Add</strong>",
