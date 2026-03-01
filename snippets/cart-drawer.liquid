@@ -158,7 +158,7 @@
           {%- if block.type == 'cart_items' -%}
           <cart-drawer-items
             class="color-{{ block.settings.color_scheme }} gradient"
-            style="--image-size: {{ block.settings.image_size }}%;--title-size:{{ block.settings.title_size }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
+            style="--image-size: {{ block.settings.image_size }}%;--cart-item-image-size: {{ block.settings.image_size | times: 0.4 }}rem;--title-size:{{ block.settings.title_size }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
             {{ block.shopify_attributes }}
           >
             <form
@@ -210,6 +210,7 @@
 
                           <div class="cart-item__media" role="cell">
                             {%- if item.image -%}
+                              {%- assign cart_item_image_width = block.settings.image_size | times: 5 -%}
                               {%- comment -%} Leave empty space due to a:empty CSS display: none rule {%- endcomment -%}
                               {%- if block.settings.image_link -%}<a href="{{ item.url }}" class="cart-item__link" tabindex="-1" aria-hidden="true"> </a>{%- endif -%}
                               <img
@@ -217,8 +218,8 @@
                                 src="{{ item.image | image_url: width: 300 }}"
                                 alt="{{ item.image.alt | escape }}"
                                 loading="lazy"
-                                width="150"
-                                height="{{ 150 | divided_by: item.image.aspect_ratio | ceil }}"
+                                width="{{ cart_item_image_width }}"
+                                height="{{ cart_item_image_width | divided_by: item.image.aspect_ratio | ceil }}"
                               >
                             {%- endif -%}
                           </div>
