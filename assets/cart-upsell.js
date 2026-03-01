@@ -231,6 +231,9 @@ if (!customElements.get('cart-drawer-upsell')) {
       });
 
       this.updateOptionStatuses();
+      const initialVariant = this.variantData.find((variant) => variant.id === this.selectedVariantId);
+      if (initialVariant) this.updateDisplayedPrices(initialVariant);
+      this.syncSelectedForCurrentVariant();
       this.updateAvailabilityUI();
       this.syncSelectionState();
     }
@@ -301,7 +304,10 @@ if (!customElements.get('cart-drawer-upsell')) {
       }
 
       this.syncVariantInputs(variant.id);
+      this.updateDisplayedPrices(variant);
+      this.syncSelectedForCurrentVariant();
       this.updateAvailabilityUI(variant.available);
+      this.syncSelectionState();
     }
 
     setSelectsFromVariant(variant) {
@@ -377,6 +383,47 @@ if (!customElements.get('cart-drawer-upsell')) {
           }
         }
       });
+    }
+
+
+    syncSelectedForCurrentVariant() {
+      const selectedVariant = parseInt(this.dataset.id, 10);
+      if (!selectedVariant) {
+        this.dataset.selected = 'false';
+        return;
+      }
+
+      const inCart = this.getCurrentCartVariantIds().includes(selectedVariant);
+      this.dataset.selected = String(inCart);
+    }
+
+    getCurrentCartVariantIds() {
+      return [...document.querySelectorAll('cart-drawer [data-quantity-variant-id]')]
+        .map((input) => parseInt(input.dataset.quantityVariantId || '0', 10))
+        .filter(Boolean);
+    }
+
+    updateDisplayedPrices(variant) {
+      if (this.dataset.updatePrices !== 'true' || !variant) return;
+
+      const percentageLeft = parseFloat(this.dataset.percentageLeft || '1');
+      const fixedDiscount = parseFloat(this.dataset.fixedDiscount || '0');
+      const comparePrice = variant.compare_at_price && variant.compare_at_price > variant.price ? variant.compare_at_price : variant.price;
+      const price = Math.max(0, (variant.price * percentageLeft) - fixedDiscount);
+
+      this.querySelectorAll('.regular-price').forEach((node) => {
+        node.textContent = this.formatMoney(price);
+      });
+
+      this.querySelectorAll('.compare-price').forEach((node) => {
+        node.textContent = this.formatMoney(comparePrice);
+        node.classList.toggle('hidden', comparePrice <= price);
+      });
+    }
+
+    formatMoney(cents) {
+      if (window?.Shopify?.formatMoney) return window.Shopify.formatMoney(cents, this.dataset.moneyFormat || undefined);
+      return `${(cents / 100).toFixed(2)}`;
     }
 
     updateAvailabilityUI(isAvailable = true) {
