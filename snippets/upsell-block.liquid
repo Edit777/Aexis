@@ -245,10 +245,12 @@
                                   assign option_class = 'unavailable'
                                 endif
                               -%}
+                              {%- assign selected_option_index = option.position | minus: 1 -%}
+                              {%- assign selected_option_value = product.first_available_variant.options[selected_option_index] -%}
                               <option
                                 value="{{ value | escape }}"
                                 class="{{ option_class }}"
-                                {% if value == product.first_available_variant.options[option.position | minus: 1] %}
+                                {% if value == selected_option_value %}
                                   selected="selected"
                                 {% endif %}
                               >
