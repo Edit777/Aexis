@@ -203,7 +203,7 @@ cart-drawer-items {
   display: grid;
   grid-template-columns: var(--cart-item-image-size, 8rem) minmax(0, 1fr);
   align-items: start;
-  gap: 1rem;
+  gap: 0.8rem;
   margin-bottom: 0;
 }
 
@@ -225,7 +225,7 @@ cart-drawer-items {
   grid-row: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.5rem;
   min-width: 0;
 }
 
@@ -233,7 +233,7 @@ cart-drawer-items {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.6rem;
 }
 
 .cart-drawer .cart-drawer-item__cart-remove-button {
@@ -243,9 +243,9 @@ cart-drawer-items {
 
 .cart-drawer .cart-drawer-item__quantity-and-prices {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.8rem;
   flex-wrap: nowrap;
 }
 
@@ -253,14 +253,19 @@ cart-drawer-items {
   flex-direction: row-reverse;
 }
 
+.cart-drawer .cart-drawer-item__quantity-and-prices--has-props {
+  margin-top: 0.2rem;
+}
+
 .cart-drawer .cart-drawer-item__single-item-prices {
-  margin-top: 0.6rem;
+  margin-top: 0.4rem;
 }
 
 .cart-drawer .cart-drawer-item__saving {
-  margin-top: 0.3rem;
+  margin-top: 0.2rem;
   display: inline-block;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
+  line-height: 1.25;
 }
 
 .cart-drawer .quantity__button svg {
@@ -317,7 +322,7 @@ cart-drawer-items {
 }
 
 .cart-drawer .cart-items td {
-  padding-top: 1.7rem;
+  padding-top: 1.1rem;
 }
 
 .cart-drawer .cart-items .cart-item__nested-line td:not(.cart-item__quantity) {
@@ -336,13 +341,13 @@ cart-drawer-items {
 
 .cart-drawer .cart-item__name {
   font-size: var(--title-size, 1.5rem);
-  line-height: 1.35;
+  line-height: 1.25;
 }
 
 .cart-drawer .cart-item__totals {
   pointer-events: auto;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-end;
   flex: 0 0 auto;
 }
@@ -351,20 +356,93 @@ cart-drawer-items {
   margin-top: 0;
 }
 
+
+.cart-drawer .cart-item__totals.left {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.cart-drawer .cart-item__totals.right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
 .cart-drawer .cart-item__price-wrapper .cart-item__discounted-prices {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.25rem;
 }
 
 .cart-drawer .unit-price {
-  margin-top: 0.6rem;
+  margin-top: 0.3rem;
 }
 
 .cart-drawer .cart-items .cart-item__quantity {
   padding-top: 0;
   grid-column: auto;
   flex: 0 0 auto;
+}
+
+
+.cart-drawer .cart-item .product-option {
+  line-height: 1.25;
+}
+
+.cart-drawer cart-remove-button .button {
+  min-width: 3rem;
+  min-height: 3rem;
+}
+
+.cart-drawer .quantity.cart-quantity {
+  width: auto;
+  min-height: auto;
+  border-radius: var(--corner-radius, var(--inputs-radius));
+  font-size: var(--font-size, 1.4rem);
+  padding: var(--container-padding, 0);
+}
+
+.cart-drawer .quantity.cart-quantity::after,
+.cart-drawer .quantity.cart-quantity::before {
+  border-radius: inherit;
+}
+
+.cart-drawer .quantity.cart-quantity::after {
+  box-shadow: 0 0 0 var(--border-width, var(--inputs-border-width)) var(--border-color, rgba(var(--color-foreground), var(--inputs-border-opacity)));
+}
+
+.cart-drawer .quantity.cart-quantity .quantity__button {
+  width: auto;
+  min-width: 2.8em;
+  padding: var(--padding, 0.4em);
+}
+
+.cart-drawer .quantity.cart-quantity .quantity__input {
+  min-width: 2.5em;
+  width: 2.8em;
+  padding: 0 var(--input-padding, 0.5em);
+  font-size: inherit;
+}
+
+.cart-drawer .quantity.cart-quantity .quantity__button:first-child,
+.cart-drawer .quantity.cart-quantity .quantity__button:last-child {
+  margin: 0;
+}
+
+.cart-drawer .quantity.cart-quantity .quantity__button + .quantity__input,
+.cart-drawer .quantity.cart-quantity .quantity__input + .quantity__button {
+  border-left: 0.1rem solid rgba(var(--color-foreground), var(--separator-opacity, 0.5));
+}
+
+.cart-drawer .quantity.cart-quantity.cart-quantity--outline-btns .quantity__button {
+  box-shadow: inset 0 0 0 0.1rem rgba(var(--color-foreground), 0.2);
+}
+
+.cart-drawer .quantity.cart-quantity.cart-quantity--round-btns .quantity__button:first-child {
+  border-radius: var(--corner-radius, var(--inputs-radius)) 0 0 var(--corner-radius, var(--inputs-radius));
+}
+
+.cart-drawer .quantity.cart-quantity.cart-quantity--round-btns .quantity__button:last-child {
+  border-radius: 0 var(--corner-radius, var(--inputs-radius)) var(--corner-radius, var(--inputs-radius)) 0;
 }
 
 @media screen and (max-width: 749px) {
