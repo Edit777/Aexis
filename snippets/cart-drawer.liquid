@@ -235,13 +235,13 @@
                                   {{- item.product.title | escape -}}
                                 </{% if block.settings.title_link %}a{% else %}h4{% endif %}>
 
-                                {%- if item.original_price != item.final_price and block.settings.display_single_item_prices -%}
+                                {%- if item.original_price != item.final_price and block.settings.display_single_item_prices and item.line_level_discount_allocations.size > 0 -%}
                                   {%- assign has_props = true -%}
                                   <div class="cart-item__discounted-prices cart-drawer-item__single-item-prices">
                                     <span>
                                       <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
                                       <s class="cart-item__old-price product-option">
-                                        {{- compare_price | divided_by: item.quantity | money -}}
+                                        {{- item.original_price | money -}}
                                       </s>
                                       <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
                                       <strong class="cart-item__final-price product-option">
@@ -249,10 +249,10 @@
                                       </strong>
                                     </span>
                                     <div class="cart-drawer__discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
-                                      {%- for discount in item.discounts -%}
+                                      {%- for discount_allocation in item.line_level_discount_allocations -%}
                                         <div class="badge">
                                           {%- render 'icon-discount' -%}
-                                          <span>{{ discount.title }}</span>
+                                          <span>{{ discount_allocation.discount_application.title }}</span>
                                         </div>
                                       {%- endfor -%}
                                     </div>
@@ -325,7 +325,7 @@
                               <div class="cart-item__quantity">
                                 <div class="cart-item__quantity-wrapper">
                                   <quantity-input
-                                    class="quantity cart-quantity color-{{ block.settings.quantity_container_color_scheme }}{% if block.settings.quantity_round_btns %} cart-quantity--round-btns{% endif %}{% if block.settings.quantity_outline_btns %} cart-quantity--outline-btns{% endif %}"
+                                    class="quantity cart-quantity color-{{ block.settings.quantity_container_color_scheme }}{% if block.settings.quantity_round_btns %} cart-quantity--round-btns{% endif %}"
                                     style="
                                       --font-size:{{ block.settings.quantity_font_size | divided_by: 10.0 }}rem;
                                       --border-width:0.{{ block.settings.quantity_border_width }}rem;
