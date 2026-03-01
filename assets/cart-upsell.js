@@ -221,10 +221,6 @@ if (!customElements.get('cart-drawer-upsell')) {
       this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
         node.addEventListener('click', this.boundToggleClick);
       });
-      this.boundControlClick = this.onControlClick.bind(this);
-      this.querySelectorAll('[data-upsell-control="true"]').forEach((node) => {
-        node.addEventListener('click', this.boundControlClick);
-      });
 
       if (this.variantPicker) {
         this.boundVariantChange = this.onVariantChange.bind(this);
@@ -249,9 +245,6 @@ if (!customElements.get('cart-drawer-upsell')) {
       this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
         node.removeEventListener('click', this.boundToggleClick);
       });
-      this.querySelectorAll('[data-upsell-control="true"]').forEach((node) => {
-        node.removeEventListener('click', this.boundControlClick);
-      });
       if (this.variantPicker) {
         this.variantPicker.removeEventListener('change', this.boundVariantChange);
       }
@@ -267,10 +260,26 @@ if (!customElements.get('cart-drawer-upsell')) {
     }
 
     onToggleClick(event) {
-      const tagName = event.target.tagName.toLowerCase();
+      const target = event.target;
+      const tagName = target.tagName.toLowerCase();
       if (tagName === 'select' || tagName === 'option') return;
 
-      if (!this.toggleEnabled || this._busy) return;
+      const toggleNode = target.closest('[data-upsell-toggle]');
+      const isContainerToggle = toggleNode?.dataset.upsellToggle === 'container';
+      const isControlToggle = toggleNode?.dataset.upsellToggle === 'control';
+      const insideControl = Boolean(target.closest('[data-upsell-control="true"]'));
+
+      if (isContainerToggle && insideControl) {
+        event.stopPropagation();
+        return;
+      }
+
+      if (!isContainerToggle && !isControlToggle) return;
+
+      if (!this.toggleEnabled || this._busy) {
+        event.preventDefault();
+        return;
+      }
       event.preventDefault();
 
       const selected = this.dataset.selected === 'true';
@@ -278,17 +287,6 @@ if (!customElements.get('cart-drawer-upsell')) {
         this.removeFromCart();
       } else {
         this.addToCart();
-      }
-    }
-
-    onControlClick(event) {
-      if (this._busy) {
-        event.preventDefault();
-        return;
-      }
-
-      if (this.dataset.toggleElement === 'container') {
-        event.stopPropagation();
       }
     }
 
@@ -485,6 +483,12 @@ if (!customElements.get('cart-drawer-upsell')) {
         node.toggleAttribute('disabled', isBusy);
         node.setAttribute('aria-busy', String(isBusy));
       });
+
+      if (this.addButton && this.isClassicAddButton) {
+        this.addButton.toggleAttribute('disabled', isBusy || this.dataset.unavailable === 'true');
+        this.addButton.setAttribute('aria-busy', String(isBusy));
+      }
+
       this.variantSelectElements.forEach((select) => {
         select.toggleAttribute('disabled', isBusy);
       });

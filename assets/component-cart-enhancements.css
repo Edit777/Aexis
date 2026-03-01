@@ -418,6 +418,17 @@ cart-drawer-upsell .upsell__add-btn > span {
   gap: 0.45rem;
 }
 
+
+cart-drawer-upsell[data-control-mode='classic'] .upsell__toggle-switch,
+cart-drawer-upsell[data-control-mode='classic'] .upsell__checkbox,
+cart-drawer-upsell[data-control-mode='classic'] .upsell__plus-btn {
+  display: none !important;
+}
+
+cart-drawer-upsell[data-control-mode='toggle'] .upsell__add-btn {
+  display: none;
+}
+
 cart-drawer-upsell .upsell__toggle-switch,
 cart-drawer-upsell .upsell__checkbox,
 cart-drawer-upsell .upsell__plus-btn {
