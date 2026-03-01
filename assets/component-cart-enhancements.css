@@ -304,15 +304,14 @@ cart-drawer-upsell.upsell:not(.upsell--custom-bg) {
 }
 
 cart-drawer-upsell .upsell__container {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: start;
-  column-gap: 1.2rem;
-  row-gap: 0.6rem;
-  padding: 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1rem;
 }
 
 cart-drawer-upsell .upsell__image {
+  position: relative;
   flex: 0 0 var(--image-size, 5.6rem);
   width: var(--image-size, 5.6rem);
   border-radius: var(--image-border-radius, 0.7rem);
@@ -323,6 +322,7 @@ cart-drawer-upsell .upsell__image {
 cart-drawer-upsell .upsell__image__img {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 1 / 1;
   object-fit: cover;
 }
@@ -332,29 +332,10 @@ cart-drawer-upsell .upsell__content {
   min-width: 0;
 }
 
-cart-drawer-upsell.upsell--btn-left .upsell__container {
-  grid-template-columns: auto auto minmax(0, 1fr);
-}
-
 cart-drawer-upsell.upsell--btn-left .upsell__toggle-switch,
 cart-drawer-upsell.upsell--btn-left .upsell__checkbox,
 cart-drawer-upsell.upsell--btn-left .upsell__plus-btn {
-  grid-column: 1;
-  justify-self: start;
-}
-
-cart-drawer-upsell.upsell--btn-left .upsell__image {
-  grid-column: 2;
-}
-
-cart-drawer-upsell.upsell--btn-left .upsell__content {
-  grid-column: 3;
-}
-
-cart-drawer-upsell.upsell--btn-right .upsell__toggle-switch,
-cart-drawer-upsell.upsell--btn-right .upsell__checkbox,
-cart-drawer-upsell.upsell--btn-right .upsell__plus-btn {
-  grid-column: 3;
+  order: -1;
 }
 
 cart-drawer-upsell .upsell__title {
@@ -479,16 +460,16 @@ cart-drawer-upsell .upsell__plus-btn .material-symbols-outlined {
 
 cart-drawer-upsell .checkmark-checked,
 cart-drawer-upsell .checkmark-unchecked {
-  display: none;
+  display: none !important;
 }
 
 cart-drawer-upsell[data-selected='true'] .checkmark-checked {
-  display: inline-flex;
+  display: inline-flex !important;
 }
 
 cart-drawer-upsell[data-selected='false'] .checkmark-unchecked,
 cart-drawer-upsell:not([data-selected='true']) .checkmark-unchecked {
-  display: inline-flex;
+  display: inline-flex !important;
 }
 
 cart-drawer-upsell .upsell__toggle-switch .toggle-switch__slider::before {
@@ -515,30 +496,13 @@ cart-drawer-upsell .upsell__toggle-switch {
 
 @media screen and (max-width: 749px) {
   cart-drawer-upsell .upsell__container {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  cart-drawer-upsell.upsell--btn-left .upsell__container,
-  cart-drawer-upsell.upsell--btn-right .upsell__container {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  cart-drawer-upsell.upsell--btn-left .upsell__image,
-  cart-drawer-upsell.upsell--btn-right .upsell__image {
-    grid-column: 1;
-  }
-
-  cart-drawer-upsell.upsell--btn-left .upsell__content,
-  cart-drawer-upsell.upsell--btn-right .upsell__content {
-    grid-column: 2;
+    gap: 0.8rem;
   }
 
   cart-drawer-upsell .upsell__toggle-switch,
   cart-drawer-upsell .upsell__checkbox,
   cart-drawer-upsell .upsell__plus-btn {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: start;
+    align-self: flex-start;
     margin-top: 0.1rem;
   }
 
@@ -548,8 +512,7 @@ cart-drawer-upsell .upsell__toggle-switch {
   cart-drawer-upsell.upsell--btn-right .upsell__toggle-switch,
   cart-drawer-upsell.upsell--btn-right .upsell__checkbox,
   cart-drawer-upsell.upsell--btn-right .upsell__plus-btn {
-    grid-column: 2;
-    justify-self: end;
+    margin-left: auto;
   }
 }
 
