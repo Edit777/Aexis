@@ -390,17 +390,17 @@ if (!customElements.get('cart-drawer-upsell')) {
     syncSelectedForCurrentVariant() {
       const selectedVariant = parseInt(this.dataset.id, 10);
       if (this.isClassicAddButton) {
-        this.dataset.selected = 'false';
+        this.setSelected(false);
         return;
       }
 
       if (!selectedVariant) {
-        this.dataset.selected = 'false';
+        this.setSelected(false);
         return;
       }
 
       const inCart = this.getCurrentCartVariantIds().includes(selectedVariant);
-      this.dataset.selected = String(inCart);
+      this.setSelected(inCart);
     }
 
     getCurrentCartVariantIds() {
@@ -495,7 +495,7 @@ if (!customElements.get('cart-drawer-upsell')) {
         if (!response.ok) return;
 
         const cartData = await response.json();
-        this.dataset.selected = 'true';
+        this.setSelected(true);
 
         if (this.cartDrawer) this.cartDrawer.renderContents(cartData);
 
@@ -539,7 +539,7 @@ if (!customElements.get('cart-drawer-upsell')) {
         if (!response.ok) return;
 
         const cartData = await response.json();
-        this.dataset.selected = 'false';
+        this.setSelected(false);
 
         if (this.cartDrawer) this.cartDrawer.renderContents(cartData);
 
@@ -560,13 +560,18 @@ if (!customElements.get('cart-drawer-upsell')) {
       if (!selectedVariant) return;
 
       const inCart = (cartData.items || []).some((item) => item.variant_id === selectedVariant);
-      this.dataset.selected = String(inCart);
+      this.setSelected(inCart);
       this.syncSelectionState();
+    }
+
+    setSelected(selected) {
+      this.dataset.selected = selected ? 'true' : 'false';
+      this.dataset.state = selected ? 'selected' : 'default';
     }
 
     syncSelectionState() {
       const selected = !this.isClassicAddButton && this.dataset.selected === 'true';
-      this.dataset.state = selected ? 'selected' : 'default';
+      this.setSelected(selected);
       this.classList.toggle('is-selected', selected);
       this.setAttribute('aria-selected', String(selected));
       this.querySelectorAll('.upsell-toggle-btn').forEach((node) => {
