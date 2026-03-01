@@ -125,12 +125,12 @@
         {%- endfor -%}
       {%- endif -%}
 
-      {%- comment -%} Cart items block — rendered from section blocks to use block settings {%- endcomment -%}
-      {%- assign total_compare_price = 0 -%}
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'cart_items' -%}
+      {%- if cart != empty -%}
+        {%- comment -%} Cart items block — rendered from section blocks to use block settings {%- endcomment -%}
+        {%- assign total_compare_price = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'cart_items' -%}
           <cart-drawer-items
-            {% if cart == empty %}class=" is-empty"{% endif %}
             style="--image-size: {{ block.settings.image_size }}%;--title-size:{{ block.settings.title_size }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
             {{ block.shopify_attributes }}
           >
@@ -141,10 +141,9 @@
               method="post"
             >
               <div id="CartDrawer-CartItems" class="drawer__contents js-contents">
-                {%- if cart != empty -%}
-                  <div class="drawer__cart-items-wrapper">
-                    <ul class="cart-items list-unstyled">
-                      {%- for item in cart.items -%}
+                <div class="drawer__cart-items-wrapper">
+                  <ul class="cart-items list-unstyled">
+                    {%- for item in cart.items -%}
                         {%- liquid
                           assign display_compare = false
                           assign compare_price = 0
@@ -408,10 +407,9 @@
                             </div>
                           </div>
                         </li>
-                      {%- endfor -%}
-                    </ul>
-                  </div>
-                {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                </div>
                 <p id="CartDrawer-LiveRegionText" class="visually-hidden" role="status"></p>
                 <p id="CartDrawer-LineItemStatus" class="visually-hidden" aria-hidden="true" role="status">
                   {{ 'accessibility.loading' | t }}
@@ -420,12 +418,12 @@
               <div id="CartDrawer-CartErrors" role="alert"></div>
             </form>
           </cart-drawer-items>
-        {%- endif -%}
-      {%- endfor -%}
+          {%- endif -%}
+        {%- endfor -%}
 
-      <div class="drawer__footer">
-        {% for block in section.blocks %}
-          {% case block.type %}
+        <div class="drawer__footer">
+          {% for block in section.blocks %}
+            {% case block.type %}
             {% when 'discount_field' %}
               {% render 'cart-discount-field', block: block %}
             {% when 'cart_note' %}
@@ -585,9 +583,10 @@
               {% if block.settings.position == 'footer' %}
                 {{ block.settings.custom_liquid }}
               {% endif %}
-          {% endcase %}
-        {% endfor %}
-      </div>
+            {% endcase %}
+          {% endfor %}
+        </div>
+      {%- endif -%}
     </div>
   </div>
 </cart-drawer>
