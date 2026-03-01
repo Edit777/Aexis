@@ -115,7 +115,9 @@ if (!customElements.get('cart-drawer-upsell')) {
         if (!response.ok) return false;
         const cartData = await response.json();
         if (rerender && this.drawer) this.drawer.renderContents(cartData);
-        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-upsell', cartData, variantId: this.currentVariantId });
+        if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') {
+          publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-upsell', cartData, variantId: this.currentVariantId });
+        }
         return true;
       } catch (error) {
         return false;
@@ -148,7 +150,9 @@ if (!customElements.get('cart-drawer-upsell')) {
         if (!response.ok) return false;
         const cartData = await response.json();
         if (rerender && this.drawer) this.drawer.renderContents(cartData);
-        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-upsell', cartData, variantId: Number(variantId) });
+        if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') {
+          publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-upsell', cartData, variantId: Number(variantId) });
+        }
         return true;
       } catch (error) {
         return false;
