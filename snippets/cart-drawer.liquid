@@ -459,20 +459,7 @@
           {% case block.type %}
             {% when 'product_upsells' %}
               {% if block.settings.position == 'body' %}
-                {% liquid
-                  if block.settings.display == 'globally'
-                    assign display = true
-                  else
-                    assign display = false
-                    assign handles_array = block.settings.display_product_handles | replace: ' ', '' | split: ','
-                    if product and handles_array contains product.handle
-                      assign display = true
-                    endif
-                  endif
-                %}
-                {% if display %}
-                  {% render 'upsell-block', block: block, type: 'cart-drawer' %}
-                {% endif %}
+                {% render 'cart-drawer-upsells', block: block %}
               {% endif %}
           {% endcase %}
         {% endfor %}
@@ -625,20 +612,7 @@
               </div>
             {% when 'product_upsells' %}
               {% if block.settings.position == 'footer' %}
-                {% liquid
-                  if block.settings.display == 'globally'
-                    assign display = true
-                  else
-                    assign display = false
-                    assign handles_array = block.settings.display_product_handles | replace: ' ', '' | split: ','
-                    if product and handles_array contains product.handle
-                      assign display = true
-                    endif
-                  endif
-                %}
-                {% if display %}
-                  {% render 'upsell-block', block: block, type: 'cart-drawer' %}
-                {% endif %}
+                {% render 'cart-drawer-upsells', block: block %}
               {% endif %}
             {% when 'gift' %}
               {% if block.settings.position == 'footer' %}
