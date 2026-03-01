@@ -280,8 +280,8 @@ cart-drawer-upsell.upsell {
   position: relative;
   display: block;
   border-radius: var(--border-radius, var(--cart-drawer-block-radius));
-  border: var(--border-width, 0.1rem) solid rgba(var(--color-foreground), 0.12);
-  background: rgb(var(--color-background));
+  border: var(--border-width, 0.1rem) solid var(--regular-border-color, rgba(var(--color-foreground), 0.12));
+  background: var(--regular-bg-color, rgb(var(--color-background)));
   overflow: hidden;
   transition: border-color var(--duration-short) ease, box-shadow var(--duration-short) ease, background var(--duration-short) ease;
 }
@@ -317,6 +317,31 @@ cart-drawer-upsell .upsell__image__img {
 cart-drawer-upsell .upsell__content {
   flex: 1;
   min-width: 0;
+}
+
+cart-drawer-upsell.upsell--btn-left .upsell__container {
+  grid-template-columns: auto auto minmax(0, 1fr);
+}
+
+cart-drawer-upsell.upsell--btn-left .upsell__toggle-switch,
+cart-drawer-upsell.upsell--btn-left .upsell__checkbox,
+cart-drawer-upsell.upsell--btn-left .upsell__plus-btn {
+  grid-column: 1;
+  justify-self: start;
+}
+
+cart-drawer-upsell.upsell--btn-left .upsell__image {
+  grid-column: 2;
+}
+
+cart-drawer-upsell.upsell--btn-left .upsell__content {
+  grid-column: 3;
+}
+
+cart-drawer-upsell.upsell--btn-right .upsell__toggle-switch,
+cart-drawer-upsell.upsell--btn-right .upsell__checkbox,
+cart-drawer-upsell.upsell--btn-right .upsell__plus-btn {
+  grid-column: 3;
 }
 
 cart-drawer-upsell .upsell__title {
@@ -439,6 +464,35 @@ cart-drawer-upsell .upsell__plus-btn .material-symbols-outlined {
   vertical-align: middle;
 }
 
+cart-drawer-upsell .checkmark-checked,
+cart-drawer-upsell .checkmark-unchecked {
+  display: none;
+}
+
+cart-drawer-upsell[data-selected='true'] .checkmark-checked,
+cart-drawer-upsell.is-selected .checkmark-checked {
+  display: inline-flex;
+}
+
+cart-drawer-upsell[data-selected='false'] .checkmark-unchecked,
+cart-drawer-upsell:not(.is-selected) .checkmark-unchecked {
+  display: inline-flex;
+}
+
+cart-drawer-upsell .upsell__toggle-switch .toggle-switch__slider::before {
+  content: '';
+}
+
+cart-drawer-upsell[data-selected='true'] .upsell__toggle-switch .toggle-switch__slider,
+cart-drawer-upsell.is-selected .upsell__toggle-switch .toggle-switch__slider {
+  background: rgb(var(--color-button));
+}
+
+cart-drawer-upsell[data-selected='true'] .upsell__toggle-switch .toggle-switch__slider::before,
+cart-drawer-upsell.is-selected .upsell__toggle-switch .toggle-switch__slider::before {
+  transform: translateX(1.2rem);
+}
+
 cart-drawer-upsell .upsell__checkbox,
 cart-drawer-upsell .upsell__plus-btn,
 cart-drawer-upsell .upsell__toggle-switch {
@@ -452,6 +506,21 @@ cart-drawer-upsell .upsell__toggle-switch {
     grid-template-columns: auto minmax(0, 1fr);
   }
 
+  cart-drawer-upsell.upsell--btn-left .upsell__container,
+  cart-drawer-upsell.upsell--btn-right .upsell__container {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  cart-drawer-upsell.upsell--btn-left .upsell__image,
+  cart-drawer-upsell.upsell--btn-right .upsell__image {
+    grid-column: 1;
+  }
+
+  cart-drawer-upsell.upsell--btn-left .upsell__content,
+  cart-drawer-upsell.upsell--btn-right .upsell__content {
+    grid-column: 2;
+  }
+
   cart-drawer-upsell .upsell__toggle-switch,
   cart-drawer-upsell .upsell__checkbox,
   cart-drawer-upsell .upsell__plus-btn {
@@ -459,6 +528,16 @@ cart-drawer-upsell .upsell__toggle-switch {
     grid-row: 1;
     align-self: start;
     margin-top: 0.1rem;
+  }
+
+  cart-drawer-upsell.upsell--btn-left .upsell__toggle-switch,
+  cart-drawer-upsell.upsell--btn-left .upsell__checkbox,
+  cart-drawer-upsell.upsell--btn-left .upsell__plus-btn,
+  cart-drawer-upsell.upsell--btn-right .upsell__toggle-switch,
+  cart-drawer-upsell.upsell--btn-right .upsell__checkbox,
+  cart-drawer-upsell.upsell--btn-right .upsell__plus-btn {
+    grid-column: 2;
+    justify-self: end;
   }
 }
 
@@ -475,6 +554,11 @@ cart-drawer-upsell.is-selected .upsell__add-btn > span::before {
   content: '✓';
   font-size: 1.1em;
   line-height: 1;
+}
+
+cart-drawer-upsell.upsell--add_button .upsell__add-btn > span::before,
+cart-drawer-upsell[data-style='add_button'] .upsell__add-btn > span::before {
+  content: none;
 }
 
 cart-drawer-upsell[data-unavailable='true'],
