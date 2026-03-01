@@ -1,9 +1,8 @@
 {% liquid
-  assign is_quantity = block.settings.goal_type == 'quantity'
   assign goal = block.settings.goal | times: 100.0
   assign current_value = cart.items_subtotal_price
 
-  if is_quantity
+  if block.settings.goal_type == 'quantity'
     assign goal = block.settings.goal | round
     assign current_value = items_count
   endif
@@ -13,14 +12,13 @@
     assign goal_progress = current_value | times: 100.0 | divided_by: goal
   endif
 
-  assign goal_reached = goal_progress >= 100.00
   if goal_progress > 100
     assign goal_progress = 100
   endif
 %}
 
 {% capture goal_difference_html %}
-  {% if is_quantity %}
+  {% if block.settings.goal_type == 'quantity' %}
     {{ goal | minus: items_count | round }}
   {% else %}
     <span>{{ goal | minus: cart.items_subtotal_price | money_without_trailing_zeros }}</span>
@@ -41,7 +39,7 @@
   {{ block.shopify_attributes }}
 >
   <p class="cart-progress__text cart-progress-bar__message">
-    {% if goal_reached == false %}
+    {% if goal_progress < 100 %}
       {{ block.settings.progress_message | replace: '[amount]', goal_difference_html }}
     {% else %}
       {{ block.settings.success_message }}
