@@ -149,12 +149,7 @@
                           assign display_compare = false
                           assign compare_price = 0
                           assign has_props = false
-                          assign current_variant = nil
-                          for variant in item.product.variants
-                            if variant.id == item.variant.id
-                              assign current_variant = variant
-                            endif
-                          endfor
+                          assign current_variant = item.variant
 
                           if block.settings.displayed_compare_prices == 'automatic'
                             if item.original_line_price != item.final_line_price
