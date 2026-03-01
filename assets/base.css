@@ -2570,54 +2570,6 @@ input[type='checkbox'] {
   width: 2rem;
   fill: none;
   vertical-align: middle;
-  transition: transform var(--duration-short) ease;
-  transform-origin: center;
-}
-
-.header__icon--cart {
-  transition: transform var(--duration-short) ease;
-}
-
-.header__icon--cart .cart-count-bubble {
-  transition: transform var(--duration-short) ease;
-  transform-origin: center;
-}
-
-.header__icon--cart:hover,
-.header__icon--cart:focus-visible {
-  transform: translateY(-1px);
-}
-
-.header__icon--cart:active {
-  transform: scale(0.97);
-}
-
-.header__icon--cart:hover .icon,
-.header__icon--cart:focus-visible .icon {
-  transform: scale(1.07) rotate(-4deg);
-}
-
-.header__icon--cart:hover .cart-count-bubble,
-.header__icon--cart:focus-visible .cart-count-bubble {
-  transform: scale(1.08);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .header__icon .icon,
-  .header__icon--cart,
-  .header__icon--cart .cart-count-bubble {
-    transition: none;
-  }
-
-  .header__icon--cart:hover,
-  .header__icon--cart:focus-visible,
-  .header__icon--cart:active,
-  .header__icon--cart:hover .icon,
-  .header__icon--cart:focus-visible .icon,
-  .header__icon--cart:hover .cart-count-bubble,
-  .header__icon--cart:focus-visible .cart-count-bubble {
-    transform: none;
-  }
 }
 
 .header__icon,
