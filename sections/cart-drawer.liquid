@@ -263,52 +263,10 @@
           "info": "Determines how the displayed compare prices of the items are caluclated. If \"Cart discounts\" is selected, compare prices won't be displayed unless there is a Product discount for the item. \"Real product compare price\" displays the compare price as item quantity * real product compare price. \"Automatic\" is the combination of the first two options. If an automatic discount is active, that's going to be displayed. Otherwise, the real compare price of the product will be taken into calculation."
         },
         {
-          "type": "select",
-          "id": "price_color",
-          "label": "Price color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "accent-1"
-        },
-        {
-          "type": "select",
-          "id": "compare_price_color",
-          "label": "Compare price color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "text"
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:sections.all.colors.label",
+          "default": "scheme-1"
         },
         {
           "type": "checkbox",
@@ -333,30 +291,6 @@
           "label": "Text",
           "default": "<strong>(You save [amount])</strong>",
           "info": "Use [amount] to display the saved amount"
-        },
-        {
-          "type": "select",
-          "id": "savings_color",
-          "label": "Color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "text"
         },
         {
           "type": "header",
@@ -548,28 +482,10 @@
           "default": "spaced"
         },
         {
-          "type": "select",
-          "id": "savings_text_color",
-          "label": "Text color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "accent-1"
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:sections.all.colors.label",
+          "default": "scheme-1"
         },
         {
           "type": "range",
@@ -648,30 +564,6 @@
             }
           ],
           "default": "spaced"
-        },
-        {
-          "type": "select",
-          "id": "subtotal_text_color",
-          "label": "Text color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "text"
         },
         {
           "type": "range",
@@ -906,28 +798,10 @@
           "label": "Custom icon"
         },
         {
-          "type": "select",
-          "id": "accent_color",
-          "label": "Accent color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "accent-1"
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:sections.all.colors.label",
+          "default": "scheme-1"
         },
         {
           "type": "header",
@@ -1400,30 +1274,6 @@
           "default": "row",
           "label": "Multiple products stacking",
           "info": "If Next to each other is selected, featured images with transparent backgrounds are recommended."
-        },
-        {
-          "type": "select",
-          "id": "accent_color",
-          "label": "Accent color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "accent-1"
         },
         {
           "type": "color_scheme",
@@ -1929,30 +1779,6 @@
           "id": "display_product_handles",
           "label": "Products to display the block on",
           "info": "Handles of specific products you want to display the block on, split by comma without spacing in between. Example: \"first-handle, second-handle\"."
-        },
-        {
-          "type": "select",
-          "id": "accent_color",
-          "label": "Accent color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "accent-1"
         },
         {
           "type": "color_scheme",
@@ -2748,28 +2574,10 @@
           "label": "t:sections.main-product.blocks.icon_with_text.settings.layout.label"
         },
         {
-          "type": "select",
-          "id": "icon_color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "accent-1",
-          "label": "Icon color"
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:sections.all.colors.label",
+          "default": "scheme-1"
         },
         {
           "type": "header",
@@ -3079,28 +2887,10 @@
           "content": "Checkbox & text"
         },
         {
-          "type": "select",
-          "id": "checkbox_color",
-          "label": "Checkbox color",
-          "options": [
-            {
-              "value": "accent-1",
-              "label": "Accent 1"
-            },
-            {
-              "value": "accent-2",
-              "label": "Accent 2"
-            },
-            {
-              "value": "outline-button",
-              "label": "Outline button"
-            },
-            {
-              "value": "text",
-              "label": "Text"
-            }
-          ],
-          "default": "text"
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:sections.all.colors.label",
+          "default": "scheme-1"
         },
         {
           "type": "inline_richtext",

@@ -65,7 +65,7 @@
         }
       </style>
       <cart-drawer-gift
-        class='cart-drawer-gift upsell color-{{ block.settings.color_scheme }} accent-color-{{ block.settings.accent_color }}{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}{% if block.settings.toggle_element == 'container' %} upsell--container-btn{% endif %}{% if unlocked %} is-unlocked{% else %} is-locked{% endif %}{% if gift_in_cart %} is-selected{% endif %}'
+        class='cart-drawer-gift upsell color-{{ block.settings.color_scheme }} gradient{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}{% if block.settings.toggle_element == 'container' %} upsell--container-btn{% endif %}{% if unlocked %} is-unlocked{% else %} is-locked{% endif %}{% if gift_in_cart %} is-selected{% endif %}'
         data-selected="{{ gift_in_cart }}"
         data-unlocked="{{ unlocked }}"
         data-gift-in-cart="{{ gift_in_cart }}"
@@ -146,7 +146,7 @@
               {% if block.settings.show_variant_picker %}
                 <div class='upsell__variant-picker'>
                   {%- for option in product.options_with_values -%}
-                    <div class="upsell__select select select--small no-background color-{{ settings.pickers_color_scheme }} accent-color-{{ settings.pickers_overlay_color }} accent-2-color-{{ settings.pickers_text_color }}">
+                    <div class="upsell__select select select--small no-background color-{{ settings.pickers_color_scheme }} gradient">
                       <select class="select__select variant-dropdown" name="options[{{ option.name | escape }}]">
                         {%- liquid
                           assign variants_available_arr = product.variants | map: 'available'

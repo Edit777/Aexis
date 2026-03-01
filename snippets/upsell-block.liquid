@@ -140,7 +140,7 @@
             </style>
           {% endif %}
           <{{ type }}-upsell
-            class='upsell upsell--{{ block.settings.style }} {{ type }}-upsell-{{ section.id }} upsell--btn-{{ block.settings.btn_position }} color-{{ block.settings.color_scheme }} accent-color-{{ block.settings.accent_color }}{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}'
+            class='upsell upsell--{{ block.settings.style }} {{ type }}-upsell-{{ section.id }} upsell--btn-{{ block.settings.btn_position }} color-{{ block.settings.color_scheme }} gradient{% if block.settings.show_custom_bg %} upsell--custom-bg{% endif %}{% if block.settings.show_box_shadow %} upsell--box-shadow{% endif %}{% if block.settings.show_border %} upsell--border{% endif %}'
             data-style="{{ block.settings.style }}" 
             data-selected="{{ preselected }}"
             data-handle="{{ product.handle }}"
@@ -207,7 +207,7 @@
                   {% if block.settings.show_variant_picker %}
                     <div class='upsell__variant-picker'>
                       {%- for option in product.options_with_values -%}
-                        <div class="upsell__select select select--small no-background color-{{ settings.pickers_color_scheme }} accent-color-{{ settings.pickers_overlay_color }} accent-2-color-{{ settings.pickers_text_color }}">
+                        <div class="upsell__select select select--small no-background color-{{ settings.pickers_color_scheme }} gradient">
                           <select class="select__select variant-dropdown" name="options[{{ option.name | escape }}]">
                             {% for value in option.values %}
                               {%- liquid
