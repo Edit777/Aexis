@@ -1,0 +1,94 @@
+{% liquid
+  assign est_id = 'estimated-shipping-' | append: section.id | append: '-' | append: block.id
+  assign min_days = block.settings.min_shipping_days | default: 3
+  assign max_days = block.settings.max_shipping_days | default: 7
+  assign date_format = block.settings.date_format | default: '%b %-d'
+  assign message = block.settings.message | default: 'Estimated delivery between [start_date] - [end_date]'
+%}
+
+<div
+  id="{{ est_id }}"
+  class="aex-estimated-shipping{% if block.settings.icon_alignment == 'middle' %} aex-estimated-shipping--align-center{% endif %}"
+  data-date-format="{{ date_format | escape }}"
+  data-min-days="{{ min_days }}"
+  data-max-days="{{ max_days }}"
+  data-message="{{ message | escape }}"
+  style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 | default: 0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 | default: 0 }}rem;"
+  {{ block.shopify_attributes }}
+>
+  {% unless block.settings.custom_icon == blank and block.settings.icon == blank %}
+    <span class="aex-estimated-shipping__icon aex-estimated-shipping__icon--{{ block.settings.icon_size | default: 'md' }}">
+      {% if block.settings.custom_icon != blank %}
+        <img
+          src="{{ block.settings.custom_icon | image_url: width: 150 }}"
+          alt=""
+          width="24"
+          height="24"
+          loading="lazy"
+        >
+      {% else %}
+        {% render 'material-icon', icon: block.settings.icon, filled: block.settings.filled_icon %}
+      {% endif %}
+    </span>
+  {% endunless %}
+  <span class="aex-estimated-shipping__text" data-estimated-shipping-text>
+    {{ message | replace: '[start_date]', '-' | replace: '[end_date]', '-' }}
+  </span>
+</div>
+
+<style>
+  #{{ est_id }} {
+    margin-top: var(--margin-top);
+    margin-bottom: var(--margin-bottom);
+    display: flex;
+    align-items: flex-start;
+    gap: .6rem;
+    line-height: 1.35;
+  }
+  #{{ est_id }}.aex-estimated-shipping--align-center { align-items: center; }
+  #{{ est_id }} .aex-estimated-shipping__icon { display: inline-flex; }
+  #{{ est_id }} .aex-estimated-shipping__icon img,
+  #{{ est_id }} .aex-estimated-shipping__icon svg { display: block; }
+  #{{ est_id }} .aex-estimated-shipping__icon--sm { font-size: 1.2rem; }
+  #{{ est_id }} .aex-estimated-shipping__icon--md { font-size: 1.6rem; }
+  #{{ est_id }} .aex-estimated-shipping__icon--lg { font-size: 2rem; }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById({{ est_id | json }});
+    if (!root) return;
+
+    const textNode = root.querySelector('[data-estimated-shipping-text]');
+    if (!textNode) return;
+
+    const minDays = Number(root.dataset.minDays || 0);
+    const maxDays = Number(root.dataset.maxDays || minDays);
+    const message = root.dataset.message || '';
+    const format = root.dataset.dateFormat || '%b %-d';
+
+    const formatDate = (date, template) => {
+      const monthShort = date.toLocaleString(undefined, { month: 'short' });
+      const monthLong = date.toLocaleString(undefined, { month: 'long' });
+      const day = date.getDate();
+      return template
+        .replace(/%B/g, monthLong)
+        .replace(/%b/g, monthShort)
+        .replace(/%-d|%e/g, String(day))
+        .replace(/%d/g, String(day).padStart(2, '0'));
+    };
+
+    const now = new Date();
+    const start = new Date(now);
+    const end = new Date(now);
+    start.setDate(now.getDate() + Math.max(0, minDays));
+    end.setDate(now.getDate() + Math.max(0, maxDays));
+
+    const startText = formatDate(start, format);
+    const endText = formatDate(end, format);
+
+    textNode.textContent = message
+      .replace('[start_date]', startText)
+      .replace('[end_date]', endText);
+  })();
+</script>

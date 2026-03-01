@@ -1,0 +1,91 @@
+{% comment %} Expected params: block, margins (boolean), block_attributes (boolean), mobile_align (boolean) {% endcomment %}
+{% liquid
+  assign nowrap = false
+  assign item_count = 0
+  if block.settings.text_1 != blank
+    assign item_count = item_count | plus: 1
+  endif
+  if block.settings.text_2 != blank
+    assign item_count = item_count | plus: 1
+  endif
+  if block.settings.text_3 != blank
+    assign item_count = item_count | plus: 1
+  endif
+  assign twi_id = 'text-with-icon-' | append: section.id | append: '-' | append: block.id
+  if block.settings.block_width == 'unlimited'
+    assign nowrap = true
+  endif
+%}
+
+{% if block.settings.block_width == 'fixed' %}
+  <style>
+    #{{ twi_id }} { width: {{ block.settings.block_mobile_width }}px; max-width: 100%; flex-shrink: 0; }
+    @media screen and (min-width: 750px) {
+      #{{ twi_id }} { width: {{ block.settings.block_desktop_width }}px; }
+    }
+  </style>
+{% endif %}
+
+<div
+  id="{{ twi_id }}"
+  class="aex-text-with-icon aex-text-with-icon--{{ block.settings.direction | default: 'row' }}{% if block.settings.enable_bg %} aex-text-with-icon--background{% endif %}"
+  style="--item-count:{{ item_count }};--mobile-text-size: {{ block.settings.mobile_text_size | divided_by: 10.0 | default: 1.2 }}rem;--desktop-text-size: {{ block.settings.desktop_text_size | divided_by: 10.0 | default: 1.4 }}rem;--icon-scale:{{ block.settings.icon_scale | divided_by: 100.0 | default: 1 }};--column-gap:{{ block.settings.column_gap | divided_by: 2.0 | default: .8 }}em;--row-gap:{{ block.settings.column_gap | divided_by: 5.0 | default: .3 }}em;--padding:{{ block.settings.padding | divided_by: 7.0 | default: .6 }}em;--bg-color:{{ block.settings.bg_color }};--corner-radius:{{ block.settings.corner_radius | divided_by: 100.0 | default: .2 }}em;--border-size:{{ block.settings.border_size | default: 0 }}px;--border-color:{{ block.settings.border_color }};{% if margins %}--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;{% endif %}"
+  {% if block_attributes %}{{- block.shopify_attributes -}}{% endif %}
+>
+  {% for i in (1..3) %}
+    {% liquid
+      case i
+        when 1
+          assign text = block.settings.text_1
+          assign custom_icon = block.settings.custom_icon_1
+          assign icon = block.settings.icon_1
+          assign filled_icon = block.settings.filled_icon_1
+        when 2
+          assign text = block.settings.text_2
+          assign custom_icon = block.settings.custom_icon_2
+          assign icon = block.settings.icon_2
+          assign filled_icon = block.settings.filled_icon_2
+        when 3
+          assign text = block.settings.text_3
+          assign custom_icon = block.settings.custom_icon_3
+          assign icon = block.settings.icon_3
+          assign filled_icon = block.settings.filled_icon_3
+      endcase
+    %}
+    {% if text != blank %}
+      <p class="aex-text-with-icon__item" style="color:{{ block.settings.text_color }};--icon-color:{{ block.settings.icon_color }};text-align:{{ block.settings.alignment | default: 'left' }};">
+        {% if custom_icon != blank %}
+          <img src="{{ custom_icon | image_url: width: 60 }}" alt="{{ custom_icon.alt | escape }}" width="20" height="20" loading="lazy">
+        {% elsif icon != blank %}
+          {% render 'material-icon', icon: icon, filled: filled_icon %}
+        {% endif %}
+        <span{% if nowrap %} class="nowrap"{% endif %}>{{ text }}</span>
+      </p>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<style>
+  #{{ twi_id }} {
+    margin-top: var(--margin-top, 0);
+    margin-bottom: var(--margin-bottom, 0);
+    display: flex;
+    flex-direction: {% if block.settings.direction == 'column' %}column{% else %}row{% endif %};
+    flex-wrap: wrap;
+    gap: var(--row-gap) var(--column-gap);
+    font-size: var(--mobile-text-size);
+    {% if block.settings.enable_bg %}
+      background: var(--bg-color);
+      border-radius: var(--corner-radius);
+      border: var(--border-size) solid var(--border-color);
+      padding: var(--padding);
+    {% endif %}
+  }
+  #{{ twi_id }} .aex-text-with-icon__item { display: inline-flex; align-items: center; gap: .45em; margin: 0; }
+  #{{ twi_id }} .aex-text-with-icon__item svg,
+  #{{ twi_id }} .aex-text-with-icon__item img { width: calc(1em * var(--icon-scale)); height: calc(1em * var(--icon-scale)); color: var(--icon-color); flex: 0 0 auto; }
+  #{{ twi_id }} .nowrap { white-space: nowrap; }
+  @media screen and (min-width: 750px) {
+    #{{ twi_id }} { font-size: var(--desktop-text-size); }
+  }
+</style>
