@@ -6,6 +6,7 @@
   --focused-base-outline: 0.2rem solid rgba(var(--color-foreground), 0.5);
   --focused-base-outline-offset: 0.3rem;
   --focused-base-box-shadow: 0 0 0 0.3rem rgb(var(--color-background)), 0 0 0.5rem 0.4rem rgba(var(--color-foreground), 0.3);
+  --tap-highlight-color: rgba(var(--color-foreground), 0.12);
 }
 
 .product-card-wrapper .card,
@@ -709,6 +710,25 @@ summary::-webkit-details-marker {
 /*
   Focus ring - default (with offset)
 */
+
+a,
+button,
+summary,
+[role='button'],
+input[type='button'],
+input[type='submit'],
+input[type='reset'] {
+  -webkit-tap-highlight-color: var(--tap-highlight-color);
+}
+
+button,
+input[type='button'],
+input[type='submit'],
+input[type='reset'] {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+}
 
 *:focus {
   outline: 0;
