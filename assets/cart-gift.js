@@ -6,8 +6,10 @@
  * HOW IT WORKS
  * ─────────────
  * The element is rendered by snippets/cart-gift.liquid with two key data attributes:
- *   • data-id       — Shopify variant ID of the gift product
- *   • data-selected — "true" | "false" (server-rendered initial state)
+ *   • data-id        — Shopify variant ID of the gift product
+ *   • data-selected  — "true" | "false" (server-rendered initial state)
+ *   • data-threshold — optional spend threshold in cents; when present the element
+ *                      re-evaluates unlock state on every cart update client-side
  *
  * On every cart update (via PUB_SUB_EVENTS.cartUpdate) the element:
  *   1. Re-evaluates whether the threshold has been met from the cartData payload.
@@ -38,40 +40,48 @@
 if (!customElements.get('cart-drawer-gift')) {
   class CartDrawerGift extends HTMLElement {
     connectedCallback() {
-      this.variantId  = parseInt(this.dataset.id,       10);
-      // data-selected is the server-rendered initial locked/unlocked state
-      this.isUnlocked = this.dataset.selected === 'true';
+      this.variantId  = parseInt(this.dataset.id, 10);
+      // Cache the cart-drawer element once; used by both add and remove methods.
+      this.cartDrawer = document.querySelector('cart-drawer');
 
-      // Subscribe to cart updates to keep gift state in sync
-      this.unsubscribe = subscribe(PUB_SUB_EVENTS.cartUpdate, ({ cartData } = {}) => {
-        if (!cartData) return;
-        this._syncGift(cartData);
-      });
+      // Subscribe to cart updates to keep gift state in sync.
+      this._onCartUpdate = ({ cartData } = {}) => {
+        if (cartData) this._syncGift(cartData);
+      };
+      this.unsubscribe = subscribe(PUB_SUB_EVENTS.cartUpdate, this._onCartUpdate);
 
       // Variant picker: when the merchant enables variant selection, sync the
       // chosen variant ID so the correct variant is added as the gift.
-      const variantPicker = this.querySelector('.upsell__variant-picker');
-      if (variantPicker) {
-        variantPicker.addEventListener('change', (event) => {
-          const select = event.target;
-          if (!select.closest('.variant-dropdown')) return;
-          this._updateVariantFromPicker(variantPicker);
-        });
+      this._variantPicker = this.querySelector('.upsell__variant-picker');
+      if (this._variantPicker) {
+        this._onVariantChange = (event) => {
+          if (event.target.closest('.variant-dropdown')) {
+            this._updateVariantFromPicker(this._variantPicker);
+          }
+        };
+        this._variantPicker.addEventListener('change', this._onVariantChange);
       }
 
       // Add-to-cart button (rendered inside <product-form> in the unlocked state).
       // The form's native submit is used for non-gift items; we intercept here.
-      const submitBtn = this.querySelector('[id$="-submit"]');
-      if (submitBtn) {
-        submitBtn.addEventListener('click', (event) => {
+      this._submitBtn = this.querySelector('[id$="-submit"]');
+      if (this._submitBtn) {
+        this._onSubmitClick = (event) => {
           event.preventDefault();
           this._addGiftToCart();
-        });
+        };
+        this._submitBtn.addEventListener('click', this._onSubmitClick);
       }
     }
 
     disconnectedCallback() {
       if (this.unsubscribe) this.unsubscribe();
+      if (this._variantPicker && this._onVariantChange) {
+        this._variantPicker.removeEventListener('change', this._onVariantChange);
+      }
+      if (this._submitBtn && this._onSubmitClick) {
+        this._submitBtn.removeEventListener('click', this._onSubmitClick);
+      }
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -79,36 +89,26 @@ if (!customElements.get('cart-drawer-gift')) {
     // ─────────────────────────────────────────────────────────────
 
     _syncGift(cartData) {
-      const wasUnlocked = this.isUnlocked;
-      // The cartData from PUB_SUB_EVENTS.cartUpdate is the full cart JSON
-      // returned by /cart/add.js or the section render payload.
       // Use items_subtotal_price (in cents) to evaluate spend threshold.
       const subtotal = cartData.items_subtotal_price ?? cartData.total_price ?? 0;
 
-      // Re-evaluate server threshold. The Liquid already computed this on page
-      // load via data-selected; on client updates we re-derive from the element's
-      // sibling threshold data if present, otherwise trust data-selected toggling.
-      // data-threshold (cents) is optionally stamped by cart-gift.liquid.
+      // Compute unlock state: re-derive from data-threshold if present;
+      // otherwise honour the current data-selected value (set by Liquid on load
+      // and by _updateUI on subsequent updates).
+      let unlocked = this.dataset.selected === 'true';
       if (this.dataset.threshold) {
-        const threshold  = parseInt(this.dataset.threshold, 10);
-        this.isUnlocked  = subtotal >= threshold;
+        unlocked = subtotal >= parseInt(this.dataset.threshold, 10);
       }
+
+      // Optimistically reflect the new state before any async mutation.
+      this._updateUI(unlocked);
 
       const giftInCart = this._giftIsInCart(cartData);
 
-      if (this.isUnlocked && !giftInCart) {
+      if (unlocked && !giftInCart) {
         this._addGiftToCart();
-      } else if (!this.isUnlocked && giftInCart) {
+      } else if (!unlocked && giftInCart) {
         this._removeGiftFromCart();
-      } else {
-        // State unchanged — just update the visual locked/unlocked classes
-        // without triggering another cart mutation.
-        this._updateUI(this.isUnlocked);
-      }
-
-      // If locked state flipped, update the visual
-      if (wasUnlocked !== this.isUnlocked) {
-        this._updateUI(this.isUnlocked);
       }
     }
 
@@ -121,17 +121,14 @@ if (!customElements.get('cart-drawer-gift')) {
       this._busy = true;
 
       try {
-        const cartDrawer = document.querySelector('cart-drawer');
-        const formData   = new FormData();
+        const formData = new FormData();
         formData.append('id',       this.variantId);
         formData.append('quantity', 1);
         formData.append('properties[_gift]', 'true');
 
-        if (cartDrawer) {
-          formData.append(
-            'sections',
-            cartDrawer.getSectionsToRender().map((s) => s.id).join(',')
-          );
+        const sectionIds = this._getSectionIds();
+        if (sectionIds) {
+          formData.append('sections',     sectionIds);
           formData.append('sections_url', window.location.pathname);
         }
 
@@ -146,14 +143,8 @@ if (!customElements.get('cart-drawer-gift')) {
 
         const cartData = await resp.json();
         this._updateUI(true);
-
-        if (cartDrawer) cartDrawer.renderContents(cartData);
-
-        publish(PUB_SUB_EVENTS.cartUpdate, {
-          source:    'cart-gift',
-          cartData,
-          variantId: this.variantId,
-        });
+        if (this.cartDrawer) this.cartDrawer.renderContents(cartData);
+        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-gift', cartData, variantId: this.variantId });
       } catch (_) {
         // Gift add is non-critical — fail silently
       } finally {
@@ -166,43 +157,27 @@ if (!customElements.get('cart-drawer-gift')) {
       this._busy = true;
 
       try {
-        const cartDrawer = document.querySelector('cart-drawer');
-
-        const body = JSON.stringify({
-          id:       this.variantId,
-          quantity: 0,
-        });
-
-        // Append sections for re-render if available
-        let url = routes.cart_change_url;
-        const sectionsParam = cartDrawer
-          ? cartDrawer.getSectionsToRender().map((s) => s.id).join(',')
-          : null;
-
-        const resp = await fetch(url, {
+        const resp = await fetch(routes.cart_change_url, {
           method:      'POST',
           credentials: 'same-origin',
           headers:     {
-            'Content-Type':    'application/json',
+            'Content-Type':     'application/json',
             'X-Requested-With': 'XMLHttpRequest',
           },
-          body: sectionsParam
-            ? JSON.stringify({ id: this.variantId, quantity: 0, sections: sectionsParam, sections_url: window.location.pathname })
-            : body,
+          body: JSON.stringify({
+            id:           this.variantId,
+            quantity:     0,
+            sections:     this._getSectionIds(),
+            sections_url: window.location.pathname,
+          }),
         });
 
         if (!resp.ok) return;
 
         const cartData = await resp.json();
         this._updateUI(false);
-
-        if (cartDrawer) cartDrawer.renderContents(cartData);
-
-        publish(PUB_SUB_EVENTS.cartUpdate, {
-          source:    'cart-gift',
-          cartData,
-          variantId: this.variantId,
-        });
+        if (this.cartDrawer) this.cartDrawer.renderContents(cartData);
+        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-gift', cartData, variantId: this.variantId });
       } catch (_) {
         // Gift remove is non-critical — fail silently
       } finally {
@@ -211,17 +186,20 @@ if (!customElements.get('cart-drawer-gift')) {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // UI state
+    // Helpers
     // ─────────────────────────────────────────────────────────────
+
+    /** Returns the section IDs string required by the Shopify section rendering API. */
+    _getSectionIds() {
+      return this.cartDrawer
+        ? this.cartDrawer.getSectionsToRender().map((s) => s.id).join(',')
+        : '';
+    }
 
     _updateUI(unlocked) {
       this.dataset.selected = String(unlocked);
-      // CSS in the theme drives locked/unlocked visuals via [data-selected]
+      // CSS drives locked/unlocked visuals via [data-selected="true"|"false"]
     }
-
-    // ─────────────────────────────────────────────────────────────
-    // Variant picker support
-    // ─────────────────────────────────────────────────────────────
 
     _updateVariantFromPicker(picker) {
       const variantJson = picker.querySelector('script[type="application/json"]');
@@ -229,30 +207,19 @@ if (!customElements.get('cart-drawer-gift')) {
 
       try {
         const variants = JSON.parse(variantJson.textContent);
-        const selects  = [...picker.querySelectorAll('select.variant-dropdown')];
-        const chosen   = selects.map((s) => s.value);
-
-        const match = variants.find((v) =>
-          v.options.every((opt, i) => opt === chosen[i])
-        );
-
+        const chosen   = [...picker.querySelectorAll('select.variant-dropdown')].map((s) => s.value);
+        const match    = variants.find((v) => v.options.every((opt, i) => opt === chosen[i]));
         if (match) this.variantId = match.id;
       } catch (_) {
         // Ignore JSON parse errors
       }
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Helpers
-    // ─────────────────────────────────────────────────────────────
-
     _giftIsInCart(cartData) {
-      const items = cartData.items || [];
-      return items.some(
+      return (cartData.items || []).some(
         (item) =>
           item.variant_id === this.variantId &&
-          item.properties &&
-          item.properties['_gift'] === 'true'
+          item.properties?.['_gift'] === 'true'
       );
     }
   }

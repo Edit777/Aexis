@@ -168,6 +168,7 @@
                   </thead>
 
                   <tbody role="rowgroup">
+                    {%- assign total_compare_price = 0 -%}
                     {%- for item in cart.items -%}
                       <tr
                         id="CartDrawer-Item-{{ item.index | plus: 1 }}"
@@ -512,6 +513,12 @@
                           </quantity-popover>
                         </td>
                       </tr>
+                      {%- if item.variant.compare_at_price > item.variant.price -%}
+                        {%- assign _line_compare = item.variant.compare_at_price | times: item.quantity -%}
+                      {%- else -%}
+                        {%- assign _line_compare = item.original_line_price -%}
+                      {%- endif -%}
+                      {%- assign total_compare_price = total_compare_price | plus: _line_compare -%}
                     {%- endfor -%}
                   </tbody>
                 </table>
@@ -525,18 +532,6 @@
           <div id="CartDrawer-CartErrors" role="alert"></div>
         </form>
       </cart-drawer-items>
-      {%- comment -%} Pre-compute compare price total for savings display in subtotals block {%- endcomment -%}
-      {%- liquid
-        assign total_compare_price = 0
-        for item in cart.items
-          if item.variant.compare_at_price > item.variant.price
-            assign line_compare = item.variant.compare_at_price | times: item.quantity
-          else
-            assign line_compare = item.original_line_price
-          endif
-          assign total_compare_price = total_compare_price | plus: line_compare
-        endfor
-      -%}
 
       <div class="drawer__footer">
         {% for block in section.blocks %}
