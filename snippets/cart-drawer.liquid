@@ -28,6 +28,9 @@
   {%- if block.type == 'countdown_timer' -%}
     <script src="{{ 'cart-countdown.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
+  {%- if block.type == 'gift' -%}
+    <script src="{{ 'cart-gift.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
 {%- endfor -%}
 
 {%- comment -%} Non-upsell item count (excludes products tagged 'cart-hidden') {%- endcomment -%}
@@ -522,128 +525,183 @@
           <div id="CartDrawer-CartErrors" role="alert"></div>
         </form>
       </cart-drawer-items>
+      {%- comment -%} Pre-compute compare price total for savings display in subtotals block {%- endcomment -%}
+      {%- liquid
+        assign total_compare_price = 0
+        for item in cart.items
+          if item.variant.compare_at_price > item.variant.price
+            assign line_compare = item.variant.compare_at_price | times: item.quantity
+          else
+            assign line_compare = item.original_line_price
+          endif
+          assign total_compare_price = total_compare_price | plus: line_compare
+        endfor
+      -%}
+
       <div class="drawer__footer">
-        {%- if settings.show_cart_note -%}
-          <details id="Details-CartDrawer">
-            <summary>
-              <span class="summary__title">
-                {{ 'sections.cart.note' | t }}
-                {{- 'icon-caret.svg' | inline_asset_content -}}
-              </span>
-            </summary>
-            <cart-note class="cart__note field">
-              <label class="visually-hidden" for="CartDrawer-Note">{{ 'sections.cart.note' | t }}</label>
-              <textarea
-                id="CartDrawer-Note"
-                class="text-area text-area--resize-vertical field__input"
-                name="note"
-                placeholder="{{ 'sections.cart.note' | t }}"
-              >{{ cart.note }}</textarea>
-            </cart-note>
-          </details>
-        {%- endif -%}
-
-        {%- if cart != empty -%}
-          {%- comment -%} Discount code block — sits between cart note and totals {%- endcomment -%}
-          {%- for block in section.blocks -%}
-            {%- if block.type == 'discount_field' -%}
-              {%- render 'cart-discount-field', block: block -%}
-            {%- endif -%}
-            {%- if block.type == 'payment_badges' -%}
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'discount_field' %}
+              {% render 'cart-discount-field', block: block %}
+            {% when 'cart_note' %}
+              <details id="Details-CartDrawer" style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;" {{ block.shopify_attributes }}>
+                <summary>
+                  <span class="summary__title">
+                    {{ 'sections.cart.note' | t }}
+                    {{- 'icon-caret.svg' | inline_asset_content -}}
+                  </span>
+                </summary>
+                <cart-note class="cart__note field">
+                  <label class="visually-hidden" for="CartDrawer-Note">{{ 'sections.cart.note' | t }}</label>
+                  <textarea
+                    id="CartDrawer-Note"
+                    class="text-area text-area--resize-vertical field__input"
+                    name="note"
+                    placeholder="{{ 'sections.cart.note' | t }}"
+                  >{{ cart.note }}</textarea>
+                </cart-note>
+              </details>
+            {% when 'subtotals' %}
+              <div class="cart-drawer__footer" style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;" {{ block.shopify_attributes }}>
+                <div class="cart-drawer__totals{% if block.settings.savings_position == 'bellow' %} cart-drawer__totals--reverse{% endif %}" role="status" style='--spacing:{{ block.settings.savings_spacing | divided_by: 10.0 }}rem;'>
+                  {% if block.settings.display_total_savings %}
+                    {% assign total_savings = total_compare_price | minus: cart.total_price %}
+                    {% if total_savings > 0 %}
+                      {% capture savings_money %}<span class='cart-drawer__totals__row__money'>{{ total_savings | money }}</span>{% endcapture %}
+                      <p class='cart-drawer__totals__row cart-drawer__totals__row--{{ block.settings.savings_alignment }} text-color-{{ block.settings.savings_text_color }}' style='--text-size:{{ block.settings.savings_text_size | divided_by: 10.0 }}rem;'>
+                        <span>{{ block.settings.savings_left_text | replace: '[savings]', savings_money }}</span><span>{{ block.settings.savings_right_text | replace: '[savings]', savings_money }}</span>
+                      </p>
+                    {% endif %}
+                  {% endif %}
+                  {% if block.settings.display_subtotal %}
+                    {% capture subtotal_money %}<span class='cart-drawer__totals__row__money'>{{ cart.total_price | money }}</span>{% endcapture %}
+                    <p class='cart-drawer__totals__row cart-drawer__totals__row--{{ block.settings.subtotal_alignment }} text-color-{{ block.settings.subtotal_text_color }}' style='--text-size:{{ block.settings.subtotal_text_size | divided_by: 10.0 }}rem;'>
+                      <span>{{ block.settings.subtotal_left_text | replace: '[subtotal]', subtotal_money }}</span><span>{{ block.settings.subtotal_right_text | replace: '[subtotal]', subtotal_money }}</span>
+                    </p>
+                  {% endif %}
+                </div>
+                {%- if block.settings.display_discounts and cart.cart_level_discount_applications.size > 0 -%}
+                  <div class="cart-drawer__discounts cart-drawer__footer__discounts list-unstyled" style='--alignment:{{ block.settings.discounts_alignment }};' role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                    <span class='cart-drawer__discounts__label'>{{ block.settings.discounts_label }}</span>
+                    {%- for discount in cart.cart_level_discount_applications -%}
+                      <div class="badge">
+                        {{- 'icon-discount.svg' | inline_asset_content -}}
+                        <span>{{ discount.title }} (-{{ discount.total_allocated_amount | money }})</span>
+                      </div>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+                {% if block.settings.display_total_savings %}
+                  {% capture total_savings_money %}
+                    {{ total_compare_price | minus: cart.total_price | money_without_trailing_zeros }}
+                  {% endcapture %}
+                  <p class='cart-drawer__total-savings {{ block.settings.savings_alignment }} text-color-{{ block.settings.savings_text_color }}'>
+                    {{ block.settings.savings_text | replace: '[amount]', total_savings_money }}
+                  </p>
+                {% endif %}
+              </div>
+            {% when 'checkout_btn' %}
+              <style>
+                {% if block.settings.enable_custom_color %}
+                  #CartDrawer-Checkout {
+                    --color-button: {{ block.settings.custom_color.red }}, {{ block.settings.custom_color.green }}, {{ block.settings.custom_color.blue }};
+                  }
+                {% endif %}
+                #CartDrawer-Checkout {
+                  --icon-scale: {{ block.settings.icon_scale | divided_by: 100.0 }}em;
+                  --icon-spacing: {{ block.settings.icon_spacing }}px;
+                }
+                {% if block.settings.prefix_icon != blank %}
+                  #CartDrawer-Checkout .button__label::before {
+                    background-image: url('{{ block.settings.prefix_icon | image_url }}');
+                  }
+                {% endif %}
+                {% if block.settings.suffix_icon != blank %}
+                  #CartDrawer-Checkout .button__label::after {
+                    background-image: url('{{ block.settings.suffix_icon | image_url }}');
+                  }
+                {% endif %}
+              </style>
+              <div class="cart__ctas" style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;" {{ block.shopify_attributes }}>
+                <noscript>
+                  <button type="submit" class="cart__update-button button button--secondary" form="CartDrawer-Form">
+                    {{ 'sections.cart.update' | t }}
+                  </button>
+                </noscript>
+                <div class='tnc-checkbox-warning tnc-checkbox-warning--above-button hidden' style='margin-bottom: 0.6em;'></div>
+                <button
+                  type="submit"
+                  id="CartDrawer-Checkout"
+                  class="cart__checkout-button button{% if block.settings.prefix_icon != blank %} button--prefix-icon{% endif %}{% if block.settings.suffix_icon != blank %} button--suffix-icon{% endif %}"
+                  name="checkout"
+                  form="CartDrawer-Form"
+                  {% if cart == empty %}
+                    disabled
+                  {% endif %}
+                >
+                  <span class='button__label'>
+                    {{ 'sections.cart.checkout' | t }}
+                    {% if block.settings.display_price %}
+                      • {{ cart.total_price | money }}
+                    {% endif %}
+                  </span>
+                </button>
+                {%- if block.settings.show_additional_checkout_buttons and additional_checkout_buttons -%}
+                  <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
+                    {{ content_for_additional_checkout_buttons }}
+                  </div>
+                {%- endif -%}
+                <div class='tnc-checkbox-warning tnc-checkbox-warning--under-button hidden' style='margin-top: 0.6em;'></div>
+              </div>
+            {%- when 'payment_badges' -%}
               {%- render 'cart-payment-badges', block: block -%}
-            {%- endif -%}
-          {%- endfor -%}
-        {%- endif -%}
-
-        <!-- Start blocks -->
-        <!-- Subtotals -->
-
-        <div class="cart-drawer__footer" {{ block.shopify_attributes }}>
-          <div>
-            {%- if cart.cart_level_discount_applications.size > 0 -%}
-              <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
-                {%- for discount in cart.cart_level_discount_applications -%}
-                  <li class="discounts__discount discounts__discount--end">
-                    {{- 'icon-discount.svg' | inline_asset_content -}}
-                    {{ discount.title | escape }}
-                    (-{{ discount.total_allocated_amount | money }})
-                  </li>
-                {%- endfor -%}
-              </ul>
-            {%- endif -%}
-          </div>
-
-          <div class="totals" role="status">
-            <h2 class="totals__total">{{ 'sections.cart.estimated_total' | t }}</h2>
-            <p class="totals__total-value">{{ cart.total_price | money_with_currency }}</p>
-          </div>
-
-          <small class="tax-note caption-large rte">
-            {%- if cart.duties_included and cart.taxes_included -%}
-              {%- if shop.shipping_policy.body == blank -%}
-                {{ 'sections.cart.duties_and_taxes_included_shipping_at_checkout_without_policy' | t }}
-              {%- else -%}
-                {{
-                  'sections.cart.duties_and_taxes_included_shipping_at_checkout_with_policy_html'
-                  | t: link: shop.shipping_policy.url
-                }}
-              {%- endif -%}
-            {%- elsif cart.duties_included == false and cart.taxes_included -%}
-              {%- if shop.shipping_policy.body == blank -%}
-                {{ 'sections.cart.taxes_included_shipping_at_checkout_without_policy' | t }}
-              {%- else -%}
-                {{
-                  'sections.cart.taxes_included_shipping_at_checkout_with_policy_html'
-                  | t: link: shop.shipping_policy.url
-                }}
-              {%- endif -%}
-            {%- elsif cart.duties_included and cart.taxes_included == false -%}
-              {%- if shop.shipping_policy.body == blank -%}
-                {{ 'sections.cart.duties_included_taxes_at_checkout_shipping_at_checkout_without_policy' | t }}
-              {%- else -%}
-                {{
-                  'sections.cart.duties_included_taxes_at_checkout_shipping_at_checkout_with_policy_html'
-                  | t: link: shop.shipping_policy.url
-                }}
-              {%- endif -%}
-            {%- elsif cart.duties_included == false and cart.taxes_included == false -%}
-              {%- if shop.shipping_policy.body == blank -%}
-                {{ 'sections.cart.taxes_at_checkout_shipping_at_checkout_without_policy' | t }}
-              {%- else -%}
-                {{
-                  'sections.cart.taxes_at_checkout_shipping_at_checkout_with_policy_html'
-                  | t: link: shop.shipping_policy.url
-                }}
-              {%- endif -%}
-            {%- endif -%}
-          </small>
-        </div>
-
-        {%- if cart != empty -%}
-          {%- comment -%} Product recommendations upsell block — sits above checkout button {%- endcomment -%}
-          {%- for block in section.blocks -%}
-            {%- if block.type == 'product_upsells' -%}
-              {%- render 'upsell-block', block: block -%}
-            {%- endif -%}
-          {%- endfor -%}
-        {%- endif -%}
-
-        <!-- CTAs -->
-
-        <div class="cart__ctas" {{ block.shopify_attributes }}>
-          <button
-            type="submit"
-            id="CartDrawer-Checkout"
-            class="cart__checkout-button button"
-            name="checkout"
-            form="CartDrawer-Form"
-            {% if cart == empty %}
-              disabled
-            {% endif %}
-          >
-            {{ 'sections.cart.checkout' | t }}
-          </button>
-        </div>
+            {%- when 'tnc_checkbox' -%}
+              <div style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;" {{ block.shopify_attributes }}>
+                <style>
+                  .tnc-chekcbox {
+                    font-size: {{ block.settings.checkbox_text_size | divided_by: 10.0 }}rem;
+                  }
+                  .tnc-checkbox-warning {
+                    font-size: {{ block.settings.warning_text_size | divided_by: 10.0 }}rem;
+                    text-align: {{ block.settings.warning_alignment }};
+                    color: {{ block.settings.warning_text_color }};
+                  }
+                </style>
+                <tnc-chekcbox
+                  class='tnc-chekcbox flex flex-align-center{% if block.settings.checkbox_alignment == 'center' %} center flex-justify-center{% endif %}'
+                  data-checked="false"
+                  data-disable-button="{{ block.settings.disable_checkout_button }}"
+                  data-warning-text='{{ block.settings.warning_text }}'
+                  data-warning-position='{{ block.settings.warning_position }}'
+                >
+                  <svg class="checkmark-checked text-color-{{ block.settings.checkbox_color }} flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" width="50" height="50">
+                    <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM337 209L209 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L303 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/>
+                  </svg>
+                  <svg class="checkmark-unchecked text-color-{{ block.settings.checkbox_color }} flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" width="50" height="50">
+                    <path d="M384 80c8.8 0 16 7.2 16 16V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V96c0-8.8 7.2-16 16-16H384zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z"/>
+                  </svg>
+                  <p class="tnc-checkbox__text margin-0">{{ block.settings.checkbox_text }}</p>
+                </tnc-chekcbox>
+                <div class='tnc-checkbox-warning tnc-checkbox-warning--under-checkbox hidden' style='margin-top: 0.4em;'></div>
+              </div>
+            {% when 'product_upsells' %}
+              {% if block.settings.position == 'footer' %}
+                {% render 'upsell-block', block: block, type: 'cart-drawer' %}
+              {% endif %}
+            {% when 'gift' %}
+              {% if block.settings.position == 'footer' %}
+                {% render 'cart-gift', block: block, items_count: non_upsell_count %}
+              {% endif %}
+            {%- when 'icon_with_text' -%}
+              {% if block.settings.position == 'footer' %}
+                {% render 'icon-with-text', block: block %}
+              {% endif %}
+            {%- when 'custom_liquid' -%}
+              {% if block.settings.position == 'footer' %}
+                {{ block.settings.custom_liquid }}
+              {% endif %}
+          {% endcase %}
+        {% endfor %}
       </div>
     </div>
   </div>
