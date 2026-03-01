@@ -226,7 +226,21 @@
             class="thumbnail-list__item slider__slide{% if section.settings.hide_variants and variant_images contains featured_media.src %} thumbnail-list_item--variant{% endif %}"
             data-target="{{ section.id }}-{{ featured_media.id }}"
             data-media-position="{{ media_index }}"
+            style="--ratio: {{ 1 | divided_by: featured_media.preview_image.aspect_ratio | times: 100 }}%"
           >
+            {%- if featured_media.media_type == 'model' -%}
+              <span class="thumbnail__badge" aria-hidden="true">
+                <span class="svg-wrapper">
+                  {{- 'icon-3d-model.svg' | inline_asset_content -}}
+                </span>
+              </span>
+            {%- elsif featured_media.media_type == 'video' or featured_media.media_type == 'external_video' -%}
+              <span class="thumbnail__badge" aria-hidden="true">
+                <span class="svg-wrapper">
+                  {{- 'icon-play.svg' | inline_asset_content -}}
+                </span>
+              </span>
+            {%- endif -%}
             {%- capture thumbnail_id -%}
               Thumbnail-{{ section.id }}-0
             {%- endcapture -%}
@@ -270,6 +284,7 @@
               class="thumbnail-list__item slider__slide{% if section.settings.hide_variants and variant_images contains media.src %} thumbnail-list_item--variant{% endif %}"
               data-target="{{ section.id }}-{{ media.id }}"
               data-media-position="{{ media_index }}"
+              style="--ratio: {{ 1 | divided_by: media.aspect_ratio | times: 100 }}%"
             >
               {%- if media.media_type == 'model' -%}
                 <span class="thumbnail__badge" aria-hidden="true">
