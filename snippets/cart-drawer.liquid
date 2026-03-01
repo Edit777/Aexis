@@ -158,7 +158,7 @@
           {%- if block.type == 'cart_items' -%}
           <cart-drawer-items
             class="color-{{ block.settings.color_scheme }} gradient"
-            style="--image-size: {{ block.settings.image_size }}%;--cart-item-image-size: {{ block.settings.image_size | times: 0.4 }}rem;--title-size:{{ block.settings.title_size }}rem;--cart-item-row-gap: 0.8rem;--cart-item-content-gap: 0.6rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
+            style="--image-size: {{ block.settings.image_size }}%;--cart-item-image-size: {{ block.settings.image_size | divided_by: 10.0 }}rem;--title-size:{{ block.settings.title_size }}rem;--cart-item-row-gap: 0.8rem;--cart-item-content-gap: 0.6rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
             {{ block.shopify_attributes }}
           >
             <form
@@ -397,6 +397,8 @@
                                     aria-hidden="true"
                                     focusable="false"
                                     class="icon icon-error"
+                                    width="13"
+                                    height="13"
                                     viewBox="0 0 13 13"
                                   >
                                     <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
