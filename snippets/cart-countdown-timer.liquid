@@ -1,5 +1,5 @@
 <cart-countdown-timer
-  class="cart-countdown"
+  class="cart-countdown{% if block.settings.width_behavior == 'full' %} cart-countdown--full-width{% endif %}"
   data-duration="{{ block.settings.timer_duration | default: 300 }}"
   data-template="{{ block.settings.timer_text | escape }}"
   style="--font-size: {{ block.settings.font_size }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"

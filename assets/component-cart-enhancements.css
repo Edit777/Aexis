@@ -135,6 +135,10 @@ cart-upsell-block[hidden] {
   padding: 0 2rem;
 }
 
+.cart-countdown--full-width {
+  padding-inline: 0;
+}
+
 .cart-countdown__text {
   margin: 0;
   padding: 0.9rem 1.2rem;
