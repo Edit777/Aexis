@@ -136,7 +136,90 @@
       "cart-drawer": {
         "type": "cart-drawer",
         "blocks": {
-          "progress_bar_Le4gmw": {
+          "countdown_timer_9n7zmb": {
+            "type": "countdown_timer",
+            "settings": {
+              "timer_text": "<strong>Cart reserved for [timer] more minutes!</strong>",
+              "timer_duration": 300,
+              "font_size": "1.4",
+              "color_scheme": "inverse",
+              "margin_top": 0,
+              "margin_bottom": 15
+            }
+          },
+          "gift_wPKN46": {
+            "type": "gift",
+            "settings": {
+              "position": "body",
+              "display": "globally",
+              "display_product_handles": "",
+              "accent_color": "accent-1",
+              "color_scheme": "background-2",
+              "product": "",
+              "product_desc": "Write a short description about your product",
+              "goal_type": "subtotal",
+              "requirement": "80",
+              "locked_progress_text": "You're [amount] away from a free gift!",
+              "unlocked_progress_text": "Congrats! You unlocked a free gift!🎉",
+              "progress_mobile_text_size": 13,
+              "progress_desktop_text_size": 15,
+              "show_image_locked_overlay": true,
+              "show_image": true,
+              "image_size": "5",
+              "image_corner_radius": 2,
+              "title_size": "1.4",
+              "desc_size": "1.2",
+              "price_position": "separate",
+              "displayed_price": "text",
+              "displayed_price_text": "FREE",
+              "price_size": "1.4",
+              "hide_compare_price": false,
+              "show_variant_picker": true,
+              "corner_radius": 6,
+              "show_box_shadow": false,
+              "show_border": true,
+              "regular_border_color": "#d7d7d7",
+              "selected_border_color": "#d7d7d7",
+              "border_width": "0.1",
+              "show_custom_bg": false,
+              "regular_bg_color": "#f2f2f2",
+              "selected_bg_color": "#f2f2f2",
+              "margin_top": 15,
+              "margin_bottom": 15
+            }
+          },
+          "checkpoints_bar_qF7fCD": {
+            "type": "checkpoints_bar",
+            "settings": {
+              "goal_type": "subtotal",
+              "progress_message": "You're [amount] away from [next_goal_lowercase]!",
+              "success_message": "Congrats! You've unlocked all prizes!🎉",
+              "labels_mobile_text_size": 10,
+              "labels_desktop_text_size": 12,
+              "accent_color": "accent-1",
+              "enable_goal_1": true,
+              "goal_1_label": "Free Shipping",
+              "goal_1_text": "FREE shipping",
+              "goal_1_amount": 30,
+              "goal_1_icon": "local_shipping",
+              "goal_1_icon_filled": false,
+              "enable_goal_2": true,
+              "goal_2_label": "20% OFF",
+              "goal_2_text": "a 20% discount",
+              "goal_2_amount": 50,
+              "goal_2_icon": "sell",
+              "goal_2_icon_filled": false,
+              "enable_goal_3": false,
+              "goal_3_label": "Free Gift",
+              "goal_3_text": "a FREE GIFT",
+              "goal_3_amount": 100,
+              "goal_3_icon": "redeem",
+              "goal_3_icon_filled": false,
+              "margin_top": 15,
+              "margin_bottom": 15
+            }
+          },
+          "progress_bar_ewnxJ3": {
             "type": "progress_bar",
             "settings": {
               "goal_type": "subtotal",
@@ -156,17 +239,6 @@
               "enabled_payment_types": "oin, dwolla, facebook_pay, forbrugsforeningen, google_pa",
               "margin_top": 12,
               "margin_bottom": 12
-            }
-          },
-          "countdown_timer_9n7zmb": {
-            "type": "countdown_timer",
-            "settings": {
-              "timer_text": "<strong>Cart reserved for [timer] more minutes!</strong>",
-              "timer_duration": 300,
-              "font_size": "1.4",
-              "color_scheme": "inverse",
-              "margin_top": 0,
-              "margin_bottom": 15
             }
           },
           "subtotals_Ukr67b": {
@@ -192,13 +264,29 @@
               "margin_top": 15,
               "margin_bottom": 15
             }
+          },
+          "checkout_btn_TRrJGQ": {
+            "type": "checkout_btn",
+            "settings": {
+              "show_additional_checkout_buttons": false,
+              "display_price": false,
+              "enable_custom_color": false,
+              "custom_color": "#dd1d1d",
+              "icon_scale": 120,
+              "icon_spacing": 10,
+              "margin_top": 15,
+              "margin_bottom": 15
+            }
           }
         },
         "block_order": [
-          "progress_bar_Le4gmw",
-          "payment_badges_rL6PYN",
           "countdown_timer_9n7zmb",
-          "subtotals_Ukr67b"
+          "gift_wPKN46",
+          "checkpoints_bar_qF7fCD",
+          "progress_bar_ewnxJ3",
+          "payment_badges_rL6PYN",
+          "subtotals_Ukr67b",
+          "checkout_btn_TRrJGQ"
         ],
         "settings": {
           "test_mode": true,
