@@ -197,12 +197,12 @@
           "cart_items_8em64M": {
             "type": "cart_items",
             "settings": {
-              "image_size": "20",
+              "image_size": "17",
               "image_link": false,
               "title_size": "1.5",
               "title_link": true,
               "displayed_variants": "classic",
-              "prices_position": "right",
+              "prices_position": "left",
               "displayed_compare_prices": "product",
               "color_scheme": "scheme-1",
               "display_single_item_prices": false,
@@ -380,7 +380,7 @@
           "checkout_btn_TRrJGQ"
         ],
         "settings": {
-          "test_mode": false,
+          "test_mode": true,
           "heading_text": "Cart • [count] items",
           "heading_alignment": "flex-start",
           "desktop_width": "normal",
