@@ -131,6 +131,7 @@
         {%- for block in section.blocks -%}
           {%- if block.type == 'cart_items' -%}
           <cart-drawer-items
+            class="color-{{ block.settings.color_scheme }} gradient"
             style="--image-size: {{ block.settings.image_size }}%;--title-size:{{ block.settings.title_size }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
             {{ block.shopify_attributes }}
           >
@@ -212,11 +213,11 @@
                                   <div class="cart-item__discounted-prices cart-drawer-item__single-item-prices">
                                     <span>
                                       <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
-                                      <s class="cart-item__old-price product-option text-color-{{ block.settings.compare_price_color }}">
+                                      <s class="cart-item__old-price product-option">
                                         {{- compare_price | divided_by: item.quantity | money -}}
                                       </s>
                                       <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
-                                      <strong class="cart-item__final-price product-option text-color-{{ block.settings.price_color }}">
+                                      <strong class="cart-item__final-price product-option">
                                         {{ item.final_price | money }}
                                       </strong>
                                     </span>
@@ -369,23 +370,23 @@
                                     -%}
                                     <div class="cart-item__discounted-prices">
                                       <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
-                                      <s class="cart-item__old-price price--end compare-price color-foreground-{{ block.settings.compare_price_color }}">
+                                      <s class="cart-item__old-price price--end compare-price">
                                         {{ compare_price | money }}
                                       </s>
                                       <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
-                                      <span class="price--end regular-price accent-color-{{ block.settings.price_color }}">
+                                      <span class="price--end regular-price">
                                         {{ item.final_line_price | money }}
                                       </span>
                                     </div>
                                     {%- if block.settings.enable_savings -%}
-                                      <span class="cart-drawer-item__saving text-color-{{ block.settings.savings_color }}">
+                                      <span class="cart-drawer-item__saving">
                                         {%- capture saved_money_span -%}{{ item_saving | money_without_trailing_zeros }}{%- endcapture -%}
                                         {{ block.settings.savings_text | replace: '[amount]', saved_money_span }}
                                       </span>
                                     {%- endif -%}
                                   {%- else -%}
                                     {%- assign total_compare_price = total_compare_price | plus: item.original_line_price -%}
-                                    <span class="price--end regular-price accent-color-{{ block.settings.price_color }}">
+                                    <span class="price--end regular-price">
                                       {{ item.original_line_price | money }}
                                     </span>
                                   {%- endif -%}
@@ -445,20 +446,20 @@
                 </cart-note>
               </details>
             {% when 'subtotals' %}
-              <div class="cart-drawer__footer" style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;" {{ block.shopify_attributes }}>
+              <div class="cart-drawer__footer color-{{ block.settings.color_scheme }} gradient" style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;" {{ block.shopify_attributes }}>
                 <div class="cart-drawer__totals{% if block.settings.savings_position == 'bellow' %} cart-drawer__totals--reverse{% endif %}" role="status" style='--spacing:{{ block.settings.savings_spacing | divided_by: 10.0 }}rem;'>
                   {% if block.settings.display_total_savings %}
                     {% assign total_savings = total_compare_price | minus: cart.total_price %}
                     {% if total_savings > 0 %}
                       {% capture savings_money %}<span class='cart-drawer__totals__row__money'>{{ total_savings | money }}</span>{% endcapture %}
-                      <p class='cart-drawer__totals__row cart-drawer__totals__row--{{ block.settings.savings_alignment }} text-color-{{ block.settings.savings_text_color }}' style='--text-size:{{ block.settings.savings_text_size | divided_by: 10.0 }}rem;'>
+                      <p class='cart-drawer__totals__row cart-drawer__totals__row--{{ block.settings.savings_alignment }}' style='--text-size:{{ block.settings.savings_text_size | divided_by: 10.0 }}rem;'>
                         <span>{{ block.settings.savings_left_text | replace: '[savings]', savings_money }}</span><span>{{ block.settings.savings_right_text | replace: '[savings]', savings_money }}</span>
                       </p>
                     {% endif %}
                   {% endif %}
                   {% if block.settings.display_subtotal %}
                     {% capture subtotal_money %}<span class='cart-drawer__totals__row__money'>{{ cart.total_price | money }}</span>{% endcapture %}
-                    <p class='cart-drawer__totals__row cart-drawer__totals__row--{{ block.settings.subtotal_alignment }} text-color-{{ block.settings.subtotal_text_color }}' style='--text-size:{{ block.settings.subtotal_text_size | divided_by: 10.0 }}rem;'>
+                    <p class='cart-drawer__totals__row cart-drawer__totals__row--{{ block.settings.subtotal_alignment }}' style='--text-size:{{ block.settings.subtotal_text_size | divided_by: 10.0 }}rem;'>
                       <span>{{ block.settings.subtotal_left_text | replace: '[subtotal]', subtotal_money }}</span><span>{{ block.settings.subtotal_right_text | replace: '[subtotal]', subtotal_money }}</span>
                     </p>
                   {% endif %}
@@ -478,7 +479,7 @@
                   {% capture total_savings_money %}
                     {{ total_compare_price | minus: cart.total_price | money_without_trailing_zeros }}
                   {% endcapture %}
-                  <p class='cart-drawer__total-savings {{ block.settings.savings_alignment }} text-color-{{ block.settings.savings_text_color }}'>
+                  <p class='cart-drawer__total-savings {{ block.settings.savings_alignment }}'>
                     {{ block.settings.savings_text | replace: '[amount]', total_savings_money }}
                   </p>
                 {% endif %}
@@ -551,16 +552,16 @@
                   }
                 </style>
                 <tnc-chekcbox
-                  class='tnc-chekcbox flex flex-align-center{% if block.settings.checkbox_alignment == 'center' %} center flex-justify-center{% endif %}'
+                  class='tnc-chekcbox color-{{ block.settings.color_scheme }} gradient flex flex-align-center{% if block.settings.checkbox_alignment == 'center' %} center flex-justify-center{% endif %}'
                   data-checked="false"
                   data-disable-button="{{ block.settings.disable_checkout_button }}"
                   data-warning-text='{{ block.settings.warning_text }}'
                   data-warning-position='{{ block.settings.warning_position }}'
                 >
-                  <svg class="checkmark-checked text-color-{{ block.settings.checkbox_color }} flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" width="50" height="50">
+                  <svg class="checkmark-checked flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" width="50" height="50">
                     <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM337 209L209 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L303 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/>
                   </svg>
-                  <svg class="checkmark-unchecked text-color-{{ block.settings.checkbox_color }} flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" width="50" height="50">
+                  <svg class="checkmark-unchecked flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" width="50" height="50">
                     <path d="M384 80c8.8 0 16 7.2 16 16V416c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V96c0-8.8 7.2-16 16-16H384zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z"/>
                   </svg>
                   <p class="tnc-checkbox__text margin-0">{{ block.settings.checkbox_text }}</p>
