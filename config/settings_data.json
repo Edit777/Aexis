@@ -196,7 +196,7 @@
           "cart_items_8em64M": {
             "type": "cart_items",
             "settings": {
-              "image_size": "17",
+              "image_size": "25",
               "image_link": false,
               "title_size": "1.5",
               "title_link": true,
@@ -207,7 +207,7 @@
               "display_single_item_prices": false,
               "enable_savings": false,
               "savings_text": "<strong>(You save [amount])</strong>",
-              "quantity_font_size": 13,
+              "quantity_font_size": 12,
               "quantity_container_padding": 0,
               "quantity_corner_radius": 0,
               "quantity_border_width": 1,
