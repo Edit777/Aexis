@@ -138,7 +138,6 @@
         "blocks": {
           "product_upsells_DcbUwe": {
             "type": "product_upsells",
-            "disabled": true,
             "settings": {
               "position": "footer",
               "display": "globally",
