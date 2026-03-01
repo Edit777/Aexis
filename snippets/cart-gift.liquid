@@ -82,14 +82,17 @@
             %}
             {% if product_image != blank %}
               <div class='upsell__image'>
-                <img
-                  src="{{ product_image | image_url: width: 500 }}"
-                  alt="{{ product_image.alt | escape }}"
-                  class="upsell__image__img"
-                  loading="lazy"
-                  width="auto"
-                  height="auto"
-                >
+                {%- assign gift_img_px = block.settings.image_size | times: 16 | round -%}
+              {%- assign gift_img_fetch_w = gift_img_px | times: 2 -%}
+              <img
+                src="{{ product_image | image_url: width: gift_img_fetch_w }}"
+                alt="{{ product_image.alt | escape }}"
+                class="upsell__image__img"
+                loading="lazy"
+                width="{{ gift_img_px }}"
+                height="{{ gift_img_px }}"
+                style="object-fit: cover;"
+              >
                 {% if block.settings.show_image_locked_overlay and unlocked == false %}
                   <div class='cart-drawer-gift__image__locked'>
                     <span class="lock"></span>
