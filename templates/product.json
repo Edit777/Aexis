@@ -91,12 +91,6 @@
             "content": "",
             "page": ""
           }
-        },
-        "share": {
-          "type": "share",
-          "settings": {
-            "share_label": "Share"
-          }
         }
       },
       "block_order": [
@@ -111,17 +105,16 @@
         "collapsible-row-0",
         "collapsible-row-1",
         "collapsible-row-2",
-        "collapsible-row-3",
-        "share"
+        "collapsible-row-3"
       ],
       "settings": {
         "enable_sticky_info": true,
         "color_scheme": "",
-        "media_size": "medium",
+        "media_size": "small",
         "constrain_to_viewport": true,
         "media_fit": "cover",
-        "gallery_layout": "stacked",
-        "mobile_thumbnails": "hide",
+        "gallery_layout": "thumbnail_slider",
+        "mobile_thumbnails": "show",
         "media_position": "left",
         "image_zoom": "lightbox",
         "hide_variants": true,
