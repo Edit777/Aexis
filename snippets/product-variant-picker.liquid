@@ -20,11 +20,15 @@
       {%- liquid
         assign swatch_count = option.values | map: 'swatch' | compact | size
         assign picker_type = block.settings.picker_type
+        assign picker_types = block.settings.picker_types | default: '' | split: ','
+        if picker_types.size > 0 and picker_types[forloop.index0] != blank
+          assign picker_type = picker_types[forloop.index0] | strip
+        endif
 
         if swatch_count > 0 and block.settings.swatch_shape != 'none'
-          if block.settings.picker_type == 'dropdown'
+          if picker_type == 'dropdown'
             assign picker_type = 'swatch_dropdown'
-          else
+          elsif picker_type == 'button'
             assign picker_type = 'swatch'
           endif
         endif
@@ -41,7 +45,8 @@
             product: product,
             option: option,
             block: block,
-            picker_type: picker_type
+            picker_type: picker_type,
+            skip_unavailable: block.settings.skip_unavailable
           %}
         </fieldset>
       {%- elsif picker_type == 'button' -%}
@@ -52,7 +57,8 @@
               product: product,
               option: option,
               block: block,
-              picker_type: picker_type
+              picker_type: picker_type,
+              skip_unavailable: block.settings.skip_unavailable
             %}
           </div>
         </fieldset>
@@ -80,7 +86,8 @@
                 product: product,
                 option: option,
                 block: block,
-                picker_type: picker_type
+                picker_type: picker_type,
+                skip_unavailable: block.settings.skip_unavailable
               %}
             </select>
             <span class="svg-wrapper">

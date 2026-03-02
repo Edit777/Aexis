@@ -11,6 +11,7 @@
   if block.settings.text_3 != blank
     assign item_count = item_count | plus: 1
   endif
+  assign legacy_text = block.settings.text
   assign twi_id = 'text-with-icon-' | append: section.id | append: '-' | append: block.id
   if block.settings.block_width == 'unlimited'
     assign nowrap = true
@@ -37,6 +38,9 @@
       case i
         when 1
           assign text = block.settings.text_1
+          if text == blank
+            assign text = legacy_text
+          endif
           assign custom_icon = block.settings.custom_icon_1
           assign icon = block.settings.icon_1
           assign filled_icon = block.settings.filled_icon_1

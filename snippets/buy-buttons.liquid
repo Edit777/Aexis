@@ -10,6 +10,44 @@
   Usage:
   {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
 {% endcomment %}
+<style>
+  #ProductSubmitButton-{{ section_id }} {
+    --icon-scale: {{ block.settings.icon_scale | default: 100 | divided_by: 100.0 }}em;
+  }
+  {% if block.settings.enable_custom_color %}
+    #ProductSubmitButton-{{ section_id }} {
+      --color-button: {{ block.settings.custom_color.red }}, {{ block.settings.custom_color.green }}, {{ block.settings.custom_color.blue }};
+    }
+  {% endif %}
+  {% if block.settings.prefix_icon != blank %}
+    #ProductSubmitButton-{{ section_id }} .button__label::before {
+      content: '';
+      display: inline-block;
+      width: var(--icon-scale);
+      height: var(--icon-scale);
+      margin-right: .45em;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-image: url('{{ block.settings.prefix_icon | image_url }}');
+      vertical-align: middle;
+    }
+  {% endif %}
+  {% if block.settings.suffix_icon != blank %}
+    #ProductSubmitButton-{{ section_id }} .button__label::after {
+      content: '';
+      display: inline-block;
+      width: var(--icon-scale);
+      height: var(--icon-scale);
+      margin-left: .45em;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-image: url('{{ block.settings.suffix_icon | image_url }}');
+      vertical-align: middle;
+    }
+  {% endif %}
+</style>
 <div {{ block.shopify_attributes }}>
   {%- if product != blank -%}
     {%- liquid
@@ -74,7 +112,7 @@
             id="ProductSubmitButton-{{ section_id }}"
             type="submit"
             name="add"
-            class="product-form__submit button button--full-width {% if show_dynamic_checkout %}button--secondary{% else %}button--primary{% endif %}"
+            class="product-form__submit button button--full-width {% if block.settings.atc_style == 'secondary' or show_dynamic_checkout %}button--secondary{% else %}button--primary{% endif %}"
             {% if product.selected_or_first_available_variant.available == false
               or quantity_rule_soldout
               or product.selected_or_first_available_variant == null
