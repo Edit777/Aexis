@@ -8,6 +8,7 @@
   - show_badges: {Boolean} Renders 'Sale' and 'Sold Out' tags if the product matches the condition (optional)
   - price_class: {String} Adds a price class to the price element (optional)
   - show_compare_at_price: {Boolean} Renders the compare at price if the product matches the condition (optional)
+  - hide_currency_code: {Boolean} Hides currency code even when enabled in theme settings (optional)
 
   Usage:
   {% render 'price', product: product %}
@@ -30,7 +31,7 @@
   assign money_price = price | money
   assign money_price_min = price_min | money
   assign money_price_max = price_max | money
-  if settings.currency_code_enabled
+  if settings.currency_code_enabled and hide_currency_code != true
     assign money_compare_at_price = compare_at_price | money_with_currency
     assign money_price = price | money_with_currency
     assign money_price_min = price_min | money_with_currency

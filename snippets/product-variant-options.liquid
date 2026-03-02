@@ -39,6 +39,10 @@
     endif
   -%}
 
+  {% if skip_unavailable and option_disabled %}
+    {% continue %}
+  {% endif %}
+
   {%- capture input_id -%}
     {{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}
   {%- endcapture -%}
