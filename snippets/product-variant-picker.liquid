@@ -11,18 +11,24 @@
 {%- unless product.has_only_default_variant -%}
   <variant-selects
     id="variant-selects-{{ section.id }}"
+    class="no-js-hidden"
     data-section="{{ section.id }}"
+    data-url="{{ product.url }}"
     {{ block.shopify_attributes }}
   >
     {%- for option in product.options_with_values -%}
       {%- liquid
         assign swatch_count = option.values | map: 'swatch' | compact | size
         assign picker_type = block.settings.picker_type
+        assign picker_types = block.settings.picker_types | default: '' | split: ','
+        if picker_types.size > 0 and picker_types[forloop.index0] != blank
+          assign picker_type = picker_types[forloop.index0] | strip
+        endif
 
         if swatch_count > 0 and block.settings.swatch_shape != 'none'
-          if block.settings.picker_type == 'dropdown'
+          if picker_type == 'dropdown'
             assign picker_type = 'swatch_dropdown'
-          else
+          elsif picker_type == 'button'
             assign picker_type = 'swatch'
           endif
         endif
@@ -39,18 +45,22 @@
             product: product,
             option: option,
             block: block,
-            picker_type: picker_type
+            picker_type: picker_type,
+            skip_unavailable: block.settings.skip_unavailable
           %}
         </fieldset>
       {%- elsif picker_type == 'button' -%}
         <fieldset class="js product-form__input product-form__input--pill">
           <legend class="form__label">{{ option.name }}</legend>
-          {% render 'product-variant-options',
-            product: product,
-            option: option,
-            block: block,
-            picker_type: picker_type
-          %}
+          <div class="product-form__input-wrap">
+            {% render 'product-variant-options',
+              product: product,
+              option: option,
+              block: block,
+              picker_type: picker_type,
+              skip_unavailable: block.settings.skip_unavailable
+            %}
+          </div>
         </fieldset>
       {%- else -%}
         <div class="product-form__input product-form__input--dropdown">
@@ -76,7 +86,8 @@
                 product: product,
                 option: option,
                 block: block,
-                picker_type: picker_type
+                picker_type: picker_type,
+                skip_unavailable: block.settings.skip_unavailable
               %}
             </select>
             <span class="svg-wrapper">
@@ -92,3 +103,37 @@
     </script>
   </variant-selects>
 {%- endunless -%}
+
+  <noscript class="product-form__noscript-wrapper-{{ section.id }}">
+    <div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
+      <label class="form__label" for="Variants-{{ section.id }}">
+        {{- 'products.product.product_variants' | t -}}
+      </label>
+      <div class="select">
+        <select
+          name="id"
+          id="Variants-{{ section.id }}"
+          class="select__select"
+          form="{{ product_form_id }}"
+        >
+          {%- for variant in product.variants -%}
+            <option
+              {% if variant == product.selected_or_first_available_variant %}
+                selected="selected"
+              {% endif %}
+              {% if variant.available == false %}
+                disabled
+              {% endif %}
+              value="{{ variant.id }}"
+            >
+              {{ variant.title }} - {{ variant.price | money }}
+              {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+            </option>
+          {%- endfor -%}
+        </select>
+        <span class="svg-wrapper">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    </div>
+  </noscript>

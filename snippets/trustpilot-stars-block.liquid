@@ -1,0 +1,20 @@
+{% assign trust_id = 'trustpilot-stars-' | append: section.id | append: '-' | append: block.id %}
+<div id="{{ trust_id }}" class="aex-trustpilot-stars" style="--rating:{{ block.settings.rating | default: 5 }};--star-color:{{ block.settings.star_color | default: '#00b67a' }};--bg-star-color:{{ block.settings.bg_star_color | default: '#d8d8d8' }};--font-size:{{ block.settings.size | divided_by: 10.0 | default: 1.4 }}rem;--margin-top: {{ block.settings.margin_top | divided_by: 10.0 | default: 0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 | default: 0 }}rem;" {% if block_attributes %}{{ block.shopify_attributes }}{% endif %}>
+  {% if block.settings.scroll_id != blank %}<a href="{{ block.settings.scroll_id }}">{% endif %}
+  <span class="aex-trustpilot-stars__line">
+    <span class="aex-trustpilot-stars__stack">
+      <span class="aex-trustpilot-stars__underlay">★★★★★</span>
+      <span class="aex-trustpilot-stars__overlay">★★★★★</span>
+    </span>
+    {% if block.settings.label != blank %}<span class="aex-trustpilot-stars__label">{{ block.settings.label }}</span>{% endif %}
+  </span>
+  {% if block.settings.scroll_id != blank %}</a>{% endif %}
+</div>
+
+<style>
+  #{{ trust_id }} { margin-top: var(--margin-top); margin-bottom: var(--margin-bottom); font-size: var(--font-size); text-align: {{ block.settings.alignment | default: 'left' }}; }
+  #{{ trust_id }} .aex-trustpilot-stars__line { display: inline-flex; align-items: center; gap: .45em; line-height: 1; }
+  #{{ trust_id }} .aex-trustpilot-stars__stack { position: relative; display: inline-block; letter-spacing: .15em; }
+  #{{ trust_id }} .aex-trustpilot-stars__underlay { color: var(--bg-star-color); }
+  #{{ trust_id }} .aex-trustpilot-stars__overlay { color: var(--star-color); position: absolute; left: 0; top: 0; white-space: nowrap; overflow: hidden; width: calc((var(--rating) / 5) * 100%); }
+</style>

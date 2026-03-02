@@ -1,0 +1,147 @@
+{% liquid
+  assign sizing_id = 'sizing-chart-' | append: section.id | append: '-' | append: block.id
+%}
+
+<div
+  id="{{ sizing_id }}"
+  class="aex-sizing-chart aex-sizing-chart--button-{{ block.settings.button_alignment | default: 'left' }}"
+  style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 | default: 0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 | default: 0 }}rem;"
+  {{ block.shopify_attributes }}
+>
+  <button type="button" class="aex-sizing-chart__button{% if block.settings.button_underline %} aex-sizing-chart__button--underline{% endif %}" data-sizing-chart-open>
+    {% if block.settings.button_custom_icon != blank %}
+      <img
+        src="{{ block.settings.button_custom_icon | image_url: width: 150 }}"
+        alt=""
+        width="20"
+        height="20"
+        loading="lazy"
+      >
+    {% elsif block.settings.button_icon != blank %}
+      {% render 'material-icon', icon: block.settings.button_icon, filled: block.settings.button_filled_icon %}
+    {% endif %}
+    <span style="font-size: {{ block.settings.text_size | divided_by: 10.0 | default: 1.4 }}rem;">{{ block.settings.button_label }}</span>
+  </button>
+
+  <dialog class="aex-sizing-chart__modal color-{{ block.settings.color_scheme }}" data-sizing-chart-dialog>
+    <button type="button" class="aex-sizing-chart__close" aria-label="Close" data-sizing-chart-close>×</button>
+
+    {% if block.settings.headline != blank %}
+      <h3 class="aex-sizing-chart__title {{ block.settings.heading_size }}">{{ block.settings.headline }}</h3>
+    {% endif %}
+
+    {% if block.settings.top_image != blank %}
+      <div class="aex-sizing-chart__image">
+        {{
+          block.settings.top_image
+          | image_url: width: 1500
+          | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 650px, calc(100vw - 40px)', widths: '165, 360, 535, 750, 1070, 1250, 1500'
+        }}
+      </div>
+    {% endif %}
+
+    <div class="aex-sizing-chart__table-wrap">
+      <table class="aex-sizing-chart__table">
+        {% if block.settings.table_header_content != blank %}
+          {% assign columns = block.settings.table_header_content | split: ',' %}
+          <thead>
+            <tr>
+              {% for column in columns %}
+                <th class="color-{{ block.settings.table_header_color_scheme }}">{{ column | strip }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+        {% endif %}
+        <tbody>
+          {% assign rows = block.settings.table_content | split: '</p><p>' %}
+          {% for row in rows %}
+            {% assign row_text = row | remove: '<p>' | remove: '</p>' | strip %}
+            {% if row_text != blank %}
+              {% assign row_columns = row_text | split: ',' %}
+              <tr>
+                {% for column in row_columns %}
+                  <td>{{ column | strip }}</td>
+                {% endfor %}
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if block.settings.caption != blank %}
+      <p class="aex-sizing-chart__caption {{ block.settings.caption_alignment }}" style="font-size: {{ block.settings.caption_size | divided_by: 10.0 }}rem;color: {{ block.settings.caption_color }};">
+        {{ block.settings.caption }}
+      </p>
+    {% endif %}
+
+    {% if block.settings.bottom_image != blank %}
+      <div class="aex-sizing-chart__image">
+        {{
+          block.settings.bottom_image
+          | image_url: width: 1500
+          | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 650px, calc(100vw - 40px)', widths: '165, 360, 535, 750, 1070, 1250, 1500'
+        }}
+      </div>
+    {% endif %}
+  </dialog>
+</div>
+
+<style>
+  #{{ sizing_id }} { margin-top: var(--margin-top); margin-bottom: var(--margin-bottom); }
+  #{{ sizing_id }}.aex-sizing-chart--button-left { text-align: left; }
+  #{{ sizing_id }}.aex-sizing-chart--button-center { text-align: center; }
+  #{{ sizing_id }}.aex-sizing-chart--button-right { text-align: right; }
+  #{{ sizing_id }} .aex-sizing-chart__button { display: inline-flex; align-items: center; gap: .5rem; border: 0; background: none; padding: 0; cursor: pointer; }
+  #{{ sizing_id }} .aex-sizing-chart__button--underline { text-decoration: underline; }
+  #{{ sizing_id }} .aex-sizing-chart__modal { border: 0; border-radius: 1rem; padding: 1.6rem; width: min(92vw, 700px); max-height: 86vh; overflow: auto; }
+  #{{ sizing_id }} .aex-sizing-chart__modal::backdrop { background: rgba(0,0,0,.45); }
+  #{{ sizing_id }} .aex-sizing-chart__close { float: right; border: 0; background: none; font-size: 2.4rem; line-height: 1; cursor: pointer; }
+  #{{ sizing_id }} .aex-sizing-chart__title { margin: 0 0 1.2rem; text-align: center; }
+  #{{ sizing_id }} .aex-sizing-chart__image { margin: 1rem 0; }
+  #{{ sizing_id }} .aex-sizing-chart__image img { width: 100%; height: auto; display: block; }
+  #{{ sizing_id }} .aex-sizing-chart__table { width: 100%; border-collapse: collapse; }
+  #{{ sizing_id }} .aex-sizing-chart__table th, #{{ sizing_id }} .aex-sizing-chart__table td { border: 1px solid rgba(0,0,0,.1); padding: .7rem; text-align: center; }
+  #{{ sizing_id }} .aex-sizing-chart__caption { margin: 1rem 0 0; }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById({{ sizing_id | json }});
+    if (!root) return;
+    const openBtn = root.querySelector('[data-sizing-chart-open]');
+    const closeBtn = root.querySelector('[data-sizing-chart-close]');
+    const dialog = root.querySelector('[data-sizing-chart-dialog]');
+
+    if (!openBtn || !dialog) return;
+
+    openBtn.addEventListener('click', () => {
+      if (typeof dialog.showModal === 'function') {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute('open', 'open');
+      }
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+      const rect = dialog.getBoundingClientRect();
+      const inside = rect.top <= event.clientY && event.clientY <= rect.bottom && rect.left <= event.clientX && event.clientX <= rect.right;
+      if (!inside) dialog.close();
+    });
+
+    {% if block.settings.test_mode %}
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+    {% endif %}
+
+    {% if block.settings.append_to_variant_label %}
+      const label = document.querySelector('#variant-selects-{{ section.id }} .product-form__input:nth-of-type(2) .form__label');
+      if (label && !label.contains(root)) {
+        label.appendChild(root);
+        label.style.display = 'flex';
+        label.style.alignItems = 'center';
+        label.style.justifyContent = 'space-between';
+      }
+    {% endif %}
+  })();
+</script>

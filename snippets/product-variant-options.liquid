@@ -39,6 +39,10 @@
     endif
   -%}
 
+  {% if skip_unavailable and option_disabled %}
+    {% continue %}
+  {% endif %}
+
   {%- capture input_id -%}
     {{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}
   {%- endcapture -%}
@@ -50,6 +54,7 @@
   {%- capture input_dataset -%}
     data-product-url="{{ value.product_url }}"
     data-option-value-id="{{ value.id }}"
+    data-option-value-name="{{ value | escape }}"
   {%- endcapture -%}
 
   {%- capture label_unavailable -%}
@@ -93,6 +98,7 @@
         class="disabled"
       {% endif %}
       {{ input_dataset }}
+      data-option-available="{{ value.available }}"
     >
     <label for="{{ input_id }}">
       {{ value -}}
@@ -112,6 +118,7 @@
         {% endif %}
       {% endif %}
       {{ input_dataset }}
+      data-option-available="{{ value.available }}"
     >
       {% if option_disabled -%}
         {{- 'products.product.value_unavailable' | t: option_value: value -}}
